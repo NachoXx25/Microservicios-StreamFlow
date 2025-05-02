@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AuthMicroservice.src.Application.DTOs;
 using AuthMicroservice.src.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthMicroservice.src.Api.Controllers
@@ -30,6 +31,23 @@ namespace AuthMicroservice.src.Api.Controllers
             try
             {
                 var result = await _authService.Login(loginDTO);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+            try
+            {
+                var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
+                var result = await _authService.Logout(jti);
                 return Ok(result);
             }
             catch (Exception ex)

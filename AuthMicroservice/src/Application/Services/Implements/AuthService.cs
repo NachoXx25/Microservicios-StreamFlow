@@ -1,6 +1,7 @@
 using AuthMicroservice.src.Application.DTOs;
 using AuthMicroservice.src.Application.Services.Interfaces;
 using AuthMicroservice.src.Domain.Models;
+using AuthMicroservice.src.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace AuthMicroservice.src.Application.Services.Implements
@@ -10,12 +11,14 @@ namespace AuthMicroservice.src.Application.Services.Implements
         private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        public AuthService(ITokenService tokenService, UserManager<User> userManager, RoleManager<Role> roleManager)
+        private readonly ITokenRepository _tokenRepository;
+        public AuthService(ITokenService tokenService, UserManager<User> userManager, RoleManager<Role> roleManager, ITokenRepository tokenRepository)
         {   
             {
                 _tokenService = tokenService;
                 _userManager = userManager;
                 _roleManager = roleManager;
+                _tokenRepository = tokenRepository;
             }
         }
 
@@ -44,6 +47,18 @@ namespace AuthMicroservice.src.Application.Services.Implements
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };
+        }
+
+        /// <summary>
+        /// Cierra sesión y elimina el token JWT del usuario autenticado.
+        /// </summary>
+        /// <param name="jti">Identificador único del token.</param>
+        /// <returns>Mensaje de éxito o error.</returns>
+        public async Task<string> Logout(string jti)
+        {
+            var result = await _tokenRepository.AddTokenToBlacklist(jti);
+            if(!result) throw new Exception("Token no encontrado o ya eliminado");
+            return "Token eliminado correctamente";
         }
     }
 }

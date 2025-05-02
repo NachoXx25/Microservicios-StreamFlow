@@ -1,3 +1,4 @@
+using AuthMicroservice.src.Domain.Models;
 using AuthMicroservice.src.Infrastructure.Data;
 using AuthMicroservice.src.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,25 @@ namespace AuthMicroservice.src.Infrastructure.Repositories.Implements
         public TokenRepository(DataContext context)
         {
             _context = context;
+        }
+
+        /// <summary>
+        /// Agrega un token a la lista negra.
+        /// </summary>
+        /// <param name="jti">Identificador único del token.</param>
+        /// <returns>True si el token fue agregado, de lo contrario false.</returns>
+        public async Task<bool> AddTokenToBlacklist(string jti)
+        {
+            var token = await _context.TokenBlacklists.FirstOrDefaultAsync(x => x.Jti == jti);
+            if (token != null) return false; 
+            var tokenBlacklist = new TokenBlacklist
+            {
+                Jti = jti,
+                RevokedAt = DateTime.UtcNow
+            };
+            await _context.TokenBlacklists.AddAsync(tokenBlacklist);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         /// <summary>
