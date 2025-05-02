@@ -31,11 +31,11 @@ namespace AuthMicroservice.src.Api.Controllers
             try
             {
                 var result = await _authService.Login(loginDTO);
-                return Ok(result);
+                return Ok( new {result} );
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( new {error = ex.Message} );
             }
         }
 
@@ -46,17 +46,18 @@ namespace AuthMicroservice.src.Api.Controllers
             if(!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
-                if(!User.Identity?.IsAuthenticated ?? true) return Unauthorized("No autenticado");
+                if(!User.Identity?.IsAuthenticated ?? true) return Unauthorized( new {error = "No autenticado"} );
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
-                updatePasswordDTO.UserId = userId;
+                updatePasswordDTO.UserId = id.ToString();
+                updatePasswordDTO.UserRequestId = userId;
                 updatePasswordDTO.Jti = jti;
                 var result = await _authService.ChangePassword(updatePasswordDTO);
-                return Ok(result);
+                return Ok( new {result} );
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( new {error = ex.Message} );
             }
         }
 
@@ -73,11 +74,11 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
                 var result = await _authService.Logout(jti);
-                return Ok(result);
+                return Ok( new {result} );
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( new {error = ex.Message} );
             }
         }
     }

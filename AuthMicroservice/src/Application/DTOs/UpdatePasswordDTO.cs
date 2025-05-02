@@ -6,7 +6,9 @@ namespace AuthMicroservice.src.Application.DTOs
     public class UpdatePasswordDTO
     {
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        [JsonIgnore]
+        public string UserRequestId { get; set; } = string.Empty;
         [Required(ErrorMessage ="La contraseña actual es requerida.")]
         public required string CurrentPassword { get; set; }
         [Required(ErrorMessage ="La contraseña nueva es requerida.")]
@@ -18,6 +20,6 @@ namespace AuthMicroservice.src.Application.DTOs
         [Compare("NewPassword", ErrorMessage = "Las contraseñas no coinciden.")]
         public required string ConfirmPassword { get; set; }
         [JsonIgnore]
-        public required string Jti { get; set; }
+        public string Jti { get; set; } = string.Empty;
     }
 }
