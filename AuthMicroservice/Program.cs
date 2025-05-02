@@ -8,6 +8,10 @@ using AuthMicroservice.src.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Builder;
 using Serilog;
+using AuthMicroservice.src.Application.Services.Interfaces;
+using AuthMicroservice.src.Application.Services.Implements;
+using AuthMicroservice.src.Infrastructure.Repositories.Interfaces;
+using AuthMicroservice.src.Infrastructure.Repositories.Implements;
 
 Env.Load();
 
@@ -72,6 +76,13 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 });
+
+//Alcance de servicios
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+//Alcance de repositorios
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 // Configurar Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
