@@ -39,6 +39,31 @@ namespace AuthMicroservice.src.Api.Controllers
             }
         }
 
+        [HttpPatch("usuarios/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdatePassword(int id, UpdatePasswordDTO updatePasswordDTO)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+            try
+            {
+                if(!User.Identity?.IsAuthenticated ?? true) return Unauthorized("No autenticado");
+                var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
+                var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
+                updatePasswordDTO.UserId = userId;
+                updatePasswordDTO.Jti = jti;
+                var result = await _authService.ChangePassword(updatePasswordDTO);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cierra sesión y elimina el token JWT del usuario autenticado.
+        /// </summary>
+        /// <returns>Mensaje de éxito o error.</returns>
         [HttpPost("logout")]
         [Authorize]
         public async Task<IActionResult> Logout()

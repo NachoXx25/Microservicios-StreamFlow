@@ -23,6 +23,24 @@ namespace AuthMicroservice.src.Application.Services.Implements
         }
 
         /// <summary>
+        /// Actualiza la contraseña del usuario autenticado.
+        /// </summary>
+        /// <param name="updatePasswordDTO">Nueva contraseña.</param>
+        /// <returns>Mensaje de éxito o error.</returns>
+        public async Task<string> ChangePassword(UpdatePasswordDTO updatePasswordDTO)
+        {
+            var user = await _userManager.FindByIdAsync(updatePasswordDTO.UserId.ToString()) ?? throw new Exception("Usuario no encontrado");
+            var userRole = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("Rol no encontrado");
+            if(userRole.Name != "Admin" && user.Id.ToString() != updatePasswordDTO.UserId) throw new Exception("No tiene permisos para cambiar la contraseña de este usuario");
+            if(updatePasswordDTO.CurrentPassword == updatePasswordDTO.NewPassword) throw new Exception("La nueva contraseña no puede ser igual a la actual");
+            var token = await _tokenRepository.VerifyIfTokenExists(updatePasswordDTO.Jti);
+            if(token) throw new Exception("Token de autenticación no válido.");
+            var result = await _userManager.ChangePasswordAsync(user, updatePasswordDTO.CurrentPassword, updatePasswordDTO.NewPassword);
+            if (!result.Succeeded) throw new Exception("Error al cambiar la contraseña: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            return "Contraseña actualizada correctamente";
+        }
+
+        /// <summary>
         /// Genera un token JWT para el usuario autenticado.
         /// </summary>
         /// <param name="loginDTO">Credenciales.</param>

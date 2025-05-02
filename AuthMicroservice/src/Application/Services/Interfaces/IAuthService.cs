@@ -12,6 +12,13 @@ namespace AuthMicroservice.src.Application.Services.Interfaces
         Task<ReturnUserWithTokenDTO> Login(LoginDTO loginDTO);
 
         /// <summary>
+        /// Actualiza la contraseña del usuario autenticado.
+        /// </summary>
+        /// <param name="updatePasswordDTO">Nueva contraseña.</param>
+        /// <returns>Mensaje de éxito o error.</returns>
+        Task<string> ChangePassword(UpdatePasswordDTO updatePasswordDTO);
+
+        /// <summary>
         /// Cierra sesión y elimina el token JWT del usuario autenticado.
         /// </summary>
         /// <param name="jti">Identificador único del token.</param>
