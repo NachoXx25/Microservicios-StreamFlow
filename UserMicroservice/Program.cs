@@ -2,9 +2,12 @@ using System.Text;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using UserMicroservice.Services;
+using UserMicroservice.src.Domain;
+using UserMicroservice.src.Infrastructure.Data;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +20,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 
+//Conexión a base de datos de módulo de usuarios (MySQL)
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
+builder.Services.AddDbContextPool<DataContext>(options =>
+{
+    options.UseMySql(Env.GetString("MYSQL_CONNECTION"), serverVersion,
+        mySqlOptions => 
+        {
+            mySqlOptions.MigrationsAssembly(typeof(DataContext).Assembly.FullName);
+            mySqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(60),
+                errorNumbersToAdd: null
+            );
+            mySqlOptions.CommandTimeout(120);
+        });
+}, poolSize: 200);
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication( options => {
 
@@ -61,6 +80,11 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 var app = builder.Build();
 
+//Llamado al dataseeder
+using (var scope = app.Services.CreateScope())
+{
+    await DataSeeder.Initialize(scope.ServiceProvider);
+}
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GreeterService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
