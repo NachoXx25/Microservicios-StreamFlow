@@ -35,7 +35,7 @@ namespace AuthMicroservice.src.Application.Services.Implements
                 new Claim("Jti", Jti),
                 new Claim("Id", user.Id.ToString()),
                 new Claim("Email", user.Email?.ToString() ?? throw new ArgumentNullException("Email no encontrado")),
-                new Claim("Role", user.Role?.Name?.ToString() ?? throw new ArgumentNullException("Rol no encontrado")),
+                new Claim(ClaimTypes.Role, user.Role?.Name?.ToString() ?? throw new ArgumentNullException("Rol no encontrado")),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.GetString("JWT_SECRET") ?? throw new ArgumentNullException("JWT_SECRET no encontrado")));
