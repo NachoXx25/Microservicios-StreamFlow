@@ -10,7 +10,7 @@ using UserMicroservice.src.Application.Services.Interfaces;
 namespace UserMicroservice.src.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -26,7 +26,7 @@ namespace UserMicroservice.src.Api
         /// <param name="search">Filtro de busqueda.</param>
         /// <returns>Lista de usuarios.</returns>
         [HttpGet("usuarios")]
-        [Authorize (Roles = "Administrador" )]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] SearchByDTO search)
         {
             if(!ModelState.IsValid)
@@ -35,6 +35,14 @@ namespace UserMicroservice.src.Api
             }
             try
             {
+                if(!User.Identity?.IsAuthenticated == true)
+                {
+                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
+                }
+                if(!User.IsInRole("Administrador"))
+                {
+                    throw new Exception("No tienes permisos para acceder a esta información.");
+                }
                 return Ok(await _userService.GetAllUsers(search));
             }catch(Exception ex)
             {
@@ -48,10 +56,16 @@ namespace UserMicroservice.src.Api
         /// <param name="Id">Id del usuario.</param>
         /// <returns>Los datos del usuario</returns> 
         [HttpGet("usuarios/{Id}")]
-        [Authorize( Roles = "Administrador" )]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUserById(int Id)
         {
             try{
+                if(!User.Identity?.IsAuthenticated == true)
+                {
+                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
+                }
+                var userIdClaim = User.FindFirst("Id")?.Value;
+                if(userIdClaim != Id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes acceder a otros usuarios.");
                 return Ok(await _userService.GetUserById(Id));
             }catch(Exception ex)
             {
@@ -95,7 +109,7 @@ namespace UserMicroservice.src.Api
         }
         
         [HttpPatch("usuarios/{Id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDTO updateUserDTO, int Id)
         {
             if(!ModelState.IsValid)
@@ -104,8 +118,12 @@ namespace UserMicroservice.src.Api
             }
             try
             {
+                if(!User.Identity?.IsAuthenticated == true)
+                {
+                    return Unauthorized(new { Error = "Se requiere autenticación." });
+                }
                 var userIdClaim = User.FindFirst("Id")?.Value;
-                if(userIdClaim != Id.ToString()) throw new Exception("No puedes editar a otros usuarios.");
+                if(userIdClaim != Id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes editar a otros usuarios.");
                 if(!string.IsNullOrEmpty(updateUserDTO.Password)) throw new Exception("No puedes editar la contraseña campo aquí.");
                 return Ok(new { user = await _userService.UpdateUser(updateUserDTO, Id)});
             }catch(Exception ex)
@@ -115,14 +133,22 @@ namespace UserMicroservice.src.Api
         }
         
         [HttpDelete("usuarios/{Id}")]
-        [Authorize( Roles = "Administrador" )]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteUser(int Id)
         {
             try
             {
+                if(!User.Identity?.IsAuthenticated == true)
+                {
+                    return Unauthorized(new { Error = "Se requiere autenticación." });
+                }
                 var userIdClaim = User.FindFirst("Id")?.Value;
                 if(userIdClaim == Id.ToString()){
                     throw new Exception("No puedes eliminarte a ti mismo.");
+                }
+                if(!User.IsInRole("Administrador"))
+                {
+                    throw new Exception("No tienes permisos para eliminar usuarios.");
                 }
                 await _userService.DeleteUser(Id);
                 return NoContent();
