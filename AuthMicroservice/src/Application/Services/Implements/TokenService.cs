@@ -43,7 +43,7 @@ namespace AuthMicroservice.src.Application.Services.Implements
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddMonths(2),
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
