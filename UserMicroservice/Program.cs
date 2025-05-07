@@ -6,8 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using UserMicroservice.Services;
+using UserMicroservice.src.Application.Services.Implements;
+using UserMicroservice.src.Application.Services.Interfaces;
 using UserMicroservice.src.Domain;
 using UserMicroservice.src.Infrastructure.Data;
+using UserMicroservice.src.Infrastructure.Repositories.Implements;
+using UserMicroservice.src.Infrastructure.Repositories.Interfaces;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +25,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+
+
+//Alcance de la inyección de dependencias
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 
 //Conexión a base de datos de módulo de usuarios (MySQL)
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
@@ -89,7 +99,8 @@ using (var scope = app.Services.CreateScope())
 {
     await DataSeeder.Initialize(scope.ServiceProvider);
 }
-// Configure the HTTP request pipeline.
+
+
 app.MapGrpcService<UserNotificationService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
