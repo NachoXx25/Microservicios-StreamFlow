@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddScoped<IUserEventService, UserEventService>();
+builder.Services.AddSingleton<IUserEventService, UserEventService>();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -80,13 +82,15 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 var app = builder.Build();
 
+// Configuración de endpoints gRPC
+app.MapGrpcService<UserNotificationService>();
 //Llamado al dataseeder
 using (var scope = app.Services.CreateScope())
 {
     await DataSeeder.Initialize(scope.ServiceProvider);
 }
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
+app.MapGrpcService<UserNotificationService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.MapOpenApi();
