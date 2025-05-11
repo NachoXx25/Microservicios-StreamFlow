@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using UserMicroservice.Services;
 using UserMicroservice.src.Application.DTOs;
 using UserMicroservice.src.Application.Services.Interfaces;
 using UserMicroservice.src.Domain;
@@ -14,16 +15,18 @@ namespace UserMicroservice.src.Application.Services.Implements
         private readonly RoleManager<Role> _roleManager;
         private readonly IUserRepository _userRepository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IUserEventService _userEventService;
         private static readonly Dictionary<string, string> ErrorTranslations = new ()
         {
             {"DuplicateUserName", "El nombre de usuario ya está en uso"},
             {"DuplicateEmail", "El correo electrónico ya está registrado"},
             {"InvalidUserName", "El nombre de usuario contiene caracteres inválidos"}
         };
-        public UserService(UserManager<User> userManager, RoleManager<Role> roleManager, IUserRepository userRepository, IServiceProvider serviceProvider)
+        public UserService(UserManager<User> userManager, RoleManager<Role> roleManager, IUserRepository userRepository, IServiceProvider serviceProvider, IUserEventService userEventService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _userEventService = userEventService;
             _userRepository = userRepository;
             _serviceProvider = serviceProvider;
         }
@@ -85,6 +88,7 @@ namespace UserMicroservice.src.Application.Services.Implements
                 
                 if (result.Succeeded)
                 {
+                    await _userEventService.PublishUserCreatedEvent(user);
                     return new ReturnUserDTO()
                     {
                         Id = user.Id,

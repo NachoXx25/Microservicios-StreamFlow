@@ -19,7 +19,7 @@ namespace UserMicroservice.Services
         private readonly string _password;
         private readonly string _username;
         private readonly int _port;
-        private readonly string _exchange;
+
         
         private ConnectionFactory _factory;
         
@@ -29,7 +29,6 @@ namespace UserMicroservice.Services
             _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
             _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
             _port = Env.GetInt("RABBITMQ_PORT"); 
-            _exchange = Env.GetString("RABBITMQ_EXCHANGE") ?? "user_events";
 
             _factory = new ConnectionFactory
             {
@@ -40,6 +39,11 @@ namespace UserMicroservice.Services
             };
         }
         
+        /// <summary>
+        /// Publica un evento de usuario creado en RabbitMQ.
+        /// </summary>
+        /// <param name="user">El usuario que se ha creado.</param>
+        /// <returns>Tarea que representa la operación asincrónica.</returns>
         public Task PublishUserCreatedEvent(User user)
         {
             try

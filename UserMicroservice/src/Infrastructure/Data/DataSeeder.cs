@@ -2,6 +2,7 @@ using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using UserMicroservice.Services;
 using UserMicroservice.src.Domain;
 
 namespace UserMicroservice.src.Infrastructure.Data
@@ -66,6 +67,11 @@ namespace UserMicroservice.src.Infrastructure.Data
                             .RuleFor(u => u.RoleId, f => Context.Roles.First(r => r.Name == f.PickRandom(roles)).Id);
                         Context.Users.AddRange(faker.Generate(150));
                         await Context.SaveChangesAsync();
+                        var userEventService = scope.ServiceProvider.GetRequiredService<IUserEventService>();
+                        foreach (var user in Context.Users)
+                        {
+                            await userEventService.PublishUserCreatedEvent(user);
+                        }
                     }
                 }
                 catch(Exception ex)
