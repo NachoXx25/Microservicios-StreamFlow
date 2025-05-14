@@ -6,12 +6,12 @@ package usernotification;
 
 
 service UserNotificationService {
-    rpc NotifyUserCreated (UserCreatedEvent) returns (UserNotificationResponse);
-    rpc NotifyRoleCreated (RoleCreatedEvent) returns (UserNotificationResponse);
+    //rpc ValidateUserCredentials (UserCredentials) returns (UserNotificationResponse);
 }
 
+
 message UserCreatedEvent {
-    string UserId = 1;
+    string Id = 1;
     string FirstName = 2;
     string LastName = 3;
     string Email = 4;
@@ -21,10 +21,20 @@ message UserCreatedEvent {
     string UpdatedAt = 8;
 }
 
-message RoleCreatedEvent {
-    uint32 RoleId = 1;
-    string RoleName = 2;
+message UserUpdatedEvent {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    string UpdatedAt = 5;
 }
+
+message UserDeletedEvent {
+    string Id = 1;
+    string Status = 2;
+    string UpdatedAt = 3;
+}
+
 message UserNotificationResponse {
     bool success = 1;
     string message = 2;

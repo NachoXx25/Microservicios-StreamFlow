@@ -6,7 +6,7 @@ namespace UserMicroservice.Services
 {
     public class UserNotificationService : Protos.UserNotificationService.UserNotificationServiceBase
     {
-        
+        /*
         public override Task<UserNotificationResponse> NotifyUserCreated(UserCreatedEvent request, ServerCallContext context)
         {
             Log.Information($"Nuevo usuario creado - Email: {request.Email}, Nombre: {request.FirstName} {request.LastName}");
@@ -18,5 +18,6 @@ namespace UserMicroservice.Services
             Log.Information($"Nuevo rol creado - Nombre: {request.RoleName}");
             return Task.FromResult(new UserNotificationResponse { Success = true, Message = "Notificación de rol creado recibida." });
         }
+        */
     }
 }

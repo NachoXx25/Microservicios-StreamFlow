@@ -60,6 +60,7 @@ namespace UserMicroservice.src.Application.Services.Implements
         {
             var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("El usuario especificado no existe.");
             await _userRepository.DeleteUser(user);
+            await _userEventService.PublishUserDeletedEvent(user);
         }
 
         /// <summary>
@@ -190,6 +191,7 @@ namespace UserMicroservice.src.Application.Services.Implements
             if(!hasChanges) throw new Exception("Debe modificar al menos un campo.");
             var role = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("Error en el sistema, vuelva a intentarlo más tarde.");
             await _userManager.UpdateAsync(user);
+            await _userEventService.PublishUserUpdatedEvent(user);
             return new ReturnUserDTO(){
                 Id = user.Id,
                 FirstName = user.FirstName,
