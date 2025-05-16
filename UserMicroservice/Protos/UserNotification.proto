@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option csharp_namespace = "UserMicroservice.Protos";
+
+package usernotification;
+
+
+service UserNotificationService {
+    //rpc ValidateUserCredentials (UserCredentials) returns (UserNotificationResponse);
+}
+
+
+message UserCreatedEvent {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    uint32 RoleId = 5;
+    bool Status = 6;
+    string CreatedAt = 7;
+    string UpdatedAt = 8;
+}
+
+message UserUpdatedEvent {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    string UpdatedAt = 5;
+}
+
+message UserDeletedEvent {
+    string Id = 1;
+    string Status = 2;
+    string UpdatedAt = 3;
+}
+
+message UserNotificationResponse {
+    bool success = 1;
+    string message = 2;
+}
