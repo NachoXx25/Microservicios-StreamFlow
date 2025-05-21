@@ -13,6 +13,7 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IVideoEventService, VideoEventService>();
 builder.Services.AddScoped<IVideoService,VideoService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddGrpc();
