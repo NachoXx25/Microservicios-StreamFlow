@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VideoMicroservice.Services;
 using VideoMicroservice.src.Application.DTOs;
 using VideoMicroservice.src.Application.Services.Interfaces;
 using VideoMicroservice.src.Domain;
@@ -12,10 +13,12 @@ namespace VideoMicroservice.src.Application.Services.Implements
     public class VideoService : IVideoService
     {
         private readonly IVideoRepository _videoRepository;
+        private readonly IVideoEventService _videoEventService;
 
-        public VideoService(IVideoRepository videoRepository)
+        public VideoService(IVideoRepository videoRepository, IVideoEventService videoEventService)
         {
             _videoRepository = videoRepository;
+            _videoEventService = videoEventService;
         }
 
         /// <summary>
@@ -26,6 +29,8 @@ namespace VideoMicroservice.src.Application.Services.Implements
         public async Task DeleteVideo(string id)
         {
             await _videoRepository.DeleteVideo(id);
+            var video = await _videoRepository.GetVideoById(id) ?? throw new ArgumentException("Video no encontrado");
+            await _videoEventService.PublishDeletedVideo(video);
         }
 
         /// <summary>
@@ -102,6 +107,8 @@ namespace VideoMicroservice.src.Application.Services.Implements
             //Actualizar el video y obtenerlo
             var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new ArgumentException("Error al actualizar el video");
 
+            await _videoEventService.PublishUpdatedVideo(updatedVideo);
+
             // Mapear el video actualizado a un DTO con la información necesaria
             var mappedVideo = new UpdateVideoDTO
             {
@@ -131,6 +138,8 @@ namespace VideoMicroservice.src.Application.Services.Implements
 
             // Subir el video y obtenerlo
             var uploadedVideo = await _videoRepository.UploadVideo(toUploadVideo) ?? throw new ArgumentException("Error al subir el video");
+
+            await _videoEventService.PublishCreatedVideo(uploadedVideo);
 
             // Mapear el video subido a un DTO con la información necesaria
             var mappedVideo = new GetVideoDTO
