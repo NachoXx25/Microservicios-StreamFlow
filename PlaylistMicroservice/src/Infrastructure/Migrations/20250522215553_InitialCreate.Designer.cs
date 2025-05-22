@@ -11,7 +11,7 @@ using PlaylistMicroservice.src.Infrastructure.Data;
 namespace PlaylistMicroservice.src.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250522212206_InitialCreate")]
+    [Migration("20250522215553_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -35,6 +35,9 @@ namespace PlaylistMicroservice.src.Infrastructure.Migrations
                     b.Property<string>("PlaylistName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

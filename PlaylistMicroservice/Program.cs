@@ -3,7 +3,11 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PlaylistMicroservice.src.Application.Services.Implements;
+using PlaylistMicroservice.src.Application.Services.Interfaces;
 using PlaylistMicroservice.src.Infrastructure.Data;
+using PlaylistMicroservice.src.Infrastructure.Repositories.Implements;
+using PlaylistMicroservice.src.Infrastructure.Repositories.Interfaces;
 using Serilog;
 
 Env.Load();
@@ -13,7 +17,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>(); 
 
 //Conexión a base de datos de módulo de autenticación (PostgreSQL)
 builder.Services.AddDbContext<DataContext>(options =>
