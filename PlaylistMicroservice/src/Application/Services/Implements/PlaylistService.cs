@@ -28,7 +28,28 @@ namespace PlaylistMicroservice.src.Application.Services.Implements
             try
             {
                 return await _playlistRepository.CreatePlaylist(name, userId);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="videoId">El ID del video a agregar.</param>
+        /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
+        /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
+        public Task<Playlist> AddVideoToPlaylist(int playlistId, int videoId, int userId)
+        {
+            try
+            {
+                return _playlistRepository.AddVideoToPlaylist(playlistId, videoId, userId);
+            }
+            catch (Exception ex)
             {
                 Log.Error(ex.Message);
                 throw new Exception(ex.Message);

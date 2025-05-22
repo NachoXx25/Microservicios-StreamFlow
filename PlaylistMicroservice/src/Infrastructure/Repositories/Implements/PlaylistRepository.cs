@@ -38,5 +38,24 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
             await _context.SaveChangesAsync();
             return playlist;
         }
+
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="videoId">El ID del video a agregar.</param>
+        /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
+        /// <returns>La lista de reproducción actualizada.</returns>
+        public async Task<Playlist> AddVideoToPlaylist(int playlistId, int videoId, int userId)
+        {
+            var playlist = await _context.Playlists.Where(p => p.Id == playlistId && p.UserId == userId).Include(p => p.Videos).FirstOrDefaultAsync();
+            if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}");
+            var video = await _context.Videos.Where(v => v.Id == videoId).FirstOrDefaultAsync();
+            if (video == null) throw new Exception($"No existe un video con ese ID: {videoId}");
+            playlist.Videos.Add(video);
+            await _context.SaveChangesAsync();
+            return playlist;
+        }
     }
 }

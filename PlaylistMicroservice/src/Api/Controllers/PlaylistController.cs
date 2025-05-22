@@ -37,5 +37,23 @@ namespace PlaylistMicroservice.src.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPost("video")]
+        [Authorize]
+        public async Task<IActionResult> AddVideoToPlaylist(AddVideoToPlaylistDTO videoDTO)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
+                int id = int.Parse(userId);
+                var playlist = await _playlistService.AddVideoToPlaylist(videoDTO.PlaylistId, videoDTO.VideoId, id);
+                return CreatedAtAction(nameof(AddVideoToPlaylist), new { id = playlist.Id }, playlist);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

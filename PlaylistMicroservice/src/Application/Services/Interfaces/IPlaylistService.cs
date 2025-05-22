@@ -15,5 +15,14 @@ namespace PlaylistMicroservice.src.Application.Services.Interfaces
         /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
         /// <returns>La nueva lista de reproducción creada.</returns>
         Task<Playlist> CreatePlaylist(string name, int userId);
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="videoId">El ID del video a agregar.</param>
+        /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
+        /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
+        Task<Playlist> AddVideoToPlaylist(int playlistId, int videoId, int userId);
     }
 }
