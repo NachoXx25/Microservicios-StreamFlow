@@ -65,9 +65,28 @@ namespace PlaylistMicroservice.src.Api.Controllers
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
                 var playlists = await _playlistService.GetPlaylistsByUserId(id);
-                if(playlists == null || playlists.Count == 0)
+                if (playlists == null || playlists.Count == 0)
                     return NotFound(new { message = "No se encontraron listas de reproducción para este usuario." });
                 return Ok(playlists);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("{playlistId}")]
+        [Authorize]
+        public async Task<IActionResult> GetVideosByPlaylistId(int playlistId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
+                int id = int.Parse(userId);
+                var videos = await _playlistService.GetVideosByPlaylistId(playlistId, id);
+                if (videos == null || videos.Count == 0)
+                    return NotFound(new { message = "No se encontraron videos para esta lista de reproducción." });
+                return Ok(videos);
             }
             catch (Exception ex)
             {

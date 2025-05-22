@@ -32,5 +32,13 @@ namespace PlaylistMicroservice.src.Application.Services.Interfaces
         /// <param name="userId">El ID del usuario</param>
         /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
         Task<List<PlaylistDTO>> GetPlaylistsByUserId(int userId);
+
+        /// <summary>
+        /// Obtiene los videos de una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="userId">El ID del usuario.</param>
+        /// <returns>Los videos de la lista de reproducción.</returns>
+        Task<List<VideosByPlaylistDTO>> GetVideosByPlaylistId(int playlistId, int userId);
     }
 }

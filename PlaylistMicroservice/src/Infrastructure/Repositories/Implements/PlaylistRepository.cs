@@ -75,5 +75,26 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
             })
             .ToListAsync();
         }
+
+        /// <summary>
+        /// Obtiene los videos de una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="userId">El ID del usuario.</param>
+        /// <returns>Los videos de la lista de reproducción.</returns>
+        public async Task<List<VideosByPlaylistDTO>> GetVideosByPlaylistId(int playlistId, int userId)
+        {
+            var playlist = await _context.Playlists
+                .Where(p => p.Id == playlistId && p.UserId == userId)
+                .Include(p => p.Videos)
+                .FirstOrDefaultAsync();
+            if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}");
+            if (playlist.Videos.Count == 0) throw new Exception($"No tienes videos en esta playlist");
+            return playlist.Videos.Select(v => new VideosByPlaylistDTO
+            {
+                VideoId = v.Id,
+                VideoName = v.VideoName
+            }).ToList();
+        }
     }
 }
