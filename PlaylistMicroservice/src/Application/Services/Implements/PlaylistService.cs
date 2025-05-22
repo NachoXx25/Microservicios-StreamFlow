@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PlaylistMicroservice.src.Application.DTOs;
 using PlaylistMicroservice.src.Application.Services.Interfaces;
 using PlaylistMicroservice.src.Domain.Models;
 using PlaylistMicroservice.src.Infrastructure.Repositories.Interfaces;
@@ -48,6 +49,24 @@ namespace PlaylistMicroservice.src.Application.Services.Implements
             try
             {
                 return _playlistRepository.AddVideoToPlaylist(playlistId, videoId, userId);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="userId">El ID del usuario</param>
+        /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
+        public async Task<List<PlaylistDTO>> GetPlaylistsByUserId(int userId)
+        {
+            try
+            {
+                return await _playlistRepository.GetPlaylistsByUserId(userId);
             }
             catch (Exception ex)
             {

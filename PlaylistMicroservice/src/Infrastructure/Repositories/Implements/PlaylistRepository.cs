@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using PlaylistMicroservice.src.Application.DTOs;
 using PlaylistMicroservice.src.Domain.Models;
 using PlaylistMicroservice.src.Infrastructure.Data;
 using PlaylistMicroservice.src.Infrastructure.Repositories.Interfaces;
@@ -56,6 +57,23 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
             playlist.Videos.Add(video);
             await _context.SaveChangesAsync();
             return playlist;
+        }
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="userId">El ID del usuario</param>
+        /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
+        public async Task<List<PlaylistDTO>> GetPlaylistsByUserId(int userId)
+        {
+            return await _context.Playlists
+            .Where(p => p.UserId == userId)
+            .Select(p => new PlaylistDTO
+            {
+                Id = p.Id,
+                Name = p.PlaylistName
+            })
+            .ToListAsync();
         }
     }
 }

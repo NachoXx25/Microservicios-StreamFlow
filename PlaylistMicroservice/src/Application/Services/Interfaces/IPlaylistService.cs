@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PlaylistMicroservice.src.Application.DTOs;
 using PlaylistMicroservice.src.Domain.Models;
 
 namespace PlaylistMicroservice.src.Application.Services.Interfaces
@@ -24,5 +25,12 @@ namespace PlaylistMicroservice.src.Application.Services.Interfaces
         /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
         /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
         Task<Playlist> AddVideoToPlaylist(int playlistId, int videoId, int userId);
+
+        /// <summary>
+        /// Obtiene una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="userId">El ID del usuario</param>
+        /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
+        Task<List<PlaylistDTO>> GetPlaylistsByUserId(int userId);
     }
 }

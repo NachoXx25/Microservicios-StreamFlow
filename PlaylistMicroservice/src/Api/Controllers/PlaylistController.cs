@@ -55,5 +55,24 @@ namespace PlaylistMicroservice.src.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetPlaylistsByUserId()
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
+                int id = int.Parse(userId);
+                var playlists = await _playlistService.GetPlaylistsByUserId(id);
+                if(playlists == null || playlists.Count == 0)
+                    return NotFound(new { message = "No se encontraron listas de reproducción para este usuario." });
+                return Ok(playlists);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
