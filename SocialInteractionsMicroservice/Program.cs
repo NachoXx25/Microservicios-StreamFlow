@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ISocialInteractionsRepository, SocialInteractionsRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ISocialInteractionsService, SocialInteractionsService>();
+builder.Services.AddScoped<SocialInteractionsEventService>();
+//builder.Services.AddSingleton<SocialInteractionsEventService>();
 builder.Services.AddGrpc();
 builder.Services.AddDbContext<SocialInteractionsContext>(options => 
     options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"),Env.GetString("MONGODB_DATABASE_NAME")));
