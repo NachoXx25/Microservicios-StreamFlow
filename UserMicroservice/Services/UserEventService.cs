@@ -103,6 +103,7 @@ namespace UserMicroservice.Services
                         Email = user.Email,
                         RoleId = user.RoleId,
                         Status = user.Status,
+                        PasswordHash = user.PasswordHash,
                         CreatedAt = DateTime.UtcNow.ToString("o"),
                         EventType = "UserCreated"
                     };

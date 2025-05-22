@@ -12,6 +12,9 @@ using AuthMicroservice.src.Application.Services.Interfaces;
 using AuthMicroservice.src.Application.Services.Implements;
 using AuthMicroservice.src.Infrastructure.Repositories.Interfaces;
 using AuthMicroservice.src.Infrastructure.Repositories.Implements;
+using AuthMicroservice.src.Infrastructure.MessageBroker.Consumers;
+using AuthMicroservice.src.Infrastructure.MessageBroker.Services;
+using RabbitMQ.Client;
 
 Env.Load();
 
@@ -24,6 +27,21 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
+try
+{
+    var connectionFactory = new ConnectionFactory();
+    connectionFactory.HostName = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+    connectionFactory.UserName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
+    connectionFactory.Password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+    connectionFactory.Port = Env.GetInt("RABBITMQ_PORT");
+    var connection = connectionFactory.CreateConnection();
+    builder.Services.AddHostedService<UserEventConsumer>();
+    builder.Services.AddSingleton<RabbitMQService>();
+}catch (Exception ex)
+{
+    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
+}
 
 //Conexión a base de datos de módulo de autenticación (PostgreSQL)
 builder.Services.AddDbContext<DataContext>(options =>

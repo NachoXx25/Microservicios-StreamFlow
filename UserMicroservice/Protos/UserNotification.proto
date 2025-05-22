@@ -17,8 +17,9 @@ message UserCreatedEvent {
     string Email = 4;
     uint32 RoleId = 5;
     bool Status = 6;
-    string CreatedAt = 7;
-    string UpdatedAt = 8;
+    string PasswordHash = 7;
+    string CreatedAt = 8;
+    string UpdatedAt = 9;
 }
 
 message UserUpdatedEvent {
