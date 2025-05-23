@@ -11,7 +11,7 @@ using PlaylistMicroservice.src.Infrastructure.Data;
 namespace PlaylistMicroservice.src.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250522215553_InitialCreate")]
+    [Migration("20250522232625_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,6 +32,9 @@ namespace PlaylistMicroservice.src.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PlaylistName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -51,6 +54,9 @@ namespace PlaylistMicroservice.src.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("PlaylistId")
                         .HasColumnType("integer");

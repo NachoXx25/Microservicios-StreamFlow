@@ -93,5 +93,25 @@ namespace PlaylistMicroservice.src.Application.Services.Implements
                 throw new Exception(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Elimina una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="videoId">El ID del video a eliminar.</param>
+        /// <param name="userId">El ID del usuario.</param>
+        /// <returns>La lista de reproducción actualizada.</returns>
+        public Task<List<VideosByPlaylistDTO>> RemoveVideoFromPlaylist(int playlistId, int videoId, int userId)
+        {
+            try
+            {
+                return _playlistRepository.RemoveVideoFromPlaylist(playlistId, videoId, userId);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

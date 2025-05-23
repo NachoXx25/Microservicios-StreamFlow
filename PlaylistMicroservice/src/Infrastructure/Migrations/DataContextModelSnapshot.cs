@@ -29,6 +29,9 @@ namespace PlaylistMicroservice.src.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PlaylistName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -48,6 +51,9 @@ namespace PlaylistMicroservice.src.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("PlaylistId")
                         .HasColumnType("integer");

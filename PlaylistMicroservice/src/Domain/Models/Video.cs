@@ -12,6 +12,8 @@ namespace PlaylistMicroservice.src.Domain.Models
         public int Id { get; set; }
 
         public string VideoName { get; set; } = string.Empty;
+
+        public bool IsDeleted { get; set; }
         public int PlaylistId { get; set; }
 
         public Playlist Playlist { get; set; } = null!;

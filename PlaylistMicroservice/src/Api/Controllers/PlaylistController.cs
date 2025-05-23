@@ -93,5 +93,25 @@ namespace PlaylistMicroservice.src.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpDelete()]
+        [Authorize]
+        public async Task<IActionResult> RemoveVideoFromPlaylist(RemoveVideoDTO removeVideoDTO)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
+                int id = int.Parse(userId);
+                var videos = await _playlistService.RemoveVideoFromPlaylist(removeVideoDTO.PlaylistId, removeVideoDTO.VideoId, id);
+                if (videos == null || videos.Count == 0)
+                    return NotFound(new { message = "No se encontraron videos para esta lista de reproducción." });
+                return Ok(videos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
