@@ -26,6 +26,11 @@ namespace VideoMicroservice.Services
         private readonly int _port;
         private readonly string _exchangeName;
 
+        private IModel playlistChannel;
+        private IModel socialInteractionsChannel;
+
+        private IConnection _connection;
+
         private ConnectionFactory _factory;
 
         public VideoEventService()
@@ -43,21 +48,42 @@ namespace VideoMicroservice.Services
                 Password = _password,
                 Port = _port
             };
-            
-            var connection = _factory.CreateConnection();
-            var channel = connection.CreateModel();
+
+            // Create a unique connection to RabbitMQ
+            _connection = _factory.CreateConnection();
+
+            // Channel for playlist service
+            playlistChannel = _connection.CreateModel();
             {
-                channel.ExchangeDeclare(
+                playlistChannel.ExchangeDeclare(
                     exchange: _exchangeName,
-                    type: "topic", 
+                    type: "topic",
                     durable: true,
                     autoDelete: false,
                     arguments: null
                 );
-                
-                DeclareAndBindQueue(channel, "video_created_queue", "video.created");
-                DeclareAndBindQueue(channel, "video_updated_queue", "video.updated");
-                DeclareAndBindQueue(channel, "video_deleted_queue", "video.deleted");
+
+                // Queues for playlist consumer
+                DeclareAndBindQueue(playlistChannel, "playlist_video_created_queue", "playlist.video.created");
+                DeclareAndBindQueue(playlistChannel, "playlist_video_updated_queue", "playlist.video.updated");
+                DeclareAndBindQueue(playlistChannel, "playlist_deleted_queue", "playlist.video.deleted");
+            }
+            
+            //Channel for social interactions service
+            socialInteractionsChannel = _connection.CreateModel();
+            {
+                socialInteractionsChannel.ExchangeDeclare(
+                    exchange: _exchangeName,
+                    type: "topic",
+                    durable: true,
+                    autoDelete: false,
+                    arguments: null
+                );
+
+                // Queues for social interactions consumer
+                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_created_queue", "social.int.video.created");
+                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_updated_queue", "social.int.video.updated");
+                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_deleted_queue", "social.int.video.deleted");
             }
         }
 
@@ -65,32 +91,47 @@ namespace VideoMicroservice.Services
         {
             try
             {
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                // Publish the event to the playlist service
+                var playlistMessage = new 
                 {
-                    var message = new 
-                    {
-                        video.Id,
-                        video.Title,
-                        video.Description,
-                        video.Genre,
-                        video.IsDeleted,
-                        EventType = "VideoCreated"
-                    };
+                    video.Id,
+                    video.Title,
+                    EventType = "VideoCreated"
+                };
 
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var playlistBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(playlistMessage));
 
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "video.created",
-                        basicProperties: properties,
-                        body: body
-                    );
-                }
+                var properties = playlistChannel.CreateBasicProperties();
+                properties.Persistent = true;
+                properties.ContentType = "application/json";
+
+                playlistChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "playlist.video.created",
+                    basicProperties: properties,
+                    body: playlistBody
+                );
+
+                // Publish the event to the social interactions service
+                var socialInteractionsMessage = new 
+                {
+                    video.Id,
+                    video.Title,
+                    video.Description,
+                    video.Genre,
+                    video.IsDeleted,
+                    EventType = "VideoCreated"
+                };
+
+                var socialInteractionsBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(socialInteractionsMessage));
+
+                socialInteractionsChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "social.int.video.created",
+                    basicProperties: properties,
+                    body: socialInteractionsBody
+                );
+                
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -103,30 +144,33 @@ namespace VideoMicroservice.Services
         {
             try
             {
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                var message = new
                 {
-                    var message = new
-                    {
-                        video.Id,
-                        video.IsDeleted,
-                        EventType = "VideoDeleted"
-                    };
+                    video.Id,
+                    video.IsDeleted,
+                    EventType = "VideoDeleted"
+                };
 
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "video.deleted",
-                        basicProperties: properties,
-                        body: body
-                    );
+                var properties = playlistChannel.CreateBasicProperties();
+                properties.Persistent = true;
+                properties.ContentType = "application/json";
+
+                playlistChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "playlist.video.deleted",
+                    basicProperties: properties,
+                    body: body
+                );
+
+                socialInteractionsChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "social.int.video.deleted",
+                    basicProperties: properties,
+                    body: body
+                );
                     
-                }
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -139,32 +183,46 @@ namespace VideoMicroservice.Services
         {
            try
            {
-            using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                // Publish the event to the playlist service
+                var playlistMessage = new 
                 {
-                    var message = new
-                    {
-                        video.Id,
-                        video.Title,
-                        video.Description,
-                        video.Genre,
-                        video.IsDeleted,
-                        EventType = "VideoUpdated"
-                    };
+                    video.Id,
+                    video.Title,
+                    EventType = "VideoUpdated"
+                };
 
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var playlistBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(playlistMessage));
 
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "video.updated",
-                        basicProperties: properties,
-                        body: body
-                    );
-                }
+                var properties = playlistChannel.CreateBasicProperties();
+                properties.Persistent = true;
+                properties.ContentType = "application/json";
+
+                playlistChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "playlist.video.updated",
+                    basicProperties: properties,
+                    body: playlistBody
+                );
+
+                // Publish the event to the social interactions service
+                var socialInteractionsMessage = new 
+                {
+                    video.Id,
+                    video.Title,
+                    video.Description,
+                    video.Genre,
+                    EventType = "VideoUpdated"
+                };
+
+                var socialInteractionsBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(socialInteractionsMessage));
+
+                socialInteractionsChannel.BasicPublish(
+                    exchange: _exchangeName,
+                    routingKey: "social.int.video.updated",
+                    basicProperties: properties,
+                    body: socialInteractionsBody
+                );
+
                 return Task.CompletedTask;
            }
            catch (Exception ex)
