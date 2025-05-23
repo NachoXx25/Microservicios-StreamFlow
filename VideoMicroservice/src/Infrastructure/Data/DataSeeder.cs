@@ -1,5 +1,6 @@
 using Bogus;
 using Microsoft.EntityFrameworkCore;
+using VideoMicroservice.Services;
 using VideoMicroservice.src.Domain;
 
 namespace VideoMicroservice.src.Infrastructure.Data
@@ -13,6 +14,8 @@ namespace VideoMicroservice.src.Infrastructure.Data
                 var videoContext = scope.ServiceProvider.GetRequiredService<VideoContext>();
 
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<DataSeeder>>();
+                
+                var videoEventPublisher = scope.ServiceProvider.GetRequiredService<IVideoEventService>();
 
                 try
                 {
@@ -26,6 +29,11 @@ namespace VideoMicroservice.src.Infrastructure.Data
                         await videoContext.SaveChangesAsync();
                     }
 
+                    var videos = await videoContext.Videos.ToListAsync();
+                    foreach (var video in videos)
+                    {
+                        await videoEventPublisher.PublishCreatedVideo(video);
+                    }
                 }
                 catch (Exception ex)
                 {
