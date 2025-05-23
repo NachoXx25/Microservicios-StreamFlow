@@ -128,5 +128,23 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
                 }
             };
         }
+
+        /// <summary>
+        /// Elimina una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="userId">El ID del usuario.</param>
+        /// <returns>True si la lista de reproducción fue eliminada, de lo contrario false.</returns>
+        public async Task<bool> DeletePlaylist(int playlistId, int userId)
+        {
+            var playlist = await _context.Playlists
+                .Where(p => p.Id == playlistId && p.UserId == userId)
+                .FirstOrDefaultAsync();
+            if (playlist == null) return false;
+            if (playlist.IsDeleted) throw new Exception($"La playlist con ID: {playlistId} ya está eliminada");
+            playlist.IsDeleted = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

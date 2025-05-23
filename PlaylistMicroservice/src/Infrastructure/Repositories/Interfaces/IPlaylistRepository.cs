@@ -49,5 +49,13 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Interfaces
         /// <param name="userId">El ID del usuario.</param>
         /// <returns>La lista de reproducción actualizada.</returns>
         Task<List<VideosByPlaylistDTO>> RemoveVideoFromPlaylist(int playlistId, int videoId, int userId);
+
+        /// <summary>
+        /// Elimina una lista de reproducción por su ID.
+        /// </summary>
+        /// <param name="playlistId">El ID de la lista de reproducción.</param>
+        /// <param name="userId">El ID del usuario.</param>
+        /// <returns>True si la lista de reproducción fue eliminada, de lo contrario false.</returns>
+        Task<bool> DeletePlaylist(int playlistId, int userId);
     }
 }
