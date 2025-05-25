@@ -91,10 +91,12 @@ namespace VideoMicroservice.Services
         {
             try
             {
+                var stringId = video.Id.ToString();
+
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     EventType = "VideoCreated"
                 };
@@ -115,7 +117,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,
@@ -144,9 +146,12 @@ namespace VideoMicroservice.Services
         {
             try
             {
+
+                var stringId = video.Id.ToString();
+
                 var message = new
                 {
-                    video.Id,
+                    id = stringId,
                     video.IsDeleted,
                     EventType = "VideoDeleted"
                 };
@@ -183,10 +188,12 @@ namespace VideoMicroservice.Services
         {
            try
            {
+                var stringId = video.Id.ToString();
+
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     EventType = "VideoUpdated"
                 };
@@ -207,7 +214,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,
