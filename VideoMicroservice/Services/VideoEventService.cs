@@ -66,7 +66,7 @@ namespace VideoMicroservice.Services
                 // Queues for playlist consumer
                 DeclareAndBindQueue(playlistChannel, "playlist_video_created_queue", "playlist.video.created");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_updated_queue", "playlist.video.updated");
-                DeclareAndBindQueue(playlistChannel, "playlist_deleted_queue", "playlist.video.deleted");
+                DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
             }
             
             //Channel for social interactions service
@@ -94,8 +94,8 @@ namespace VideoMicroservice.Services
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    video.Id,
-                    video.Title,
+                    Id = video.Id.ToString(),
+                    Title = video.Title,
                     EventType = "VideoCreated"
                 };
 
@@ -146,8 +146,8 @@ namespace VideoMicroservice.Services
             {
                 var message = new
                 {
-                    video.Id,
-                    video.IsDeleted,
+                    Id = video.Id.ToString(),
+                    IsDeleted = video.IsDeleted,
                     EventType = "VideoDeleted"
                 };
 
@@ -186,8 +186,8 @@ namespace VideoMicroservice.Services
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    video.Id,
-                    video.Title,
+                    Id = video.Id.ToString(),
+                    Title = video.Title,
                     EventType = "VideoUpdated"
                 };
 

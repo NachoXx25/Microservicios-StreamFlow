@@ -27,12 +27,11 @@ namespace VideoMicroservice.src.Infrastructure.Data
                             .RuleFor(v => v.Genre, f => f.PickRandom(new[] { "Acción", "Comedia", "Drama", "Terror", "Ciencia Ficción" }));
                         videoContext.Videos.AddRange(faker.Generate(450));
                         await videoContext.SaveChangesAsync();
-                    }
-
-                    var videos = await videoContext.Videos.ToListAsync();
-                    foreach (var video in videos)
-                    {
-                        await videoEventPublisher.PublishCreatedVideo(video);
+                        var videos = await videoContext.Videos.ToListAsync();
+                        foreach (var video in videos)
+                        {
+                            await videoEventPublisher.PublishCreatedVideo(video);
+                        }
                     }
                 }
                 catch (Exception ex)
