@@ -91,6 +91,8 @@ namespace VideoMicroservice.Services
         {
             try
             {
+                var stringId = video.Id.ToString();
+
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
@@ -115,7 +117,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,
@@ -144,6 +146,9 @@ namespace VideoMicroservice.Services
         {
             try
             {
+
+                var stringId = video.Id.ToString();
+
                 var message = new
                 {
                     Id = video.Id.ToString(),
@@ -183,6 +188,8 @@ namespace VideoMicroservice.Services
         {
            try
            {
+                var stringId = video.Id.ToString();
+
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
@@ -207,7 +214,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    video.Id,
+                    id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,
