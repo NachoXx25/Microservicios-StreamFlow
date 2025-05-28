@@ -7,7 +7,7 @@ namespace PlaylistMicroservice.src.Application.DTOs
 {
     public class VideosByPlaylistDTO
     {
-        public int VideoId { get; set; }
+        public string VideoId { get; set; } = string.Empty;
         public required string VideoName { get; set; } 
 
     }
