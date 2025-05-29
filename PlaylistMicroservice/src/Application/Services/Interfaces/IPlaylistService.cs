@@ -24,7 +24,7 @@ namespace PlaylistMicroservice.src.Application.Services.Interfaces
         /// <param name="videoId">El ID del video a agregar.</param>
         /// <param name="userId">El ID del usuario que crea la lista de reproducción.</param>
         /// <returns>La lista de reproducción correspondiente al ID proporcionado.</returns>
-        Task<Playlist> AddVideoToPlaylist(int playlistId, int videoId, int userId);
+        Task<PlaylistWithVideosDTO> AddVideoToPlaylist(int playlistId, string videoId, int userId);
 
         /// <summary>
         /// Obtiene una lista de reproducción por su ID.
@@ -48,7 +48,7 @@ namespace PlaylistMicroservice.src.Application.Services.Interfaces
         /// <param name="videoId">El ID del video a eliminar.</param>
         /// <param name="userId">El ID del usuario.</param>
         /// <returns>La lista de reproducción actualizada.</returns>
-        Task<List<VideosByPlaylistDTO>> RemoveVideoFromPlaylist(int playlistId, int videoId, int userId);
+        Task<PlaylistWithVideosDTO> RemoveVideoFromPlaylist(int playlistId, string videoId, int userId);
 
         /// <summary>
         /// Elimina una lista de reproducción por su ID.

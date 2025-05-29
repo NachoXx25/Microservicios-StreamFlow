@@ -149,13 +149,13 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                         await userEventHandlerRepository.HandleVideoUpdatedEvent(videoEvent);
                     }
                     // Confirmamos el mensaje después de procesarlo
-                    _channelCreated.BasicAck(ea.DeliveryTag, false);
+                    _channelUpdated.BasicAck(ea.DeliveryTag, false);
                 }
                 catch (Exception ex)
                 {
                     Log.Error("Error en el servicio consumidor {ex.Message}", ex.Message);
                     bool requeue = ex is DbUpdateException || ex is TimeoutException;
-                    _channelCreated.BasicNack(ea.DeliveryTag, false, requeue);
+                    _channelUpdated.BasicNack(ea.DeliveryTag, false, requeue);
                 }
             };
 
@@ -180,19 +180,19 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                         await userEventHandlerRepository.HandleVideoDeletedEvent(videoEvent);
                     }
                     // Confirmamos el mensaje después de procesarlo
-                    _channelCreated.BasicAck(ea.DeliveryTag, false);
+                    _channelDeleted.BasicAck(ea.DeliveryTag, false);
                 }
                 catch (Exception ex)
                 {
                     Log.Error("Error en el servicio consumidor {ex.Message}", ex.Message);
                     bool requeue = ex is DbUpdateException || ex is TimeoutException;
-                    _channelCreated.BasicNack(ea.DeliveryTag, false, requeue);
+                    _channelDeleted.BasicNack(ea.DeliveryTag, false, requeue);
                 }
             };
 
             _channelCreated.BasicConsume(queue: "playlist_video_created_queue", autoAck: false, consumer: consumerCreated);
             _channelUpdated.BasicConsume(queue: "playlist_video_updated_queue", autoAck: false, consumer: consumerUpdated);
-            _channelDeleted.BasicConsume(queue: "playlist_deleted_queue", autoAck: false, consumer: consumerDeleted);
+            _channelDeleted.BasicConsume(queue: "playlist_video_deleted_queue", autoAck: false, consumer: consumerDeleted);
 
             Log.Information("Consumidores de eventos iniciados");
             return Task.CompletedTask;
