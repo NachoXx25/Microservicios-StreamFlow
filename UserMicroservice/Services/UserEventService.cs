@@ -15,57 +15,86 @@ namespace UserMicroservice.Services
         Task PublishUserUpdatedEvent(User user);
         Task PublishUserDeletedEvent(User user);
     }
+    
     public class UserEventService : IUserEventService
     {
-        private readonly string _hostname;
-        private readonly string _password;
-        private readonly string _username;
-        private readonly int _port;
-        private readonly string _exchangeName;
+        private readonly string _userExchangeName;
+        private readonly string _billExchangeName;
+        private readonly IConnection _connection;
+        private readonly IModel _userChannel;
+        private readonly IModel _billChannel;
+        private bool _disposed = false;
 
-        private ConnectionFactory _factory;
-        
         public UserEventService()
         {
-            _hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            _port = Env.GetInt("RABBITMQ_PORT"); 
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "user_events";
-            _factory = new ConnectionFactory
+            var hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+            var username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
+            var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+            var port = Env.GetInt("RABBITMQ_PORT", 5672);
+
+            _userExchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "user_events";
+            _billExchangeName = "BillExchange";
+
+            var factory = new ConnectionFactory
             {
-                HostName = _hostname,
-                UserName = _username,
-                Password = _password,
-                Port = _port
+                HostName = hostname,
+                UserName = username,
+                Password = password,
+                Port = port
             };
 
-            var connection = _factory.CreateConnection();
-            var channel = connection.CreateModel();
+            try
             {
-                channel.ExchangeDeclare(
-                    exchange: _exchangeName,
-                    type: "topic", 
-                    durable: true,
-                    autoDelete: false,
-                    arguments: null
-                );
-                
-                DeclareAndBindQueue(channel, "user_created_queue", "user.created");
-                DeclareAndBindQueue(channel, "user_updated_queue", "user.updated");
-                DeclareAndBindQueue(channel, "user_deleted_queue", "user.deleted");
+                _connection = factory.CreateConnection();
+
+                _userChannel = _connection.CreateModel();
+                _billChannel = _connection.CreateModel();
+
+                SetupUserExchange();
+                SetupBillExchange();
+
+                Log.Information("UserEventService inicializado con conexiones persistentes");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error inicializando UserEventService");
+                throw;
             }
         }
-        
-        /// <summary>
-        /// Declara y vincula una cola al exchange.
-        /// </summary>
-        /// <param name="channel">El canal de comunicación con RabbitMQ.</param>
-        /// <param name="queueName">El nombre de la cola.</param>
-        /// <param name="routingKey">La clave de enrutamiento para el evento.</param>
-        private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey)
+
+        private void SetupUserExchange()
         {
-            // Declara cola
+            _userChannel.ExchangeDeclare(
+                exchange: _userExchangeName,
+                type: "topic",
+                durable: true,
+                autoDelete: false,
+                arguments: null
+            );
+
+            DeclareAndBindQueue(_userChannel, "user_created_queue", "user.created", _userExchangeName);
+            DeclareAndBindQueue(_userChannel, "user_updated_queue", "user.updated", _userExchangeName);
+            DeclareAndBindQueue(_userChannel, "user_deleted_queue", "user.deleted", _userExchangeName);
+        }
+
+        private void SetupBillExchange()
+        {
+
+            _billChannel.ExchangeDeclare(
+                exchange: _billExchangeName,
+                type: "topic",
+                durable: true,
+                autoDelete: false,
+                arguments: null
+            );
+
+            DeclareAndBindQueue(_billChannel, "bill_user_created_queue", "user.created", _billExchangeName);
+            DeclareAndBindQueue(_billChannel, "bill_user_updated_queue", "user.updated", _billExchangeName);
+            DeclareAndBindQueue(_billChannel, "bill_user_deleted_queue", "user.deleted", _billExchangeName);
+        }
+
+        private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
+        {
             channel.QueueDeclare(
                 queue: queueName,
                 durable: true,
@@ -73,155 +102,176 @@ namespace UserMicroservice.Services
                 autoDelete: false,
                 arguments: null
             );
-            
-            // Vincula cola al exchange
+
             channel.QueueBind(
                 queue: queueName,
-                exchange: _exchangeName,
+                exchange: exchangeName,
                 routingKey: routingKey
             );
         }
-        /// <summary>
-        /// Publica un evento de usuario creado en RabbitMQ.
-        /// </summary>
-        /// <param name="user">El usuario que se ha creado.</param>
-        /// <returns>Tarea que representa la operación asincrónica.</returns>
+
         public Task PublishUserCreatedEvent(User user)
         {
             try
             {
-                Log.Information($"Publicando evento de usuario creado - Email: {user.Email}, Nombre: {user.FirstName} {user.LastName}");
-                
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                Log.Information("Publicando evento UserCreated - Email: {Email}, Nombre: {FirstName} {LastName}",
+                               user.Email, user.FirstName, user.LastName);
+
+                var message = new
                 {
-                    var message = new 
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        RoleId = user.RoleId,
-                        Status = user.Status,
-                        CreatedAt = DateTime.UtcNow.ToString("o"),
-                        EventType = "UserCreated"
-                    };
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    RoleId = user.RoleId,
+                    Status = user.Status,
+                    CreatedAt = DateTime.UtcNow.ToString("o"),
+                    EventType = "UserCreated"
+                };
 
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var properties = CreateBasicProperties();
 
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "user.created",
-                        basicProperties: properties,
-                        body: body
-                    );
-                    
-                    Log.Information($"Evento publicado exitosamente para usuario: {user.Email}");
-                }
+                PublishToExchange(_userChannel, _userExchangeName, "user.created", body, properties);
+                PublishToExchange(_billChannel, _billExchangeName, "user.created", body, properties);
+
+                Log.Information("Evento UserCreated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Log.Error(ex, $"Error al publicar evento de usuario creado para {user.Email}");
+                Log.Error(ex, "Error publicando evento UserCreated para {Email}", user.Email);
                 throw new Exception("Error al publicar el evento de usuario creado", ex);
             }
         }
 
-        /// <summary>
-        /// Publica un evento de usuario eliminado en RabbitMQ.
-        /// </summary>
-        /// <param name="user">El usuario que se ha eliminado.</param>
-        /// <returns>Tarea que representa la operación asincrónica.</returns>
-        public Task PublishUserDeletedEvent(User user)
-        {
-            try{
-                Log.Information($"Publicando evento de usuario eliminado - Email: {user.Email}, Nombre: {user.FirstName} {user.LastName}");
-                
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
-                {
-                    var message = new
-                    {
-                        Id = user.Id,
-                        Status = user.Status,
-                        UpdatedAt = DateTime.UtcNow.ToString("o"),
-                        EventType = "UserDeleted"
-                    };
-
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "user.deleted",
-                        basicProperties: properties,
-                        body: body
-                    );
-                    
-                    Log.Information($"Evento publicado exitosamente para usuario eliminado: {user.Email}");
-                }
-                return Task.CompletedTask;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Error al publicar evento de usuario eliminado para {user.Email}");
-                throw new Exception("Error al publicar el evento de usuario eliminado", ex);
-            }
-        }
-
-        /// <summary>
-        /// Publica un evento de usuario actualizado en RabbitMQ.
-        /// </summary>
-        /// <param name="user">El usuario que se ha actualizado.</param>
-        /// <returns>Tarea que representa la operación asincrónica.</returns>
         public Task PublishUserUpdatedEvent(User user)
         {
             try
             {
-                Log.Information($"Publicando evento de usuario actualizado - Email: {user.Email}, Nombre: {user.FirstName} {user.LastName}");
-                
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                Log.Information("Publicando evento UserUpdated - Email: {Email}, Nombre: {FirstName} {LastName}",
+                               user.Email, user.FirstName, user.LastName);
+
+                var message = new
                 {
-                    var message = new
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        UpdatedAt = DateTime.UtcNow.ToString("o"),
-                        EventType = "UserUpdated"
-                    };
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    UpdatedAt = DateTime.UtcNow.ToString("o"),
+                    EventType = "UserUpdated"
+                };
 
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var properties = CreateBasicProperties();
 
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    properties.ContentType = "application/json";
-   
-                    channel.BasicPublish(
-                        exchange: _exchangeName,
-                        routingKey: "user.updated",
-                        basicProperties: properties,
-                        body: body
-                    );
-                    
-                    Log.Information($"Evento publicado exitosamente para usuario: {user.Email}");
-                }
+                PublishToExchange(_userChannel, _userExchangeName, "user.updated", body, properties);
+                PublishToExchange(_billChannel, _billExchangeName, "user.updated", body, properties);
+
+                Log.Information("Evento UserUpdated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error al publicar evento de usuario actualizado para {user.Email}");
+                Log.Error(ex, "Error publicando evento UserUpdated para {Email}", user.Email);
                 throw new Exception("Error al publicar el evento de usuario actualizado", ex);
             }
+        }
+
+        public Task PublishUserDeletedEvent(User user)
+        {
+            try
+            {
+                Log.Information("Publicando evento UserDeleted - Email: {Email}, Nombre: {FirstName} {LastName}",
+                               user.Email, user.FirstName, user.LastName);
+
+                var message = new
+                {
+                    Id = user.Id,
+                    Status = user.Status,
+                    UpdatedAt = DateTime.UtcNow.ToString("o"),
+                    EventType = "UserDeleted"
+                };
+
+                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+                var properties = CreateBasicProperties();
+
+                PublishToExchange(_userChannel, _userExchangeName, "user.deleted", body, properties);
+                PublishToExchange(_billChannel, _billExchangeName, "user.deleted", body, properties);
+
+                Log.Information("Evento UserDeleted publicado en ambos exchanges para: {Email}", user.Email);
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error publicando evento UserDeleted para {Email}", user.Email);
+                throw new Exception("Error al publicar el evento de usuario eliminado", ex);
+            }
+        }
+
+        private void PublishToExchange(IModel channel, string exchangeName, string routingKey, byte[] body, IBasicProperties properties)
+        {
+            try
+            {
+                channel.BasicPublish(
+                    exchange: exchangeName,
+                    routingKey: routingKey,
+                    basicProperties: properties,
+                    body: body
+                );
+
+                Log.Debug("Mensaje enviado a exchange: {Exchange}, routing key: {RoutingKey}", exchangeName, routingKey);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error publicando en exchange: {Exchange}", exchangeName);
+                throw;
+            }
+        }
+
+        private IBasicProperties CreateBasicProperties()
+        {
+            var properties = _userChannel.CreateBasicProperties();
+            properties.Persistent = true;
+            properties.ContentType = "application/json";
+            properties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            return properties;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                try
+                {
+                    _userChannel?.Close();
+                    _billChannel?.Close();
+                    _connection?.Close();
+
+                    _userChannel?.Dispose();
+                    _billChannel?.Dispose();
+                    _connection?.Dispose();
+
+                    Log.Information("Conexiones RabbitMQ cerradas correctamente");
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error cerrando conexiones RabbitMQ");
+                }
+
+                _disposed = true;
+            }
+        }
+
+        ~UserEventService()
+        {
+            Dispose(false);
         }
     }
 }
