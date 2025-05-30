@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+option csharp_namespace = "PlaylistMicroservice.Protos";
+
+package playlist;
+
+
+service PlaylistService {
+    rpc GetPlaylistsByUserId(GetPlaylistsByUserIdRequest) returns (GetPlaylistsByUserIdResponse);
+    rpc CreatePlaylist(CreatePlaylistRequest) returns (PlaylistCreatedResponse);
+    rpc AddVideoToPlaylist(AddVideoToPlaylistRequest) returns (AddVideoToPlaylistResponse);
+    rpc GetVideosByPlaylistId(GetVideosByPlaylistIdRequest) returns (GetVideosByPlaylistIdResponse);
+    rpc RemoveVideoFromPlaylist(RemoveVideoFromPlaylistRequest) returns (RemoveVideoFromPlaylistResponse);
+    rpc DeletePlaylist(DeletePlaylistRequest) returns (DeletePlaylistResponse);
+}
+
+// Mensaje de respuesta para obtener las listas de reproducción por ID de usuario
+message Playlist {
+  string Id = 1;
+  string Name = 2;
+}
+
+// Mensaje de solicitud para obtener las listas de reproducción por ID de usuario
+message GetPlaylistsByUserIdRequest {
+  string Id = 1;
+    string UserId = 2;
+}
+
+// Mensaje de respuesta que contiene una lista de reproducción
+message GetPlaylistsByUserIdResponse {
+  repeated Playlist Playlists = 1;
+}
+
+// Mensaje que representa la creación de una lista de reproducción
+message PlaylistCreatedResponse {
+  string Id = 1;
+  string Name = 2;
+  bool IsDeleted = 3;
+  string UserId = 4;
+}
+
+// Mensaje de solicitud para crear una lista de reproducción
+message CreatePlaylistRequest {
+  string Name = 1;
+  string UserId = 2;
+}
+
+// Mensaje de solicitud para agregar un video a una lista de reproducción
+message AddVideoToPlaylistRequest {
+  string PlaylistId = 1;
+  string VideoId = 2;
+  string UserId = 3;
+}
+
+// Mensaje de respuesta para agregar un video a una lista de reproducción
+message VideoByPlaylist {
+    string Id = 1;
+    string Name = 2;
+}
+
+// Mensaje de respuesta para agregar un video a una lista de reproducción
+message AddVideoToPlaylistResponse {
+  string PlaylistId = 1;
+  string Name = 2;
+  repeated VideoByPlaylist Videos = 3;
+}
+
+// Mensaje de respuesta para obtener videos por ID de lista de reproducción
+message GetVideosByPlaylistIdRequest {
+  string PlaylistId = 1;
+  string UserId = 2;
+}
+
+// Mensaje de respuesta que contiene una lista de videos por ID de lista de reproducción
+message GetVideosByPlaylistIdResponse {
+  repeated VideoByPlaylist Videos = 1;
+}
+
+
+// Mensaje para eliminar un video de una lista de reproducción
+message RemoveVideoFromPlaylistRequest {
+    string VideoId = 1;
+    string PlaylistId = 2;
+    string UserId = 3;
+}
+
+// Mensaje de respuesta para eliminar un video de una lista de reproducción
+message RemoveVideoFromPlaylistResponse {
+    AddVideoToPlaylistResponse Playlist = 1;
+}
+
+// Mensaje para eliminar una lista de reproducción
+message DeletePlaylistRequest {
+    string PlaylistId = 1;
+    string UserId = 2;
+}
+
+// Mensaje de respuesta para eliminar una lista de reproducción
+message DeletePlaylistResponse {
+    string Response = 1;
+}
