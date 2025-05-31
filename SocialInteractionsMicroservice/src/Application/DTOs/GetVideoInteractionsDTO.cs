@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using SocialInteractionsMicroservice.src.Domain.Models;
 
 namespace SocialInteractionsMicroservice.src.Application.DTOs
 {
@@ -10,8 +11,8 @@ namespace SocialInteractionsMicroservice.src.Application.DTOs
     {
         public required string VideoId { get; set; }
 
-        public int Likes { get; set; }
+        public required List<Like> Likes { get; set; } = new List<Like>();
 
-        public List<string> Comments { get; set; } = new List<string>();
+        public required List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
