@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using SocialInteractionsMicroservice.src.Application.Services.Interfaces;
+using SocialInteractionsMicroservice.src.Domain.Models;
 
 namespace SocialInteractionsMicroservice.Services
 {
@@ -21,16 +22,27 @@ namespace SocialInteractionsMicroservice.Services
             try
             {
                 var response = await _socialInteractionsService.GetVideoInteractions(request.VideoId);
+
+                var likes = response.Likes.Select(l => new Protos.Like
+                {
+                    LikeId = l.Id.ToString(),
+                }).ToList();
+
+                var comments = response.Comments.Select(c => new Protos.Comment
+                {
+                    CommentId = c.Id.ToString(),
+                    Content = c.Content,
+                }).ToList();
+
                 return new Protos.GetVideoLikesAndCommentsResponse
                 {
                     VideoId = response.VideoId,
-                    Likes = response.Likes,
-                    Comments = { response.Comments }
+                    Likes = { likes },
+                    Comments = { comments }
                 };
             }
             catch (Exception ex)
             {
-                
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
