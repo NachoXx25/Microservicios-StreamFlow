@@ -37,7 +37,7 @@ namespace VideoMicroservice.Services
                     Id = createdVideo.Id.ToString(),
                     Title = createdVideo.Title,
                     Description = createdVideo.Description,
-                    Likes = 0,
+                    Likes = createdVideo.Likes,
                     Genre = createdVideo.Genre,
                     IsDeleted = false
                 };
@@ -58,7 +58,7 @@ namespace VideoMicroservice.Services
 
                 if (video == null)
                 {
-                    throw new RpcException(new Status(StatusCode.NotFound, "Video not found"));
+                    throw new RpcException(new Status(StatusCode.NotFound, "Video no encontrado"));
                 }
 
                 var response = new Protos.GetVideoByIdResponse
@@ -66,7 +66,7 @@ namespace VideoMicroservice.Services
                     Id = video.Id,
                     Title = video.Title,
                     Description = video.Description,
-                    Likes = 0, //TODO: Obtain likes from the social interactions service
+                    Likes = video.Likes, 
                     Genre = video.Genre,
                 };
 
@@ -137,7 +137,8 @@ namespace VideoMicroservice.Services
                     Id = video.Id,
                     Title = video.Title,
                     Description = video.Description,
-                    Genre = video.Genre
+                    Genre = video.Genre,
+                    Likes = video.Likes,
                 }).ToList();
 
                 var getAllVideosResponse = new Protos.GetAllVideosResponse

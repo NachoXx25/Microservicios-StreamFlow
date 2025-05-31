@@ -21,7 +21,7 @@ message Video {
     string id = 1;
     string title = 2;
     string description = 3;
-    uint32 likes = 4;
+    int32 likes = 4;
     string genre = 5;
     bool is_deleted = 6;
 }
@@ -40,7 +40,7 @@ message GetVideoByIdResponse {
     string id = 1;
     string title = 2;
     string description = 3;
-    uint32 likes = 4;
+    int32 likes = 4;
     string genre = 5;
 }
 
