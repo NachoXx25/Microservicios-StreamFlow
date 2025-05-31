@@ -13,11 +13,13 @@ namespace VideoMicroservice.src.Domain
         public ObjectId Id { get; set; }
 
         public required string Title { get; set; }
-        
+
         public required string Description { get; set; }
-        
+
         public required string Genre { get; set; }
 
-        public required bool IsDeleted { get; set; }  = false;
+        public required bool IsDeleted { get; set; } = false;
+        
+        public required int Likes { get; set; } = 0;
     }
 }
