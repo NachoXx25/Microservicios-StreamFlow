@@ -17,6 +17,7 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Data
         }
 
         public DbSet<Video> Videos { get; set; }
-        public DbSet<VideoInteractions> VideoInteractions { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
