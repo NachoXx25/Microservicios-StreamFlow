@@ -66,7 +66,7 @@ namespace VideoMicroservice.Services
                 // Queues for playlist consumer
                 DeclareAndBindQueue(playlistChannel, "playlist_video_created_queue", "playlist.video.created");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_updated_queue", "playlist.video.updated");
-                DeclareAndBindQueue(playlistChannel, "playlist_deleted_queue", "playlist.video.deleted");
+                DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
             }
             
             //Channel for social interactions service
@@ -83,7 +83,7 @@ namespace VideoMicroservice.Services
                 // Queues for social interactions consumer
                 DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_created_queue", "social.int.video.created");
                 DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_updated_queue", "social.int.video.updated");
-                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_deleted_queue", "social.int.video.deleted");
+                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_deleted_queue", "social.int.video.deleted");
             }
         }
 
