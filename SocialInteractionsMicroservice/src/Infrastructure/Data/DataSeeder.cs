@@ -37,26 +37,41 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Data
 
                 try
                 {
-                    if (!await videoContext.VideoInteractions.AnyAsync())
-                    {
-                        var videoIds = await videoContext.Videos
-                                                .Select(v => v.Id)
+                    var videoIds = await videoContext.Videos
+                                                .Select(v => v.Id.ToString())
                                                 .ToListAsync();
-            
+
+                    if (!await videoContext.Likes.AnyAsync())
+                    {
+
                         if (videoIds.Any())
                         {
-                            var faker = new Faker<VideoInteractions>()
-                                .RuleFor(v => v.VideoId, f => f.PickRandom(videoIds))
-                                .RuleFor(v => v.Likes, f => 2)
-                                .RuleFor(v => v.Comments, f => new List<string> { f.Lorem.Sentence() });
-                                
-                            // Generate and add interactions
-                            videoContext.VideoInteractions.AddRange(faker.Generate(40));
+                            var faker = new Faker<Like>()
+                                .RuleFor(l => l.VideoId, f => f.PickRandom(videoIds));
+
+                            videoContext.Likes.AddRange(faker.Generate(75));
                             await videoContext.SaveChangesAsync();
                         }
                         else
                         {
                             logger.LogWarning("No se encontraron videos para generar interacciones.");
+                        }
+                    }
+
+                    if (!await videoContext.Comments.AnyAsync())
+                    {
+                        if (videoIds.Any())
+                        {
+                            var faker = new Faker<Comment>()
+                                .RuleFor(c => c.VideoId, f => f.PickRandom(videoIds))
+                                .RuleFor(c => c.Content, f => f.Lorem.Sentence(10));
+
+                            videoContext.Comments.AddRange(faker.Generate(35));
+                            await videoContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            logger.LogWarning("No se encontraron videos para generar comentarios.");
                         }
                     }
                 }
