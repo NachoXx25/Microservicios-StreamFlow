@@ -7,7 +7,7 @@ using MongoDB.EntityFrameworkCore;
 
 namespace SocialInteractionsMicroservice.src.Domain.Models
 {
-    [Collection("videos")]
+    [Collection("Videos")]
     public class Video
     {
         public ObjectId Id { get; set; }
