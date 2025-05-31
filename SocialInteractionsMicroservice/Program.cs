@@ -15,12 +15,12 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<ISocialInteractionsRepository, SocialInteractionsRepository>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<IVideoEventHandlerRepository,VideoEventHandlerRepository>();
 builder.Services.AddScoped<ISocialInteractionsService, SocialInteractionsService>();
 builder.Services.AddScoped<SocialInteractionsEventService>();
-//builder.Services.AddSingleton<SocialInteractionsEventService>();
 
 try
 {
@@ -32,7 +32,8 @@ try
     var connection = connectionFactory.CreateConnection();
     builder.Services.AddHostedService<VideoEventConsumer>();
     builder.Services.AddSingleton<RabbitMQService>();
-}catch (Exception ex)
+}
+catch (Exception ex)
 {
     Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
 }
@@ -48,12 +49,10 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 var app = builder.Build();
 
-/*
 using (var scope = app.Services.CreateScope())
 {
     await DataSeeder.Initialize(scope.ServiceProvider);
 }
-*/
 
 app.MapGrpcService<SocialInteractionsGrpcService>();
 
