@@ -34,8 +34,17 @@ message GetVideoLikesAndCommentsRequest {
     string video_id = 1;
 }
 
+message Like {
+    string like_id = 1;
+}
+
+message Comment {
+    string comment_id = 1;
+    string content = 2;
+}
+
 message GetVideoLikesAndCommentsResponse {
     string video_id = 1;
-    int32 likes = 2;
-    repeated string comments = 3;
+    repeated Like likes = 2;
+    repeated Comment comments = 3;
 }
