@@ -20,23 +20,6 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Data
 
                 try
                 {
-                    if (!await videoContext.Videos.AnyAsync())
-                    {
-                        var faker = new Faker<Video>()
-                            .RuleFor(v => v.Title, f => f.Lorem.Sentence(3))
-                            .RuleFor(v => v.Description, f => f.Lorem.Paragraph(2))
-                            .RuleFor(v => v.Genre, f => f.PickRandom(new[] { "Acción", "Comedia", "Drama", "Terror", "Ciencia Ficción" }));
-                        videoContext.Videos.AddRange(faker.Generate(450));
-                        await videoContext.SaveChangesAsync();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Un error ha ocurrido mientras se cargaban los seeders");
-                }
-
-                try
-                {
                     var videoIds = await videoContext.Videos
                                                 .Select(v => v.Id.ToString())
                                                 .ToListAsync();
