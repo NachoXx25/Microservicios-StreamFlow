@@ -20,7 +20,7 @@ namespace PlaylistMicroservice.Services
             Log.Information("Obteniendo listas de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
                 var playlists = await _playlistService.GetPlaylistsByUserId(userId);
                 return new GetPlaylistsByUserIdResponse
                 {
@@ -44,7 +44,11 @@ namespace PlaylistMicroservice.Services
             try
             {
                 int.TryParse(request.UserId, out int userId);
-                var playlist = await _playlistService.CreatePlaylist(request.Name, userId);
+                var createdPlaylist = new CreatePlaylistDTO
+                {
+                    Name = request.Name
+                };
+                var playlist = await _playlistService.CreatePlaylist(createdPlaylist.Name, userId);
                 return new PlaylistCreatedResponse
                 {
                     Id = playlist.Id.ToString(),
@@ -67,6 +71,11 @@ namespace PlaylistMicroservice.Services
             {
                 int.TryParse(request.UserId, out int userId);
                 int.TryParse(request.PlaylistId, out int playlistId);
+                var addVideoDTO = new AddVideoToPlaylistDTO
+                {
+                    VideoId = request.VideoId,
+                    PlaylistId = request.PlaylistId
+                };
                 var playlist = await _playlistService.AddVideoToPlaylist(playlistId, request.VideoId, userId);
                 return new AddVideoToPlaylistResponse
                 {
@@ -91,8 +100,8 @@ namespace PlaylistMicroservice.Services
             Log.Information("Obteniendo videos de la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
-                int.TryParse(request.PlaylistId, out int playlistId);
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var videos = await _playlistService.GetVideosByPlaylistId(playlistId, userId);
                 return new GetVideosByPlaylistIdResponse
                 {
@@ -115,9 +124,14 @@ namespace PlaylistMicroservice.Services
             Log.Information("Eliminando video de la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
-                int.TryParse(request.PlaylistId, out int playlistId);
-                var playlist = await _playlistService.RemoveVideoFromPlaylist(playlistId, request.VideoId, userId);
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
+                var removeVideoDTO = new RemoveVideoDTO
+                {
+                    VideoId = request.VideoId,
+                    PlaylistId = request.PlaylistId
+                };
+                var playlist = await _playlistService.RemoveVideoFromPlaylist(playlistId, removeVideoDTO.VideoId, userId);
                 return new RemoveVideoFromPlaylistResponse
                 {
                     Playlist = new AddVideoToPlaylistResponse
@@ -144,8 +158,12 @@ namespace PlaylistMicroservice.Services
             Log.Information("Eliminando lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
-                int.TryParse(request.PlaylistId, out int playlistId);
+                var deleteDTO  = new DeletePlaylistDTO
+                {
+                    PlaylistId = request.PlaylistId
+                };
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                int.TryParse(deleteDTO.PlaylistId, out int playlistId);
                 var message = await _playlistService.DeletePlaylist(playlistId, userId);
                 return new DeletePlaylistResponse { Response = message };
             }
