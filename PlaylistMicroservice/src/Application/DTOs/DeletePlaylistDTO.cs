@@ -10,6 +10,6 @@ namespace PlaylistMicroservice.src.Application.DTOs
     {
         [Required(ErrorMessage = "El ID de la lista de reproducción es requerido")]
         [RegularExpression(@"^\d+$", ErrorMessage = "El ID de la lista de reproducción debe ser un número entero positivo")]
-        public int PlaylistId { get; set; }
+        public string PlaylistId { get; set; } = string.Empty;
     }
 }

@@ -47,7 +47,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var playlist = await _playlistService.AddVideoToPlaylist(videoDTO.PlaylistId, videoDTO.VideoId, id);
+                int.TryParse(videoDTO.PlaylistId, out int playlistId);
+                var playlist = await _playlistService.AddVideoToPlaylist(playlistId, videoDTO.VideoId, id);
                 return CreatedAtAction(nameof(AddVideoToPlaylist), new { id = playlist.Id }, playlist);
             }
             catch (Exception ex)
@@ -103,7 +104,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var videos = await _playlistService.RemoveVideoFromPlaylist(removeVideoDTO.PlaylistId, removeVideoDTO.VideoId, id);
+                int.TryParse(removeVideoDTO.PlaylistId, out int playlistId);
+                var videos = await _playlistService.RemoveVideoFromPlaylist(playlistId, removeVideoDTO.VideoId, id);
                 return Ok(videos);
             }
             catch (Exception ex)
@@ -121,7 +123,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var message = await _playlistService.DeletePlaylist(deleteDTO.PlaylistId, id);
+                int.TryParse(deleteDTO.PlaylistId, out int playlistId);
+                var message = await _playlistService.DeletePlaylist(playlistId, id);
                 return Ok(new { message });
             }
             catch (Exception ex)
