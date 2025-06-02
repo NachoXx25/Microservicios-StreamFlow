@@ -37,7 +37,7 @@ namespace AuthMicroservice.src.Api.Controllers
                 var result = await _authService.Login(loginDTO);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
-                    ActionMessage = $"Usuario {result.Email} ha iniciado sesión",
+                    ActionMessage = $"Usuario {result.Email} ha iniciado sesion",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -46,7 +46,7 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
-                    ErrorMessage = ex.Message,
+                    ErrorMessage = $"Intento de inicio de sesion: {ex.Message}",
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
@@ -69,7 +69,7 @@ namespace AuthMicroservice.src.Api.Controllers
                 var result = await _authService.ChangePassword(updatePasswordDTO);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
-                    ActionMessage = $"Usuario {id} ha cambiado su contraseña",
+                    ActionMessage = $"Usuario {id} ha cambiado su contrasena",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -78,7 +78,7 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
-                    ErrorMessage = ex.Message,
+                    ErrorMessage = $"Error al cambiar contrasena: {ex.Message}",
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
@@ -101,7 +101,7 @@ namespace AuthMicroservice.src.Api.Controllers
                 var result = await _authService.Logout(jti);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
-                    ActionMessage = $"Usuario con JTI {userId} ha cerrado sesión",
+                    ActionMessage = $"Usuario con JTI {userId} ha cerrado sesion",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -110,7 +110,7 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
-                    ErrorMessage = ex.Message,
+                    ErrorMessage = $"Error al cerrar sesion: {ex.Message}",
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
