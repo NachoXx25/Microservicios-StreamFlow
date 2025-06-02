@@ -4,16 +4,19 @@ using Serilog;
 using UserMicroservice.src.Application.Services.Interfaces;
 using UserMicroservice.src.Application.DTOs;
 using Google.Protobuf.WellKnownTypes;
+using UserMicroservice.src.Domain.Models;
 
 namespace UserMicroservice.Services
 {
     public class UserGrpcService : Protos.UserGrpcService.UserGrpcServiceBase
     {
         private readonly IUserService _userService;
+        private readonly IMonitoringEventService _monitoringEventService;
 
-        public UserGrpcService(IUserService userService)
+        public UserGrpcService(IUserService userService, IMonitoringEventService monitoringEventService)
         {
             _userService = userService;
+            _monitoringEventService = monitoringEventService;
         }
 
         public override async Task<GetAllUsersResponse> GetAllUsers(GetAllUsersRequest request, ServerCallContext context)
@@ -39,11 +42,21 @@ namespace UserMicroservice.Services
                     Email = u.Email,
                     CreatedAt = Timestamp.FromDateTime(u.CreatedAt.ToUniversalTime()),
                 }));
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Se han obtenido {users.Count()} usuarios",
+                    Service = "UserMicroservice"
+                });
                 return response;
             }
             catch (Exception ex)
             {
                 Log.Error($"Error al obtener todos los usuarios: {ex.Message}");
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "UserMicroservice"
+                });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener todos los usuarios: {ex.Message}"));
             }
 
@@ -56,6 +69,11 @@ namespace UserMicroservice.Services
             {
                 if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 var user = await _userService.GetUserById(userId);
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Se ha obtenido el usuario con ID: {userId}",
+                    Service = "UserMicroservice"
+                });
                 return new GetUserByIdResponse
                 {
                     User = new User
@@ -71,6 +89,11 @@ namespace UserMicroservice.Services
             catch (Exception ex)
             {
                 Log.Error($"Error al obtener usuario por ID: {ex.Message}");
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "UserMicroservice"
+                });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener usuario por ID: {ex.Message}"));
             }
         }
@@ -91,6 +114,11 @@ namespace UserMicroservice.Services
                 };
                 var user = await _userService.CreateUser(userDTO);
                 Log.Information("Usuario creado correctamente");
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario creado con ID: {user.Id}",
+                    Service = "UserMicroservice"
+                });
                 return new CreateUserResponse
                 {
                     Id = user.Id.ToString(),
@@ -106,6 +134,11 @@ namespace UserMicroservice.Services
             catch (Exception ex)
             {
                 Log.Error($"Error al crear usuario: {ex.Message}");
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "UserMicroservice"
+                });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al crear el usuario: {ex.Message}"));
             }
         }
@@ -124,6 +157,12 @@ namespace UserMicroservice.Services
                     Password = request.Password
                 };
                 var updatedUser = await _userService.UpdateUser(updateUser, userId);
+                Log.Information("Usuario actualizado correctamente");
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario actualizado con ID: {updatedUser.Id}",
+                    Service = "UserMicroservice"
+                });
                 return new UpdateUserResponse
                 {
                     Id = updatedUser.Id.ToString(),
@@ -139,6 +178,11 @@ namespace UserMicroservice.Services
             catch (Exception ex)
             {
                 Log.Error($"Error al actualizar usuario: {ex.Message}");
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "UserMicroservice"
+                });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al actualizar el usuario: {ex.Message}"));
             }
         }
@@ -151,11 +195,21 @@ namespace UserMicroservice.Services
                 if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 await _userService.DeleteUser(userId);
                 Log.Information("Usuario eliminado correctamente");
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario eliminado con ID: {userId}",
+                    Service = "UserMicroservice"
+                });
                 return new Empty();
             }
             catch (Exception ex)
             {
                 Log.Error($"Error al eliminar usuario: {ex.Message}");
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "UserMicroservice"
+                });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al eliminar el usuario: {ex.Message}"));
             }
         }

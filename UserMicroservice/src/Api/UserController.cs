@@ -27,7 +27,7 @@ namespace UserMicroservice.src.Api
         /// <param name="search">Filtro de busqueda.</param>
         /// <returns>Lista de usuarios.</returns>
         [HttpGet("usuarios")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] SearchByDTO search)
         {
             if(!ModelState.IsValid)

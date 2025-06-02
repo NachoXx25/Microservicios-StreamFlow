@@ -29,6 +29,7 @@ builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>
 
 //Alcance de la inyección de dependencias
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Configurar URLs explícitamente
