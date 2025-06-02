@@ -22,8 +22,7 @@ message Playlist {
 
 // Mensaje de solicitud para obtener las listas de reproducción por ID de usuario
 message GetPlaylistsByUserIdRequest {
-  string Id = 1;
-    string UserId = 2;
+  string UserId = 1;
 }
 
 // Mensaje de respuesta que contiene una lista de reproducción

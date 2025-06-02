@@ -26,6 +26,7 @@ builder.Services.AddGrpc();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
 builder.Services.AddScoped<IVideoEventHandlerRepository, VideoEventHandlerRepository>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 try
 {
     var connectionFactory = new ConnectionFactory();
