@@ -31,6 +31,8 @@ message GetAllUsersRequest {
     string FirstName = 1;
     string LastName = 2;
     string Email = 3;
+    string UserId = 4;
+    string UserEmail = 5;
 }
 
 // Mensaje de respuesta para el servicio GetAllUsers
@@ -41,6 +43,8 @@ message GetAllUsersResponse {
 // Mensajes para obtener un usuario por ID
 message GetUserByIdRequest{
     string Id = 1;
+    string UserId = 2; // ID del usuario que realiza la solicitud
+    string UserEmail = 3; // Email del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para obtener un usuario por ID
@@ -56,6 +60,8 @@ message CreateUserRequest {
     string Password = 4;
     string ConfirmPassword = 5;
     string Role = 6;
+    string UserId = 7; // ID del usuario que realiza la solicitud
+    string UserEmail = 8; // Email del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para crear un usuario
@@ -77,6 +83,8 @@ message UpdateUserRequest {
     string LastName = 3;
     string Email = 4;
     string Password = 5;
+    string UserEmail = 6; // Email del usuario que realiza la solicitud
+    string UserId = 7; // ID del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para actualizar un usuario
@@ -94,4 +102,6 @@ message UpdateUserResponse {
 // Mensaje de solicitud para eliminar un usuario
 message DeleteUserRequest {
     string Id = 1;
+    string UserId = 2; // ID del usuario que realiza la solicitud
+    string UserEmail = 3; // Email del usuario que realiza la solicitud
 }

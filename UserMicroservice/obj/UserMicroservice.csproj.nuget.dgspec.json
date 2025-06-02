@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\UserMicroservice\\UserMicroservice.csproj": {}
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\UserMicroservice\\UserMicroservice.csproj": {
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\UserMicroservice\\UserMicroservice.csproj",
+        "projectUniqueName": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
         "projectName": "UserMicroservice",
-        "projectPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\UserMicroservice\\UserMicroservice.csproj",
+        "projectPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
         "packagesPath": "C:\\Users\\TheNachoXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\UserMicroservice\\obj\\",
+        "outputPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

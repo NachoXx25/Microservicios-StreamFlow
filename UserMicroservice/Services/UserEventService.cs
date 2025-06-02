@@ -20,9 +20,11 @@ namespace UserMicroservice.Services
     {
         private readonly string _userExchangeName;
         private readonly string _billExchangeName;
+        private readonly string _playlistExchangeName;
         private readonly IConnection _connection;
         private readonly IModel _userChannel;
         private readonly IModel _billChannel;
+        private readonly IModel _playlistChannel;
         private bool _disposed = false;
 
         public UserEventService()
@@ -34,6 +36,7 @@ namespace UserMicroservice.Services
 
             _userExchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "user_events";
             _billExchangeName = "BillExchange";
+            _playlistExchangeName = "PlaylistExchange";
 
             var factory = new ConnectionFactory
             {
@@ -49,9 +52,11 @@ namespace UserMicroservice.Services
 
                 _userChannel = _connection.CreateModel();
                 _billChannel = _connection.CreateModel();
+                _playlistChannel = _connection.CreateModel();
 
                 SetupUserExchange();
                 SetupBillExchange();
+                SetupPlaylistExchange();
 
                 Log.Information("UserEventService inicializado con conexiones persistentes");
             }
@@ -60,6 +65,20 @@ namespace UserMicroservice.Services
                 Log.Error(ex, "Error inicializando UserEventService");
                 throw;
             }
+        }
+
+        private void SetupPlaylistExchange()
+        {
+            _playlistChannel.ExchangeDeclare(
+                exchange: _playlistExchangeName,
+                type: "topic",
+                durable: true,
+                autoDelete: false,
+                arguments: null
+            );
+
+            DeclareAndBindQueue(_playlistChannel, "playlist_user_created_queue", "user.created", _playlistExchangeName);
+            DeclareAndBindQueue(_playlistChannel, "playlist_user_updated_queue", "user.updated", _playlistExchangeName);
         }
 
         private void SetupUserExchange()
@@ -134,6 +153,7 @@ namespace UserMicroservice.Services
 
                 PublishToExchange(_userChannel, _userExchangeName, "user.created", body, properties);
                 PublishToExchange(_billChannel, _billExchangeName, "user.created", body, properties);
+                PublishToExchange(_playlistChannel, _playlistExchangeName, "user.created", body, properties);
 
                 Log.Information("Evento UserCreated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
@@ -167,6 +187,7 @@ namespace UserMicroservice.Services
 
                 PublishToExchange(_userChannel, _userExchangeName, "user.updated", body, properties);
                 PublishToExchange(_billChannel, _billExchangeName, "user.updated", body, properties);
+                PublishToExchange(_playlistChannel, _playlistExchangeName, "user.updated", body, properties);
 
                 Log.Information("Evento UserUpdated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;

@@ -45,6 +45,9 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Se han obtenido {users.Count()} usuarios",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "GET/usuarios",
                     Service = "UserMicroservice"
                 });
                 return response;
@@ -55,6 +58,8 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = ex.Message,
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "UserMicroservice"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener todos los usuarios: {ex.Message}"));
@@ -72,6 +77,9 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Se ha obtenido el usuario con ID: {userId}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "GET/usuario/{id}",
                     Service = "UserMicroservice"
                 });
                 return new GetUserByIdResponse
@@ -92,6 +100,8 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = ex.Message,
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "UserMicroservice"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener usuario por ID: {ex.Message}"));
@@ -117,6 +127,9 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario creado con ID: {user.Id}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "POST/usuarios",
                     Service = "UserMicroservice"
                 });
                 return new CreateUserResponse
@@ -137,6 +150,8 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = ex.Message,
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "UserMicroservice"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al crear el usuario: {ex.Message}"));
@@ -161,6 +176,9 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario actualizado con ID: {updatedUser.Id}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"PATCH/usuarios/{userId}",
                     Service = "UserMicroservice"
                 });
                 return new UpdateUserResponse
@@ -181,6 +199,8 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = ex.Message,
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "UserMicroservice"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al actualizar el usuario: {ex.Message}"));
@@ -198,6 +218,9 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario eliminado con ID: {userId}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"DELETE/usuarios/{userId}",
                     Service = "UserMicroservice"
                 });
                 return new Empty();
@@ -208,6 +231,8 @@ namespace UserMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = ex.Message,
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "UserMicroservice"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al eliminar el usuario: {ex.Message}"));

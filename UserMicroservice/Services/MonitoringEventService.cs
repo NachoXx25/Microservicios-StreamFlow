@@ -139,6 +139,9 @@ namespace UserMicroservice.Services
                 {
                     actionEvent.ActionMessage,
                     actionEvent.Service,
+                    actionEvent.UserId,
+                    actionEvent.UserEmail,
+                    actionEvent.UrlMethod,
                     Timestamp = DateTime.UtcNow
                 };
                 var body = JsonSerializer.SerializeToUtf8Bytes(message);
@@ -164,6 +167,8 @@ namespace UserMicroservice.Services
                 {
                     errorEvent.ErrorMessage,
                     errorEvent.Service,
+                    errorEvent.UserId,
+                    errorEvent.UserEmail,
                     Timestamp = DateTime.UtcNow
                 };
                 var body = JsonSerializer.SerializeToUtf8Bytes(message);

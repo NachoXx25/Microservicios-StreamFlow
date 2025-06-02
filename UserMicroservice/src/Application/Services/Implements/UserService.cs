@@ -133,9 +133,6 @@ namespace UserMicroservice.src.Application.Services.Implements
         /// <returns>Lista de usuarios</returns>
         public async Task<IEnumerable<UserDTO>> GetAllUsers(SearchByDTO search)
         {
-            if(string.IsNullOrWhiteSpace(search.FirstName) && 
-               string.IsNullOrWhiteSpace(search.LastName) && 
-               string.IsNullOrWhiteSpace(search.Email)) throw new Exception("Debe especificar al menos un parámetro de búsqueda.");
             var users = _userManager.Users.OrderBy( u => u.Id).AsQueryable();
             if(!string.IsNullOrWhiteSpace(search.FirstName))
             {
@@ -150,6 +147,12 @@ namespace UserMicroservice.src.Application.Services.Implements
                 users = users.Where(x => x.Email != null && x.Email.ToLower().Contains(search.Email.ToLower()));
             }
             var pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific SA Standard Time");
+            if (string.IsNullOrWhiteSpace(search.FirstName) &&
+               string.IsNullOrWhiteSpace(search.LastName) &&
+               string.IsNullOrWhiteSpace(search.Email))
+            {
+                users = users.Where(u => u.Status == true);
+            }
             var result = await users.Where(u => u.Status == true).Select(user => new UserDTO()
             {
                 Id = user.Id,
