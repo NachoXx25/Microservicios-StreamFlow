@@ -20,7 +20,7 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<IVideoEventHandlerRepository,VideoEventHandlerRepository>();
 builder.Services.AddScoped<ISocialInteractionsService, SocialInteractionsService>();
-builder.Services.AddScoped<SocialInteractionsEventService>();
+builder.Services.AddScoped<ISocialInteractionsEventService, SocialInteractionsEventService>();
 
 try
 {
@@ -48,11 +48,6 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Services(services));
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    await DataSeeder.Initialize(scope.ServiceProvider);
-}
 
 app.MapGrpcService<SocialInteractionsGrpcService>();
 
