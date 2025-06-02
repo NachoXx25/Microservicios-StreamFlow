@@ -35,11 +35,11 @@ namespace VideoMicroservice.Services
 
         public VideoEventService()
         {
-            _hostname = Env.GetString("RABBITMQ_HOST");
-            _password = Env.GetString("RABBITMQ_PASSWORD");
-            _username = Env.GetString("RABBITMQ_USERNAME");
+            _hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+            _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
             _port = Env.GetInt("RABBITMQ_PORT");
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE");
+            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "VideoExchange";
 
             _factory = new ConnectionFactory()
             {
