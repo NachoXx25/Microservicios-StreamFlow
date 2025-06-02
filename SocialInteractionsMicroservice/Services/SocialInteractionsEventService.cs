@@ -11,7 +11,7 @@ namespace SocialInteractionsMicroservice.Services
 {
     public interface ISocialInteractionsEventService
     {
-        Task PublishLikeEvent(string videoId);
+        Task PublishLikeEvent(string videoId, string likeId);
     }
 
     public class SocialInteractionsEventService : ISocialInteractionsEventService
@@ -27,11 +27,11 @@ namespace SocialInteractionsMicroservice.Services
 
         public SocialInteractionsEventService()
         {
-            _hostname = Env.GetString("RABBITMQ_HOST");
-            _username = Env.GetString("RABBITMQ_USERNAME");
-            _password = Env.GetString("RABBITMQ_PASSWORD");
+            _hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+            _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
+            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
             _port = Env.GetInt("RABBITMQ_PORT");
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE_NAME");
+            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "SocialInteractionsExchange";
 
             _factory = new ConnectionFactory()
             {
@@ -75,7 +75,7 @@ namespace SocialInteractionsMicroservice.Services
             );
         }
 
-        public Task PublishLikeEvent(string videoId)
+        public Task PublishLikeEvent(string videoId, string likeId)
         {
             try
             {
@@ -85,6 +85,7 @@ namespace SocialInteractionsMicroservice.Services
                     var message = new
                     {
                         VideoId = videoId,
+                        LikeId = likeId,
                         EventType = "SocialInteractionsLike"
                     };
 
