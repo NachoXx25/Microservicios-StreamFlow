@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {}
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
+        "projectUniqueName": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
         "projectName": "UserMicroservice",
-        "projectPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
+        "projectPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\UserMicroservice.csproj",
         "packagesPath": "C:\\Users\\TheNachoXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\obj\\",
+        "outputPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\UserMicroservice\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -51,9 +51,93 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Bogus": {
+              "target": "Package",
+              "version": "[35.6.2, )"
+            },
+            "DotNetEnv": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Google.Protobuf": {
+              "target": "Package",
+              "version": "[3.30.2, )"
+            },
             "Grpc.AspNetCore": {
               "target": "Package",
-              "version": "[2.64.0, )"
+              "version": "[2.71.0, )"
+            },
+            "Grpc.AspNetCore.Server.Reflection": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Grpc.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.72.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[9.0.2, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Serilog": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Settings.Configuration": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.3.2, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.6.1, )"
             }
           },
           "imports": [
