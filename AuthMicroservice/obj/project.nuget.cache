@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jOdYD0vMolQ=",
+  "dgSpecHash": "rNh2TUPBpSI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFLow\\AuthMicroservice\\AuthMicroservice.csproj",
+  "projectFilePath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\AuthMicroservice\\AuthMicroservice.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\TheNachoXx\\.nuget\\packages\\bogus\\35.6.3\\bogus.35.6.3.nupkg.sha512",
     "C:\\Users\\TheNachoXx\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",

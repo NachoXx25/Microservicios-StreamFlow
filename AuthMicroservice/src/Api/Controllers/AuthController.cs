@@ -38,6 +38,9 @@ namespace AuthMicroservice.src.Api.Controllers
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario {result.Email} ha iniciado sesion",
+                    UserId = result.Id.ToString(),
+                    UserEmail = result.Email,
+                    UrlMethod = "POST/auth/login",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -70,6 +73,9 @@ namespace AuthMicroservice.src.Api.Controllers
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario {id} ha cambiado su contrasena",
+                    UserId = userId,
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    UrlMethod = $"PATCH/auth/usuarios/{id}",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -79,6 +85,8 @@ namespace AuthMicroservice.src.Api.Controllers
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al cambiar contrasena: {ex.Message}",
+                    UserId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
@@ -102,6 +110,9 @@ namespace AuthMicroservice.src.Api.Controllers
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Usuario con JTI {userId} ha cerrado sesion",
+                    UserId = userId,
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    UrlMethod = "POST/auth/logout",
                     Service = "AuthMicroservice"
                 });
                 return Ok(new { result });
@@ -111,6 +122,8 @@ namespace AuthMicroservice.src.Api.Controllers
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al cerrar sesion: {ex.Message}",
+                    UserId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
