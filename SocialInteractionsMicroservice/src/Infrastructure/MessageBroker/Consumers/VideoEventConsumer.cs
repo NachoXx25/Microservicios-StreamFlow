@@ -39,6 +39,10 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Consum
             {
                 _connection = _rabbitMQService.CreateConnection();
 
+                _channelCreated = _connection.CreateModel();
+                _channelUpdated = _connection.CreateModel();
+                _channelDeleted = _connection.CreateModel();
+
                 _channelCreated.BasicQos(0, 1, false);
                 _channelCreated.QueueDeclare(
                     "social_interactions_video_created_queue",
