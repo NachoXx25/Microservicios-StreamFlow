@@ -54,7 +54,7 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para obtener usuario por ID: {request.Id}");
             try
             {
-                int.TryParse(request.Id, out int userId);
+                if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 var user = await _userService.GetUserById(userId);
                 return new GetUserByIdResponse
                 {
@@ -148,7 +148,7 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para eliminar usuario con ID: {request.Id}");
             try
             {
-                int.TryParse(request.Id, out int userId);
+                if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 await _userService.DeleteUser(userId);
                 Log.Information("Usuario eliminado correctamente");
                 return new Empty();
