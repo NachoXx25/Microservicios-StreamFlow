@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetEnv;
 using RabbitMQ.Client;
 
 namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Services
@@ -22,11 +23,11 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Servic
 
         public RabbitMQService()
         {
-            _hostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
-            _userName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
-            _password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
-            _port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672");
-            _exchangeName = Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE_NAME") ?? "video_events";
+            _hostName = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+            _userName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
+            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+            _port = Env.GetInt("RABBITMQ_PORT");
+            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "SocialInteractionsExchange";
 
             CreateConnection();
         }
