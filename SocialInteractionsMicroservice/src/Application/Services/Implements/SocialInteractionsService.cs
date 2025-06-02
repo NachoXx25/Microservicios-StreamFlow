@@ -52,7 +52,7 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
 
             var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("El video no existe.");
 
-            if (!video.IsDeleted) { 
+            if (video.IsDeleted) { 
                 throw new InvalidOperationException("El video ha sido eliminado, no se puede dar like.");
             }
 
@@ -81,7 +81,7 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
 
             var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("El video no existe.");
            
-            if (!video.IsDeleted)
+            if (video.IsDeleted)
             {
                 throw new InvalidOperationException("El video ha sido eliminado, no se puede comentar.");
             }
