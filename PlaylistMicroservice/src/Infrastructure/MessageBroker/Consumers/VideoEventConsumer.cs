@@ -50,7 +50,7 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                 );
                 _channelCreated.QueueBind(
                     queue: "playlist_video_created_queue",
-                    exchange: _rabbitMQService.ExchangeName,
+                    exchange: "VideoExchange",
                     routingKey: "playlist.video.created"
                 );
 
@@ -65,7 +65,7 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                 );
                 _channelUpdated.QueueBind(
                     queue: "playlist_video_updated_queue",
-                    exchange: _rabbitMQService.ExchangeName,
+                    exchange: "VideoExchange",
                     routingKey: "playlist.video.updated"
                 );
 
@@ -80,7 +80,7 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                 );
                 _channelDeleted.QueueBind(
                     queue: "playlist_video_deleted_queue",
-                    exchange: _rabbitMQService.ExchangeName,
+                    exchange: "VideoExchange",
                     routingKey: "playlist.video.deleted"
                 );
             }

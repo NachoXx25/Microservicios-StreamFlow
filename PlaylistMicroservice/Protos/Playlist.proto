@@ -23,6 +23,7 @@ message Playlist {
 // Mensaje de solicitud para obtener las listas de reproducción por ID de usuario
 message GetPlaylistsByUserIdRequest {
   string UserId = 1;
+  string UserEmail = 2;
 }
 
 // Mensaje de respuesta que contiene una lista de reproducción
@@ -42,6 +43,7 @@ message PlaylistCreatedResponse {
 message CreatePlaylistRequest {
   string Name = 1;
   string UserId = 2;
+  string UserEmail = 3;
 }
 
 // Mensaje de solicitud para agregar un video a una lista de reproducción
@@ -49,6 +51,7 @@ message AddVideoToPlaylistRequest {
   string PlaylistId = 1;
   string VideoId = 2;
   string UserId = 3;
+  string UserEmail = 4;
 }
 
 // Mensaje de respuesta para agregar un video a una lista de reproducción
@@ -68,6 +71,7 @@ message AddVideoToPlaylistResponse {
 message GetVideosByPlaylistIdRequest {
   string PlaylistId = 1;
   string UserId = 2;
+  string UserEmail = 3;
 }
 
 // Mensaje de respuesta que contiene una lista de videos por ID de lista de reproducción
@@ -81,6 +85,7 @@ message RemoveVideoFromPlaylistRequest {
     string VideoId = 1;
     string PlaylistId = 2;
     string UserId = 3;
+    string UserEmail = 4;
 }
 
 // Mensaje de respuesta para eliminar un video de una lista de reproducción
@@ -92,6 +97,7 @@ message RemoveVideoFromPlaylistResponse {
 message DeletePlaylistRequest {
     string PlaylistId = 1;
     string UserId = 2;
+    string UserEmail = 3;
 }
 
 // Mensaje de respuesta para eliminar una lista de reproducción

@@ -28,16 +28,14 @@ namespace PlaylistMicroservice.Services
                 if(playlists.Count() == 0) 
                 {
                     Log.Warning("No se encontraron listas de reproducción para el usuario {UserId}", userId);
-                    await _monitoringEventService.PublishActionEventAsync(new ActionEvent
-                    {
-                        ActionMessage = $"El usuario {userId} no tiene listas de reproduccion",
-                        Service = "PlaylistService"
-                    });
-                    return new GetPlaylistsByUserIdResponse();
+                    throw new Exception($"No se encontraron listas de reproducción para el usuario {userId}");
                 }
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
-                    ActionMessage = $"El usuario {userId} ha solicitado sus listas de reproduccion",
+                    ActionMessage = $"Obtener playlist por id de usuario",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "GET/listas-reproduccion",
                     Service = "PlaylistService"
                 });
                 return new GetPlaylistsByUserIdResponse
@@ -55,6 +53,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al obtener las listas de reproduccion del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener las listas de reproducción: {ex.Message}"));
@@ -75,6 +75,9 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"El usuario {userId} ha creado una nueva lista de reproduccion: {playlist.PlaylistName}",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "POST/listas-reproduccion",
                     Service = "PlaylistService"
                 });
                 return new PlaylistCreatedResponse
@@ -91,6 +94,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al crear la lista de reproduccion del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al crear la lista de reproducción: {ex.Message}"));
@@ -113,6 +118,9 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"El usuario {userId} ha agregado el video {request.VideoId} a la lista de reproduccion {playlistId}",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"POST/listas-reproduccion/{playlistId}/videos",
                     Service = "PlaylistService"
                 });
                 return new AddVideoToPlaylistResponse
@@ -132,6 +140,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al agregar el video {request.VideoId} a la lista de reproduccion {request.PlaylistId} del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al agregar el video a la lista de reproducción: {ex.Message}"));
@@ -149,6 +159,9 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"El usuario {userId} ha solicitado los videos de la lista de reproduccion {playlistId}",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"GET/listas-reproduccion/{playlistId}/videos",
                     Service = "PlaylistService"
                 });
                 return new GetVideosByPlaylistIdResponse
@@ -166,6 +179,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al obtener los videos de la lista de reproduccion {request.PlaylistId} del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al obtener los videos de la lista de reproducción: {ex.Message}"));
@@ -188,6 +203,9 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"El usuario {userId} ha eliminado el video {removeVideoDTO.VideoId} de la lista de reproduccion {playlistId}",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"DELETE/listas-reproduccion/{playlistId}/videos",
                     Service = "PlaylistService"
                 });
                 return new RemoveVideoFromPlaylistResponse
@@ -210,6 +228,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al eliminar el video {request.VideoId} de la lista de reproduccion {request.PlaylistId} del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al eliminar el video de la lista de reproducción: {ex.Message}"));
@@ -231,6 +251,9 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"El usuario {userId} ha eliminado la lista de reproduccion {deleteDTO.PlaylistId}",
+                    UserId = userId.ToString(),
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"DELETE/listas-reproduccion/{playlistId}",
                     Service = "PlaylistService"
                 });
                 return new DeletePlaylistResponse { Response = message };
@@ -241,6 +264,8 @@ namespace PlaylistMicroservice.Services
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
                 {
                     ErrorMessage = $"Error al eliminar la lista de reproduccion {request.PlaylistId} del usuario {request.UserId}: {ex.Message}",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
                     Service = "PlaylistService"
                 });
                 throw new RpcException(new Status(StatusCode.Internal, $"Error al eliminar la lista de reproducción: {ex.Message}"));

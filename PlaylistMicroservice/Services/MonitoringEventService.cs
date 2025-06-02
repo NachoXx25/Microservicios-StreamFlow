@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using DotNetEnv;
 using PlaylistMicroservice.src.Domain.Models;
+using PlaylistMicroservice.src.Infrastructure.MessageBroker.Services;
 using RabbitMQ.Client;
 using Serilog;
 
@@ -18,34 +19,34 @@ namespace PlaylistMicroservice.Services
     public class MonitoringEventService : IMonitoringEventService
     {
         private readonly string _exchangeName;
-        private readonly IConnection _connection;
         private readonly IModel _errorChannel;
         private readonly IModel _actionChannel;
-        private bool _disposed = false;
+
+        private readonly RabbitMQService _rabbitMQService;
 
         public MonitoringEventService()
         {
-            var hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            var username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            var port = Env.GetInt("RABBITMQ_PORT", 5672);
+            
 
             _exchangeName = "MonitoringExchange";
 
             var factory = new ConnectionFactory
             {
-                HostName = hostname,
-                UserName = username,
-                Password = password,
-                Port = port
+                HostName = "localhost",
+                UserName = "guest",
+                Password = "guest",
+                Port = 5672
+            };
+            _rabbitMQService = new RabbitMQService
+            {
+                _factory = factory,
+                _connection = factory.CreateConnection()
             };
 
             try
             {
-                _connection = factory.CreateConnection();
-
-                _errorChannel = _connection.CreateModel();
-                _actionChannel = _connection.CreateModel();
+                _errorChannel = _rabbitMQService._connection.CreateModel();
+                _actionChannel = _rabbitMQService._connection.CreateModel();
 
                 SetupErrorExchange();
                 SetupActionExchange();
@@ -139,6 +140,9 @@ namespace PlaylistMicroservice.Services
                 {
                     actionEvent.ActionMessage,
                     actionEvent.Service,
+                    actionEvent.UserId,
+                    actionEvent.UserEmail,
+                    actionEvent.UrlMethod,
                     Timestamp = DateTime.UtcNow
                 };
                 var body = JsonSerializer.SerializeToUtf8Bytes(message);
@@ -164,6 +168,8 @@ namespace PlaylistMicroservice.Services
                 {
                     errorEvent.ErrorMessage,
                     errorEvent.Service,
+                    errorEvent.UserId,
+                    errorEvent.UserEmail,
                     Timestamp = DateTime.UtcNow
                 };
                 var body = JsonSerializer.SerializeToUtf8Bytes(message);
