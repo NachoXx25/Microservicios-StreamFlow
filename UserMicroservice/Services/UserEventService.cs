@@ -134,8 +134,8 @@ namespace UserMicroservice.Services
             try
             {
                 Log.Information($"Publicando evento de usuario creado - Email: {user.Email}, Nombre: {user.FirstName} {user.LastName}");
-                
-                var message = new 
+
+                var message = new
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
