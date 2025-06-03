@@ -58,23 +58,7 @@ builder.Services.AddDbContextPool<DataContext>(options =>
             mySqlOptions.CommandTimeout(120);
         });
 }, poolSize: 200);
-//Configuración de middleware de autenticación
-builder.Services.AddAuthentication( options => {
 
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer( options => {
-
-    options.TokenValidationParameters = new TokenValidationParameters (){
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.GetString("JWT_SECRET"))),
-        ValidateLifetime = true,
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ClockSkew = TimeSpan.Zero 
-    };
-});
 
 //Configuración de identity
 builder.Services.Configure<IdentityOptions>(options =>
@@ -115,8 +99,6 @@ app.MapOpenApi();
 app.UseHttpsRedirection();
 app.UseSwaggerUI();
 app.UseSwagger();
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
 app.MapGrpcService<UserGrpcService>();
 app.Run();

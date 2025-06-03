@@ -68,27 +68,6 @@ builder.Services.AddDbContext<DataContext>(options =>
         }
     ));
 
-//Configuración de middleware de autenticación
-builder.Services.AddAuthentication(options =>
-{
-
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-
-    options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.GetString("JWT_SECRET"))),
-        ValidateLifetime = true,
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ClockSkew = TimeSpan.Zero
-    };
-});
-
 // Configurar Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
@@ -102,8 +81,6 @@ app.MapOpenApi();
 app.UseHttpsRedirection();
 app.UseSwaggerUI();
 app.UseSwagger();
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
 app.MapGrpcService<PlaylistGrpcService>();
 app.Run();

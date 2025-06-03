@@ -21,7 +21,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreatePlaylist(CreatePlaylistDTO createPlaylist)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -39,7 +38,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpPost("video")]
-        [Authorize]
         public async Task<IActionResult> AddVideoToPlaylist(AddVideoToPlaylistDTO videoDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -58,7 +56,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetPlaylistsByUserId()
         {
             try
@@ -77,7 +74,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpGet("{playlistId}")]
-        [Authorize]
         public async Task<IActionResult> GetVideosByPlaylistId(int playlistId)
         {
             try
@@ -96,7 +92,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpDelete("video")]
-        [Authorize]
         public async Task<IActionResult> RemoveVideoFromPlaylist(RemoveVideoDTO removeVideoDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -115,7 +110,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpDelete()]
-        [Authorize]
         public async Task<IActionResult> DeletePlaylist(DeletePlaylistDTO deleteDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

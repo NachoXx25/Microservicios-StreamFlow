@@ -27,7 +27,6 @@ namespace UserMicroservice.src.Api
         /// <param name="search">Filtro de busqueda.</param>
         /// <returns>Lista de usuarios.</returns>
         [HttpGet("usuarios")]
-        //[AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] SearchByDTO search)
         {
             if(!ModelState.IsValid)
@@ -57,7 +56,6 @@ namespace UserMicroservice.src.Api
         /// <param name="Id">Id del usuario.</param>
         /// <returns>Los datos del usuario</returns> 
         [HttpGet("usuarios/{Id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetUserById(int Id)
         {
             try{
@@ -80,7 +78,6 @@ namespace UserMicroservice.src.Api
         /// <param name="userDTO">Datos del usuario.</param>
         /// <returns>Ok en caso de exito o bad request en caso de errror.</returns>
         [HttpPost("usuarios")]
-        [AllowAnonymous]
         public async Task<IActionResult> CreateUser(CreateUserDTO userDTO)
         {
             try
@@ -110,7 +107,6 @@ namespace UserMicroservice.src.Api
         }
         
         [HttpPatch("usuarios/{Id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDTO updateUserDTO, int Id)
         {
             if(!ModelState.IsValid)
@@ -134,7 +130,6 @@ namespace UserMicroservice.src.Api
         }
         
         [HttpDelete("usuarios/{Id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> DeleteUser(int Id)
         {
             try
