@@ -115,22 +115,19 @@ namespace UserMicroservice.Services
             try
             {
                 Log.Information($"Publicando evento de usuario creado - Email: {user.Email}, Nombre: {user.FirstName} {user.LastName}");
-                
-                using (var connection = _factory.CreateConnection())
-                using (var channel = connection.CreateModel())
+
+                var message = new
                 {
-                    var message = new 
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        RoleId = user.RoleId,
-                        Status = user.Status,
-                        PasswordHash = user.PasswordHash,
-                        CreatedAt = DateTime.UtcNow.ToString("o"),
-                        EventType = "UserCreated"
-                    };
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    RoleId = user.RoleId,
+                    Status = user.Status,
+                    PasswordHash = user.PasswordHash,
+                    CreatedAt = DateTime.UtcNow.ToString("o"),
+                    EventType = "UserCreated"
+                };
 
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
                 var properties = CreateBasicProperties();

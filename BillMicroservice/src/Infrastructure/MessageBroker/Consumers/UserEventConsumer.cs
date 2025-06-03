@@ -99,7 +99,7 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            Log.Information("Iniciando el consumidor de eventos de video.");
+            Log.Information("Iniciando el consumidor de eventos de usuario.");
 
             // User created event consumer
             var consumerCreated = new AsyncEventingBasicConsumer(_channelCreated);

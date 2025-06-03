@@ -67,6 +67,7 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
                     else
                     {
                         Log.Information("Ya existen facturas en la base de datos, no se ejecutarán los seeders de facturas.");
+                        return;
                     }
                 }
             }
@@ -115,7 +116,7 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
             }
             catch (Exception)
             {
-                Log.Error("Error al manejar el evento de actualización de video: {@UserUpdatedEvent}", userUpdatedEvent);
+                Log.Error("Error al manejar el evento de actualización de usuario: {@UserUpdatedEvent}", userUpdatedEvent);
                 throw;
             }
         }
