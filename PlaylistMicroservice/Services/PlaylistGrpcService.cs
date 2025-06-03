@@ -23,7 +23,8 @@ namespace PlaylistMicroservice.Services
             Log.Information("Obteniendo listas de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
                 var playlists = await _playlistService.GetPlaylistsByUserId(userId);
                 if(playlists.Count() == 0) 
                 {
@@ -66,7 +67,9 @@ namespace PlaylistMicroservice.Services
             Log.Information("Creando lista de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
+                if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
+                if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("El nombre de la lista de reproducción no puede estar vacío");
                 var createdPlaylist = new CreatePlaylistDTO
                 {
                     Name = request.Name
@@ -107,8 +110,11 @@ namespace PlaylistMicroservice.Services
             Log.Information("Agregando video a la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                int.TryParse(request.UserId, out int userId);
-                int.TryParse(request.PlaylistId, out int playlistId);
+                if(string.IsNullOrWhiteSpace(request.VideoId)) throw new Exception("El id del video no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
+                if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var addVideoDTO = new AddVideoToPlaylistDTO
                 {
                     VideoId = request.VideoId,
@@ -153,7 +159,9 @@ namespace PlaylistMicroservice.Services
             Log.Information("Obteniendo videos de la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var videos = await _playlistService.GetVideosByPlaylistId(playlistId, userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
@@ -192,7 +200,9 @@ namespace PlaylistMicroservice.Services
             Log.Information("Eliminando video de la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.VideoId)) throw new Exception("El id del video no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var removeVideoDTO = new RemoveVideoDTO
                 {
@@ -241,12 +251,14 @@ namespace PlaylistMicroservice.Services
             Log.Information("Eliminando lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
+                if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
                 var deleteDTO  = new DeletePlaylistDTO
                 {
                     PlaylistId = request.PlaylistId
                 };
-                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
-                int.TryParse(deleteDTO.PlaylistId, out int playlistId);
                 var message = await _playlistService.DeletePlaylist(playlistId, userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
