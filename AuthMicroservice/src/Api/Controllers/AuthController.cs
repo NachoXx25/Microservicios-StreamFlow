@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthMicroservice.Services;
 using AuthMicroservice.src.Application.DTOs;
 using AuthMicroservice.src.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserMicroservice.src.Domain.Models;
 
 namespace AuthMicroservice.src.Api.Controllers
 {
@@ -14,9 +16,11 @@ namespace AuthMicroservice.src.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly IMonitoringEventService _monitoringEventService;
+        public AuthController(IAuthService authService, IMonitoringEventService monitoringEventService)
         {
             _authService = authService;
+            _monitoringEventService = monitoringEventService;
         }
 
         /// <summary>
@@ -31,11 +35,24 @@ namespace AuthMicroservice.src.Api.Controllers
             try
             {
                 var result = await _authService.Login(loginDTO);
-                return Ok( new {result} );
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario {result.Email} ha iniciado sesion",
+                    UserId = result.Id.ToString(),
+                    UserEmail = result.Email,
+                    UrlMethod = "POST/auth/login",
+                    Service = "AuthMicroservice"
+                });
+                return Ok(new { result });
             }
             catch (Exception ex)
             {
-                return BadRequest( new {error = ex.Message} );
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Intento de inicio de sesion: {ex.Message}",
+                    Service = "AuthMicroservice"
+                });
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -53,11 +70,26 @@ namespace AuthMicroservice.src.Api.Controllers
                 updatePasswordDTO.UserRequestId = userId;
                 updatePasswordDTO.Jti = jti;
                 var result = await _authService.ChangePassword(updatePasswordDTO);
-                return Ok( new {result} );
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario {id} ha cambiado su contrasena",
+                    UserId = userId,
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    UrlMethod = $"PATCH/auth/usuarios/{id}",
+                    Service = "AuthMicroservice"
+                });
+                return Ok(new { result });
             }
             catch (Exception ex)
             {
-                return BadRequest( new {error = ex.Message} );
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al cambiar contrasena: {ex.Message}",
+                    UserId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    Service = "AuthMicroservice"
+                });
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -73,12 +105,28 @@ namespace AuthMicroservice.src.Api.Controllers
             try
             {
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
+                var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
                 var result = await _authService.Logout(jti);
-                return Ok( new {result} );
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = $"Usuario con JTI {userId} ha cerrado sesion",
+                    UserId = userId,
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    UrlMethod = "POST/auth/logout",
+                    Service = "AuthMicroservice"
+                });
+                return Ok(new { result });
             }
             catch (Exception ex)
             {
-                return BadRequest( new {error = ex.Message} );
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al cerrar sesion: {ex.Message}",
+                    UserId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                    UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    Service = "AuthMicroservice"
+                });
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

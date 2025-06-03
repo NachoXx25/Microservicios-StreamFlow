@@ -36,6 +36,7 @@ namespace AuthMicroservice.src.Infrastructure.Repositories.Implements
                     LastName = userEvent.LastName,
                     UserName = Guid.NewGuid().ToString(),
                     Email = userEvent.Email,
+                    NormalizedEmail = userEvent.Email.ToUpperInvariant(),
                     RoleId = userEvent.RoleId,
                     Status = userEvent.Status,
                     PasswordHash = userEvent.PasswordHash,
@@ -90,8 +91,9 @@ namespace AuthMicroservice.src.Infrastructure.Repositories.Implements
                 existingUser.FirstName = userEvent.FirstName;
                 existingUser.LastName = userEvent.LastName;
                 existingUser.Email = userEvent.Email;
+                existingUser.NormalizedEmail = userEvent.Email.ToUpperInvariant();
                 existingUser.UpdatedAt = DateTime.UtcNow;
-                
+
                 await _context.SaveChangesAsync();
                 Log.Information("Usuario actualizado con ID {UserId}", userEvent.Id);
             }catch (Exception ex)

@@ -15,6 +15,7 @@ using AuthMicroservice.src.Infrastructure.Repositories.Implements;
 using AuthMicroservice.src.Infrastructure.MessageBroker.Consumers;
 using AuthMicroservice.src.Infrastructure.MessageBroker.Services;
 using RabbitMQ.Client;
+using AuthMicroservice.Services;
 
 Env.Load();
 
@@ -28,6 +29,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 try
 {
     var connectionFactory = new ConnectionFactory();

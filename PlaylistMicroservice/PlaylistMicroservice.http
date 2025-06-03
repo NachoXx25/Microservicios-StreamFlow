@@ -1,0 +1,6 @@
+@PlaylistMicroservice_HostAddress = http://localhost:5249
+
+GET {{PlaylistMicroservice_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

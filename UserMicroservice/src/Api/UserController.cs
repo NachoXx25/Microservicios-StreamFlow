@@ -15,12 +15,10 @@ namespace UserMicroservice.src.Api
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IUserEventService _userEventService;
 
-        public UserController(IUserService userService, IUserEventService userEventService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _userEventService = userEventService;
         }
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace UserMicroservice.src.Api
         /// <param name="search">Filtro de busqueda.</param>
         /// <returns>Lista de usuarios.</returns>
         [HttpGet("usuarios")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] SearchByDTO search)
         {
             if(!ModelState.IsValid)

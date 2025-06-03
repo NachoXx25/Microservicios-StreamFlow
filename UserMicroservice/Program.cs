@@ -2,6 +2,7 @@ using System.Text;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -18,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
-builder.Services.AddScoped<IUserEventService, UserEventService>();
 builder.Services.AddSingleton<IUserEventService, UserEventService>();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
@@ -29,8 +29,18 @@ builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>
 
 //Alcance de la inyección de dependencias
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+// Configurar URLs explícitamente
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // Puerto para HTTP/REST API
+    options.ListenLocalhost(5135, o => o.Protocols = HttpProtocols.Http1);
+
+    // Puerto para gRPC (HTTP/2)
+    options.ListenLocalhost(5136, o => o.Protocols = HttpProtocols.Http2);
+});
 
 //Conexión a base de datos de módulo de usuarios (MySQL)
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
@@ -92,8 +102,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 var app = builder.Build();
 
-// Configuración de endpoints gRPC
-app.MapGrpcService<UserNotificationService>();
+
+
 //Llamado al dataseeder
 using (var scope = app.Services.CreateScope())
 {
@@ -109,4 +119,5 @@ app.UseSwagger();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGrpcService<UserGrpcService>();
 app.Run();

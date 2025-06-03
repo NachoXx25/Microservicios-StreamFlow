@@ -47,7 +47,7 @@ namespace AuthMicroservice.src.Application.Services.Implements
         /// <returns>Token JWT generado.</returns>
         public async Task<ReturnUserWithTokenDTO> Login(LoginDTO loginDTO)
         {
-            User user = await _userManager.FindByEmailAsync(loginDTO.Email) ?? throw new Exception("Usuario no encontrado");
+            User user = await _userManager.FindByEmailAsync(loginDTO.Email) ?? throw new Exception("Usuario o contraseña incorrectos");
             var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
             var role = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("Rol no encontrado");
             if (!result) throw new Exception("Contraseña o usuario incorrectos");
