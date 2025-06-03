@@ -8,6 +8,10 @@ using BillMicroservice.src.Infrastructure.Repositories.Interfaces;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
+using RabbitMQ.Client;
+using BillMicroservice.src.Infrastructure.MessageBroker.Consumers;
+using BillMicroservice.src.Infrastructure.MessageBroker.Services;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +21,26 @@ builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<BillContext>
 builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
+builder.Services.AddScoped<IBillEventService, BillEventService>();
 builder.Services.AddScoped<IBillService, BillService>();
+
+try
+{
+    var connectionFactory = new ConnectionFactory();
+    connectionFactory.HostName = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+    connectionFactory.UserName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
+    connectionFactory.Password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+    connectionFactory.Port = Env.GetInt("RABBITMQ_PORT");
+    var connection = connectionFactory.CreateConnection();
+    builder.Services.AddHostedService<UserEventConsumer>();
+    builder.Services.AddSingleton<RabbitMQService>();
+}
+catch (Exception ex)
+{
+    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
+}
+
 builder.Services.AddGrpc();
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
@@ -34,6 +57,9 @@ builder.Services.AddDbContext<BillContext>(options =>
             mySqlOptions.CommandTimeout(120);
         }));
 
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services));
 
 var app = builder.Build();
 
