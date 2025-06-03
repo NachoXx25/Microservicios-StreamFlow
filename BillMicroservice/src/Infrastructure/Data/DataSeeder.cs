@@ -23,7 +23,6 @@ namespace BillMicroservice.src.Infrastructure.Data
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
                 try
                 {
-                    
                     try {
                         await billContext.Database.MigrateAsync();
                     }
@@ -41,12 +40,6 @@ namespace BillMicroservice.src.Infrastructure.Data
                             var createdRole = await billContext.Roles.FindAsync(role.Id);
                             if(createdRole != null)
                             {
-                                var existsInAuthContext = await billContext.Roles.AnyAsync( r => r.Name == roleName);
-                                if(!existsInAuthContext)
-                                {
-                                    await billContext.Roles.AddAsync(new Role { Id = createdRole.Id, Name = roleName, NormalizedName = roleName.ToUpper() });
-                                    await billContext.SaveChangesAsync();
-                                }
                                 var existsInBillContext = await billContext.Roles.AnyAsync( r => r.Name == roleName);
                                 if(!existsInBillContext)
                                 {
@@ -56,18 +49,7 @@ namespace BillMicroservice.src.Infrastructure.Data
                             }
                         }
                     }
-                    if(!await billContext.Users.AnyAsync())
-                    {
-                        var faker = new Faker<User>()
-                            .RuleFor(u => u.UserName, f => Guid.NewGuid().ToString())
-                            .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName?.ToUpper())
-                            .RuleFor(u => u.Email, f => f.Internet.Email())
-                            .RuleFor(u => u.NormalizedEmail, (f, u) => u.Email?.ToUpper())
-                            .RuleFor(u => u.PasswordHash, (f, u) => new PasswordHasher<User>().HashPassword(u, "Password123!"))
-                            .RuleFor(u => u.RoleId, f => billContext.Roles.First(r => r.Name == f.PickRandom(roles)).Id);
-                        billContext.Users.AddRange(faker.Generate(150));
-                        await billContext.SaveChangesAsync();
-                    };
+
                     var statuses = new[] { "Pendiente", "Pagado", "Vencido" };
                     
                     if(!await billContext.Statuses.AnyAsync())
@@ -76,27 +58,6 @@ namespace BillMicroservice.src.Infrastructure.Data
                         {
                             billContext.Statuses.Add(new Status { Name = status });
                         }
-                        await billContext.SaveChangesAsync();
-                    }
-
-                    if(!await billContext.Bills.AnyAsync())
-                    {
-
-                        var paidStatusId = billContext.Statuses.First(s => s.Name == "Pagado").Id;
-
-                        var faker = new Faker<Bill>()
-                            .RuleFor(b => b.UserId, f => f.PickRandom(billContext.Users.ToList()).Id)
-                            .RuleFor(b => b.StatusId, f => f.PickRandom(billContext.Statuses.ToList()).Id)
-                            .RuleFor(b => b.AmountToPay, f => (int)f.Finance.Amount(10, 1000))
-                            .RuleFor(b => b.CreatedAt, f => f.Date.Past(1))
-                            .RuleFor(b => b.PaymentDate, (f, b) => {
-                                if (b.StatusId == paidStatusId)
-                                    return f.Date.Between(b.CreatedAt, DateTime.Now);
-                                else
-                                    return null;
-                            });
-
-                        billContext.Bills.AddRange(faker.Generate(350));
                         await billContext.SaveChangesAsync();
                     }
                 }
