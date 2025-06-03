@@ -7,6 +7,7 @@ using AuthMicroservice.src.Application.DTOs;
 using AuthMicroservice.src.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using UserMicroservice.src.Domain.Models;
 
 namespace AuthMicroservice.src.Api.Controllers
@@ -31,7 +32,7 @@ namespace AuthMicroservice.src.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 var result = await _authService.Login(loginDTO);
@@ -60,10 +61,10 @@ namespace AuthMicroservice.src.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(int id, UpdatePasswordDTO updatePasswordDTO)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
-                if(!User.Identity?.IsAuthenticated ?? true) return Unauthorized( new {error = "No autenticado"} );
+                if (!User.Identity?.IsAuthenticated ?? true) return Unauthorized(new { error = "No autenticado" });
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
                 updatePasswordDTO.UserId = id.ToString();
@@ -101,7 +102,7 @@ namespace AuthMicroservice.src.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
@@ -127,6 +128,39 @@ namespace AuthMicroservice.src.Api.Controllers
                     Service = "AuthMicroservice"
                 });
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+        
+        [HttpPost("validate-token")]
+        public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenRequestDTO request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Token))
+                {
+                    return BadRequest(new { message = "Token is required" });
+                }
+                var isBlacklisted = await _authService.IsTokenBlacklistedAsync(request.Token);
+                
+                if (isBlacklisted)
+                {
+                    return Ok(new TokenValidationResponseDTO
+                    {
+                        IsBlacklisted = true,
+                        Message = "Token inválido"
+                    });
+                }
+
+                return Ok(new TokenValidationResponseDTO
+                {
+                    IsBlacklisted = false,
+                    Message = "Token válido"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error validating token");
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
     }

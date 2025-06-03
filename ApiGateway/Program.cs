@@ -1,4 +1,5 @@
 using System.Text;
+using ApiGateway.Middleware;
 using ApiGateway.Services;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<UserGrpcClient>();
+
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication(options =>
 {
@@ -36,10 +38,12 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
+
 // Configurar Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
     .ReadFrom.Services(services));
+
 var app = builder.Build();
 
 
@@ -51,6 +55,7 @@ app.UseHttpsRedirection();
 app.UseSwaggerUI();
 app.UseSwagger();
 app.UseAuthentication();
+app.UseMiddleware<BlacklistValidationMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
