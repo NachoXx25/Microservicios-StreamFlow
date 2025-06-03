@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<UserGrpcClient>();
-
+builder.Services.AddSingleton<VideoGrpcClient>();
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication(options =>
 {
@@ -45,10 +45,6 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Services(services));
 
 var app = builder.Build();
-
-
-
-
 
 app.MapOpenApi();
 app.UseHttpsRedirection();
