@@ -41,6 +41,16 @@ namespace AuthMicroservice.src.Application.Services.Implements
         }
 
         /// <summary>
+        /// Valida un token JWT y verifica si está en la lista negra.
+        /// </summary>
+        /// <param name="token">Token a validar.</param>
+        /// <returns>Respuesta de validación del token.</returns>
+        public Task<bool> IsTokenBlacklistedAsync(string token)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Genera un token JWT para el usuario autenticado.
         /// </summary>
         /// <param name="loginDTO">Credenciales.</param>
