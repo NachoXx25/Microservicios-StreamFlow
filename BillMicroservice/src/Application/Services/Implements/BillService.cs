@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BillMicroservice.Services;
 using BillMicroservice.src.Application.DTOs;
 using BillMicroservice.src.Application.Services.Interfaces;
 using BillMicroservice.src.Domain.Models.Bill;
@@ -15,11 +16,14 @@ namespace BillMicroservice.src.Application.Services.Implements
         private readonly IStatusRepository _statusRepository;
         private readonly IUserRepository _userRepository;
 
-        public BillService(IBillRepository billRepository, IStatusRepository statusRepository, IUserRepository userRepository)
+        private readonly IBillEventService _billEventService;
+
+        public BillService(IBillRepository billRepository, IStatusRepository statusRepository, IUserRepository userRepository, IBillEventService billEventService)
         {
             _billRepository = billRepository;
             _statusRepository = statusRepository;
             _userRepository = userRepository;
+            _billEventService = billEventService;
         }
 
         /// <summary>
@@ -256,6 +260,20 @@ namespace BillMicroservice.src.Application.Services.Implements
             // Actualizar la factura
             var updatedBill = await _billRepository.UpdateBillState(id, statusId, paymentDate) ?? 
                 throw new InvalidOperationException("Error al actualizar la factura");
+
+            var user = await _userRepository.GetUserById(updatedBill.UserId) ?? 
+                throw new KeyNotFoundException("El usuario no existe");
+
+            await _billEventService.PublishUpdatedBillEvent(new UpdatedBillDTO
+            {
+                Id = updatedBill.Id,
+                UserId = updatedBill.UserId,
+                UserEmail = user.Email,
+                FirstName = user.Email,
+                LastName = user.LastName,
+                StatusName = status,
+                Amount = updatedBill.AmountToPay
+            });
 
             // Crear y retornar el DTO
             return new CreatedBillDTO
