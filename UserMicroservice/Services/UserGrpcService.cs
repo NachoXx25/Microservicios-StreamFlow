@@ -73,7 +73,8 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para obtener usuario por ID: {request.Id}");
             try
             {
-                if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
+                if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
+                if (!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 var user = await _userService.GetUserById(userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
@@ -175,9 +176,10 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para actualizar usuario con ID: {request.Id}");
             try
             {
-                int.TryParse(request.Id, out int userId);
-                if( request.FirstName.Length < 2 || request.FirstName.Length > 20) throw new Exception("El nombre debe tener entre 2 y 20 letras.");
-                if( request.LastName.Length < 2 || request.LastName.Length > 20) throw new Exception("El apellido debe tener entre 2 y 20 letras.");
+                if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
+                if (!int.TryParse(request.Id, out int userId)) throw new Exception("El ID debe ser un número entero positivo");
+                if (request.FirstName.Length > 20) throw new Exception("El nombre debe tener máximo 20 letras.");
+                if (request.LastName.Length > 20) throw new Exception("El apellido debe tener máximo 20 letras.");
                 var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
                 if (!regex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
                 var updateUser = new UpdateUserDTO
@@ -228,7 +230,8 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para eliminar usuario con ID: {request.Id}");
             try
             {
-                if(!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
+                if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
+                if (!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 await _userService.DeleteUser(userId);
                 Log.Information("Usuario eliminado correctamente");
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
