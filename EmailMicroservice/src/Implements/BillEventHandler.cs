@@ -7,7 +7,9 @@ using EmailMicroservice.src.Interfaces;
 using System.Net.Mail;
 using Serilog;
 using DotNetEnv;
-using System.Net;
+using MimeKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace EmailMicroservice.src.Implements
 {
@@ -15,29 +17,35 @@ namespace EmailMicroservice.src.Implements
     {
         public async Task HandleBillUpdatedEvent(BillUpdated billEvent)
         {
-            Log.Information("📧 Enviando email de factura actualizada a: {UserEmail}, Estado: {BillStatus}",
-               billEvent.UserEmail, billEvent.BillStatus);
+            Log.Information("📧 Enviando email de factura actualizada a: {UserEmail}", billEvent.UserEmail);
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(Env.GetString("FROM_EMAIL"));
-                mailMessage.To.Add(new MailAddress(billEvent.UserEmail));
-                mailMessage.Subject = "Factura Actualizada";
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = GenerateEmailTemplate(billEvent);
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("StreamFlow", Env.GetString("FROM_EMAIL")));
+                message.To.Add(new MailboxAddress(billEvent.UserName, billEvent.UserEmail));
+                message.Subject = "Factura Actualizada";
 
-                using (var smtpClient = new SmtpClient("smtp.gmail.com"))
+                var bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = GenerateEmailTemplate(billEvent);
+                message.Body = bodyBuilder.ToMessageBody();
+
+                using (var smtpClient = new MailKit.Net.Smtp.SmtpClient())
                 {
-                    smtpClient.Port = 587;
-                    smtpClient.Credentials = new NetworkCredential(Env.GetString("FROM_EMAIL"), Env.GetString("FROM_EMAIL_PASSWORD"));
-                    smtpClient.EnableSsl = true;
-                    await smtpClient.SendMailAsync(mailMessage);
+                    await smtpClient.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                    await smtpClient.AuthenticateAsync(
+                        Env.GetString("FROM_EMAIL"), 
+                        Env.GetString("FROM_EMAIL_PASSWORD")
+                    );
+                    await smtpClient.SendAsync(message);
+                    await smtpClient.DisconnectAsync(true);
                 }
+                
                 Log.Information("✅ Email enviado exitosamente a: {UserEmail}", billEvent.UserEmail);
             }
             catch (Exception ex)
             {
-                Log.Error($"Error al manejar el evento de actualización de factura: {ex.Message}");
+                Log.Error("❌ Error al enviar email: {Error}", ex.Message);
+                throw;
             }
         }
 

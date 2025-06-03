@@ -71,12 +71,11 @@ namespace BillMicroservice.Services
 
                     var message = new
                     {
-                        BillId = updatedBill.Id,
-                        updatedBill.UserEmail,
+                        BillId = updatedBill.Id.ToString(),
+                        UserEmail = updatedBill.UserEmail,
                         UserName = userName,
                         BillStatus = updatedBill.StatusName,
-                        BillAmount = updatedBill.Amount,
-                        EventType = "BillUpdated",
+                        BillAmount = updatedBill.Amount.ToString(),
                     };
 
                     var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));

@@ -51,26 +51,33 @@ namespace EmailMicroservice.src.Infrastructure.MessageBroker.Consumers
             var consumerUpdated = new AsyncEventingBasicConsumer(_channelBillUpdated);
             consumerUpdated.Received += async (model, ea) =>
             {
-                var body = ea.Body.ToArray();
-                var message = System.Text.Encoding.UTF8.GetString(body);
-                Log.Information($"Mensaje recibido: {message}");
-
-                var billEvent = System.Text.Json.JsonSerializer.Deserialize<BillUpdated>(message);
-                if (billEvent == null)
+                try
                 {
-                    Log.Error("Failed to deserialize BillUpdatedEvent");
+                    var body = ea.Body.ToArray();
+                    var message = System.Text.Encoding.UTF8.GetString(body);
+                    Log.Information($"Mensaje recibido: {message}");
+
+                    var billEvent = System.Text.Json.JsonSerializer.Deserialize<BillUpdated>(message);
+                    if (billEvent == null)
+                    {
+                        Log.Error("Failed to deserialize BillUpdatedEvent");
+                        return;
+                    }
+                    using (var scope = _provider.CreateScope())
+                    {
+                        var userEventHandlerRepository = scope.ServiceProvider.GetRequiredService<IBillEventHandler>();
+                        await userEventHandlerRepository.HandleBillUpdatedEvent(billEvent);
+                    }
+                    // Confirmamos el mensaje después de procesarlo
+                    _channelBillUpdated.BasicAck(ea.DeliveryTag, false);
+                    }catch (Exception ex)
+                {
+                    Log.Error($"Error al procesar el mensaje: {ex.Message}");
+                    // Si ocurre un error, no confirmamos el mensaje para que pueda ser reintentado
+                    _channelBillUpdated.BasicNack(ea.DeliveryTag, false, true);
                     return;
                 }
-                using (var scope = _provider.CreateScope())
-                {
-                    var userEventHandlerRepository = scope.ServiceProvider.GetRequiredService<IBillEventHandler>();
-                    await userEventHandlerRepository.HandleBillUpdatedEvent(billEvent);
-                }
-                // Confirmamos el mensaje después de procesarlo
-                _channelBillUpdated.BasicAck(ea.DeliveryTag, false);
             };
-
-
 
             _channelBillUpdated.BasicConsume(
                 queue: "bill_updated_queue",

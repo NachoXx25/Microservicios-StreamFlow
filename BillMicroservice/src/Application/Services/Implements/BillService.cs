@@ -269,7 +269,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 Id = updatedBill.Id,
                 UserId = updatedBill.UserId,
                 UserEmail = user.Email,
-                FirstName = user.Email,
+                FirstName = user.FirstName,
                 LastName = user.LastName,
                 StatusName = status,
                 Amount = updatedBill.AmountToPay
