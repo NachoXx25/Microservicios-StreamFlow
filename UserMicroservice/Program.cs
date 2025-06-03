@@ -95,7 +95,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-app.MapGrpcService<UserNotificationService>();
 app.MapOpenApi();
 app.UseHttpsRedirection();
 app.UseSwaggerUI();
