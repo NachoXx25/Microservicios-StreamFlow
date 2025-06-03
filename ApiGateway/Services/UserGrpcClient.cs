@@ -14,14 +14,14 @@ namespace ApiGateway.Services
             _client = new UserGrpcService.UserGrpcServiceClient(_channel);
         }
 
-        public async Task<GetAllUsersResponse> GetAllUsersAsync()
+        public async Task<GetAllUsersResponse> GetAllUsersAsync(GetAllUsersRequest request)
         {
-            return await _client.GetAllUsersAsync(new GetAllUsersRequest());
+            return await _client.GetAllUsersAsync(request);
         }
 
-        public async Task<GetUserByIdResponse> GetUserByIdAsync(string userId)
+        public async Task<GetUserByIdResponse> GetUserByIdAsync(GetUserByIdRequest request)
         {
-            return await _client.GetUserByIdAsync(new GetUserByIdRequest { Id = userId });
+            return await _client.GetUserByIdAsync(request);
         }
 
         public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)

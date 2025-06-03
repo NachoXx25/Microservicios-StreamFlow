@@ -17,6 +17,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<UserGrpcClient>();
+builder.Services.AddSingleton<PlaylistGrpcClient>();
+builder.Services.AddHttpClient();
 
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication(options =>
