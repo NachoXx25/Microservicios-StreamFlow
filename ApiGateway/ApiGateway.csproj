@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\UserService\UserNotification.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\PlaylistService\Playlist.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\VideoService\videos.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\BillService\bills.proto" GrpcServices="Client" />
   </ItemGroup>

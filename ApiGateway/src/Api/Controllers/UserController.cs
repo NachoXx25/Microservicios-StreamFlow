@@ -21,8 +21,8 @@ namespace ApiGateway.src.Api.Controllers
         }
 
         [HttpGet("usuarios")]
-        [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> GetAllUsers()
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllUsers([FromForm] GetAllUsersRequest request)
         {
             try
             {
@@ -34,7 +34,9 @@ namespace ApiGateway.src.Api.Controllers
                 {
                     throw new Exception("No tienes permisos para acceder a esta información.");
                 }
-                var response = await _userGrpcClient.GetAllUsersAsync();
+                request.UserId = User.FindFirst("Id")?.Value;
+                request.UserEmail = User.FindFirst("Email")?.Value;
+                var response = await _userGrpcClient.GetAllUsersAsync(request);
                 return Ok(response.Users);
             }
             catch (Exception ex)
@@ -55,7 +57,13 @@ namespace ApiGateway.src.Api.Controllers
                 }
                 var userIdClaim = User.FindFirst("Id")?.Value;
                 if(userIdClaim != id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes acceder a otros usuarios.");
-                var response = await _userGrpcClient.GetUserByIdAsync(id);
+                var request = new GetUserByIdRequest
+                {
+                    Id = id,
+                    UserId = User.FindFirst("Id")?.Value,
+                    UserEmail = User.FindFirst("Email")?.Value
+                };
+                var response = await _userGrpcClient.GetUserByIdAsync(request);
             return Ok(response.User);
             }catch(Exception ex)
             {
@@ -80,12 +88,15 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         throw new Exception("No tienes permisos para crear usuarios administradores.");
                     }
-                }       
+                }
+                request.UserId = User.FindFirst("Id")?.Value;
+                request.UserEmail = User.FindFirst("Email")?.Value;       
                 var response = await _userGrpcClient.CreateUserAsync(request);
                 return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                return BadRequest( new { Error = ex.Message});
+                return BadRequest(new { Error = ex.Message });
             }
         }
 
@@ -103,6 +114,8 @@ namespace ApiGateway.src.Api.Controllers
                 if (userIdClaim != id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes editar a otros usuarios.");
                 if (!string.IsNullOrEmpty(request.Password)) throw new Exception("No puedes editar la contraseña campo aquí.");
                 request.Id = id;
+                request.UserId = User.FindFirst("Id")?.Value;
+                request.UserEmail = User.FindFirst("Email")?.Value;
                 var response = await _userGrpcClient.UpdateUserAsync(request);
                 return Ok(response);
             }
@@ -131,7 +144,13 @@ namespace ApiGateway.src.Api.Controllers
                 {
                     throw new Exception("No tienes permisos para eliminar usuarios.");
                 }
-                await _userGrpcClient.DeleteUserAsync(new DeleteUserRequest { Id = id });
+                var request = new DeleteUserRequest
+                {
+                    Id = id,
+                    UserId = User.FindFirst("Id")?.Value,
+                    UserEmail = User.FindFirst("Email")?.Value
+                };
+                await _userGrpcClient.DeleteUserAsync(request);
                 return NoContent();
             }
             catch (Exception ex)
