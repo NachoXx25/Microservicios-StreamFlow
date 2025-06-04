@@ -11,8 +11,15 @@ service SocialInteractionsGrpcService {
     rpc GetVideoLikesAndComments (GetVideoLikesAndCommentsRequest) returns (GetVideoLikesAndCommentsResponse);
 }
 
+// Message for monitoring events
+message UserData {
+    string id = 1;
+    string email = 2;
+}
+
 message GiveLikeRequest {
     string video_id = 1;
+    UserData user_data = 2;
 }
 
 message GiveLikeResponse {
@@ -23,6 +30,7 @@ message GiveLikeResponse {
 message MakeCommentRequest {
     string video_id = 1;
     string comment = 2;
+    UserData user_data = 3;
 }
 
 message MakeCommentResponse {
@@ -32,6 +40,7 @@ message MakeCommentResponse {
 
 message GetVideoLikesAndCommentsRequest {
     string video_id = 1;
+    UserData user_data = 2;
 }
 
 message Like {
