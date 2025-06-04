@@ -39,30 +39,30 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
 
                 _channelAction.BasicQos(0, 1, false);
                 _channelAction.QueueDeclare(
-                    "action_queue",
+                    "Action_queue",
                     true,
                     false,
                     false,
                     null
                 );
                 _channelAction.QueueBind(
-                    "action_queue",
+                    "Action_queue",
                     _rabbitMQService.ExchangeName,
-                    "action.event"
+                    "action.generated"
                 );
 
                 _channelError.BasicQos(0, 1, false);
                 _channelError.QueueDeclare(
-                    "error_queue",
+                    "Error_queue",
                     true,
                     false,
                     false,
                     null
                 );
                 _channelError.QueueBind(
-                    "error_queue",
+                    "Error_queue",
                     _rabbitMQService.ExchangeName,
-                    "error.event"
+                    "error.generated"
                 );
 
                 Log.Information("Canales de RabbitMQ inicializados correctamente.");
