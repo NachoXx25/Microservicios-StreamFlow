@@ -45,11 +45,6 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    await DataSeeder.Initialize(scope.ServiceProvider);
-}
-
 app.MapGrpcService<MonitoringGrpcService>();
 
 app.Run();
