@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using ApiGateway.Services;
 using ApiGateway.Protos.PlaylistService;
 using Grpc.Net.Client;
+using Grpc.Core;
+using Serilog;
 namespace ApiGateway.Services
 {
     public class PlaylistGrpcClient
@@ -20,27 +22,75 @@ namespace ApiGateway.Services
         }
         public async Task<GetPlaylistsByUserIdResponse> GetPlaylistsByUserIdAsync(GetPlaylistsByUserIdRequest request)
         {
-            return await _client.GetPlaylistsByUserIdAsync(request);
+            try
+            {
+                return await _client.GetPlaylistsByUserIdAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC obteniendo playlists");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
         public async Task<PlaylistCreatedResponse> CreatePlaylistAsync(CreatePlaylistRequest request)
         {
-            return await _client.CreatePlaylistAsync(request);
+            try
+            {
+                return await _client.CreatePlaylistAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC creando playlist");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
         public async Task<AddVideoToPlaylistResponse> AddVideoToPlaylistAsync(AddVideoToPlaylistRequest request)
         {
-            return await _client.AddVideoToPlaylistAsync(request);
+            try
+            {
+                return await _client.AddVideoToPlaylistAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC agregando video a playlist");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
         public async Task<GetVideosByPlaylistIdResponse> GetVideosByPlaylistIdAsync(GetVideosByPlaylistIdRequest request)
         {
-            return await _client.GetVideosByPlaylistIdAsync(request);
+             try
+            {
+                return await _client.GetVideosByPlaylistIdAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC obteniendo videos de playlist");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
         public async Task<RemoveVideoFromPlaylistResponse> RemoveVideoFromPlaylistAsync(RemoveVideoFromPlaylistRequest request)
         {
-            return await _client.RemoveVideoFromPlaylistAsync(request);
+            try
+            {
+                return await _client.RemoveVideoFromPlaylistAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC removiendo video de playlist");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
         public async Task<DeletePlaylistResponse> DeletePlaylistAsync(DeletePlaylistRequest request)
         {
-            return await _client.DeletePlaylistAsync(request);
+            try
+            {
+                return await _client.DeletePlaylistAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC eliminando playlist");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
     }
 }

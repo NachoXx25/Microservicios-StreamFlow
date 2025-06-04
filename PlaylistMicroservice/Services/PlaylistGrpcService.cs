@@ -26,11 +26,6 @@ namespace PlaylistMicroservice.Services
                 if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
                 if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
                 var playlists = await _playlistService.GetPlaylistsByUserId(userId);
-                if(playlists.Count() == 0) 
-                {
-                    Log.Warning("No se encontraron listas de reproducción para el usuario {UserId}", userId);
-                    throw new Exception($"No se encontraron listas de reproducción para el usuario {userId}");
-                }
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
                     ActionMessage = $"Obtener playlist por id de usuario",

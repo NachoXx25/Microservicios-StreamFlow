@@ -117,15 +117,16 @@ namespace UserMicroservice.Services
                 Log.Information("Recibida petición para crear un nuevo usuario");
                 var nameRegex = new Regex(@"^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s\-]+$");
                 var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-                if (!nameRegex.IsMatch(request.FirstName)) throw new Exception("El Nombre solo puede contener carácteres del abecedario español.");
-                if (!nameRegex.IsMatch(request.LastName)) throw new Exception("El Apellido solo puede contener carácteres del abecedario español.");
-                if (!emailRegex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
                 if (request.FirstName.Length < 2 || request.FirstName.Length > 20) throw new Exception("El Nombre debe tener entre 2 y 20 letras.");
                 if (request.LastName.Length < 2 || request.LastName.Length > 20) throw new Exception("El Apellido debe tener entre 2 y 20 letras.");
                 if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8 || request.Password.Length > 20) throw new Exception("La contraseña debe tener entre 8 y 20 caracteres.");
                 if (string.IsNullOrEmpty(request.ConfirmPassword) || request.ConfirmPassword != request.Password) throw new Exception("La confirmación de la contraseña no coincide.");
-                if (string.IsNullOrEmpty(request.Role) || (request.Role != "Administrador" && request.Role != "Cliente")) throw new Exception("El Rol debe ser 'Admin' o 'User'.");
+                if (string.IsNullOrEmpty(request.Role) || (request.Role != "Administrador" && request.Role != "Cliente")) throw new Exception("El Rol debe ser 'Administrador' o 'Cliente'.");
                 if (string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.ConfirmPassword) || string.IsNullOrEmpty(request.Role)) throw new Exception("Todos los campos son obligatorios.");
+                if (!nameRegex.IsMatch(request.FirstName)) throw new Exception("El Nombre solo puede contener carácteres del abecedario español.");
+                if (!nameRegex.IsMatch(request.LastName)) throw new Exception("El Apellido solo puede contener carácteres del abecedario español.");
+                if (!emailRegex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
+    
                 var userDTO = new CreateUserDTO
                 {
                     FirstName = request.FirstName,
@@ -180,8 +181,11 @@ namespace UserMicroservice.Services
                 if (!int.TryParse(request.Id, out int userId)) throw new Exception("El ID debe ser un número entero positivo");
                 if (request.FirstName.Length > 20) throw new Exception("El nombre debe tener máximo 20 letras.");
                 if (request.LastName.Length > 20) throw new Exception("El apellido debe tener máximo 20 letras.");
-                var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-                if (!regex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
+                if (!string.IsNullOrEmpty(request.Email))
+                {
+                    var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                    if (!regex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
+                }
                 var updateUser = new UpdateUserDTO
                 {
                     FirstName = request.FirstName,

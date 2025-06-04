@@ -1,5 +1,7 @@
 using ApiGateway.Protos.UserService;
+using Grpc.Core;
 using Grpc.Net.Client;
+using Serilog;
 namespace ApiGateway.Services
 {
     public class UserGrpcClient
@@ -16,27 +18,67 @@ namespace ApiGateway.Services
 
         public async Task<GetAllUsersResponse> GetAllUsersAsync(GetAllUsersRequest request)
         {
-            return await _client.GetAllUsersAsync(request);
+            try
+            {
+                return await _client.GetAllUsersAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC obteniendo todos los usuarios");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
 
         public async Task<GetUserByIdResponse> GetUserByIdAsync(GetUserByIdRequest request)
         {
-            return await _client.GetUserByIdAsync(request);
+            try
+            {
+                return await _client.GetUserByIdAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC obteniendo usuario por ID");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
 
         public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
         {
-            return await _client.CreateUserAsync(request);
+            try
+            {
+                return await _client.CreateUserAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC creando usuario");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
 
         public async Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest request)
         {
-            return await _client.UpdateUserAsync(request);
+            try
+            {
+                return await _client.UpdateUserAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC actualizando usuario");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
 
         public async Task DeleteUserAsync(DeleteUserRequest request)
         {
-            await _client.DeleteUserAsync(request);
+            try
+            {
+                await _client.DeleteUserAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                Log.Error(ex, "Error gRPC eliminando usuario");
+                throw new InvalidOperationException(ex.Status.Detail);
+            }
         }
 
         public void Dispose()

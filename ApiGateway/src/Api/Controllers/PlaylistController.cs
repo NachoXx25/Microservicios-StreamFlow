@@ -6,6 +6,7 @@ using ApiGateway.Protos.PlaylistService;
 using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace ApiGateway.src.Api.Controllers
 {
@@ -43,21 +44,18 @@ namespace ApiGateway.src.Api.Controllers
 
         [HttpPost("listas-reproduccion")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreatePlaylist([FromBody] string name)
-        {
+        public async Task<IActionResult> CreatePlaylist([FromForm] string name)
+        { 
             try
             {
                 if (User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
-                if (string.IsNullOrEmpty(name))
-                {
-                    return BadRequest(new { Error = "El nombre de la lista de reproducción es requerido" });
-                }
                 var request = new CreatePlaylistRequest();
+                Log.Information("Creando lista de reproducción: {Name}", name);
                 request.Name = name;
                 request.UserId = User?.FindFirst("Id")?.Value ?? request.UserId;
                 request.UserEmail = User?.FindFirst("Email")?.Value ?? request.UserEmail;
                 var response = await _playlistGrpcClient.CreatePlaylistAsync(request);
-                return CreatedAtAction(nameof(GetPlaylistsByUserId), new { userId = request.UserId }, response);
+                return CreatedAtAction(nameof(GetPlaylistsByUserId), response);
             }
             catch (Exception ex)
             {
@@ -67,7 +65,7 @@ namespace ApiGateway.src.Api.Controllers
 
         [HttpPost("listas-reproduccion/{id}/videos")]
         [AllowAnonymous]
-        public async Task<IActionResult> AddVideoToPlaylist(string id, [FromBody] string videoId)
+        public async Task<IActionResult> AddVideoToPlaylist(string id, [FromForm] string videoId)
         {
             try
             {
@@ -118,7 +116,7 @@ namespace ApiGateway.src.Api.Controllers
 
         [HttpDelete("listas-reproduccion/{id}/videos")]
         [AllowAnonymous]
-        public async Task<IActionResult> RemoveVideoFromPlaylist(string id, [FromBody] string videoId)
+        public async Task<IActionResult> RemoveVideoFromPlaylist(string id, [FromForm] string videoId)
         {
             try
             {
