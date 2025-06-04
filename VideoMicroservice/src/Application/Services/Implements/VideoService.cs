@@ -55,6 +55,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = video.Title,
                 Description = video.Description,
                 Genre = video.Genre,
+                Likes = video.Likes
             }).ToArray();
 
             return mappedVideos;
@@ -83,6 +84,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = video.Title,
                 Description = video.Description,
                 Genre = video.Genre,
+                Likes = video.Likes
             };
 
             return mappedVideo;
@@ -134,6 +136,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Description = video.Description,
                 Genre = video.Genre,
                 IsDeleted = false,
+                Likes = 0,
             };
 
             // Subir el video y obtenerlo
@@ -148,6 +151,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = uploadedVideo.Title,
                 Description = uploadedVideo.Description,
                 Genre = uploadedVideo.Genre,
+                Likes = uploadedVideo.Likes,
             };
 
             return mappedVideo;

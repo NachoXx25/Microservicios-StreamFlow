@@ -35,11 +35,11 @@ namespace VideoMicroservice.Services
 
         public VideoEventService()
         {
-            _hostname = Env.GetString("RABBITMQ_HOST");
-            _password = Env.GetString("RABBITMQ_PASSWORD");
-            _username = Env.GetString("RABBITMQ_USERNAME");
+            _hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
+            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
+            _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
             _port = Env.GetInt("RABBITMQ_PORT");
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE");
+            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "VideoExchange";
 
             _factory = new ConnectionFactory()
             {
@@ -67,6 +67,7 @@ namespace VideoMicroservice.Services
                 DeclareAndBindQueue(playlistChannel, "playlist_video_created_queue", "playlist.video.created");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_updated_queue", "playlist.video.updated");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
+                DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
             }
             
             //Channel for social interactions service
@@ -83,7 +84,7 @@ namespace VideoMicroservice.Services
                 // Queues for social interactions consumer
                 DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_created_queue", "social.int.video.created");
                 DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_updated_queue", "social.int.video.updated");
-                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_deleted_queue", "social.int.video.deleted");
+                DeclareAndBindQueue(socialInteractionsChannel, "social_interactions_video_deleted_queue", "social.int.video.deleted");
             }
         }
 
@@ -91,13 +92,14 @@ namespace VideoMicroservice.Services
         {
             try
             {
+
                 var stringId = video.Id.ToString();
 
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    Id = video.Id.ToString(),
-                    Title = video.Title,
+                    Id = stringId,
+                    video.Title,
                     EventType = "VideoCreated"
                 };
 
@@ -117,7 +119,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    id = stringId,
+                    Id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,
@@ -149,10 +151,13 @@ namespace VideoMicroservice.Services
 
                 var stringId = video.Id.ToString();
 
+
+                var stringId = video.Id.ToString();
+
                 var message = new
                 {
-                    Id = video.Id.ToString(),
-                    IsDeleted = video.IsDeleted,
+                    Id = stringId,
+                    video.IsDeleted,
                     EventType = "VideoDeleted"
                 };
 
@@ -190,11 +195,13 @@ namespace VideoMicroservice.Services
            {
                 var stringId = video.Id.ToString();
 
+                var stringId = video.Id.ToString();
+
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
-                    Id = video.Id.ToString(),
-                    Title = video.Title,
+                    Id = stringId,
+                    video.Title,
                     EventType = "VideoUpdated"
                 };
 
@@ -214,7 +221,7 @@ namespace VideoMicroservice.Services
                 // Publish the event to the social interactions service
                 var socialInteractionsMessage = new 
                 {
-                    id = stringId,
+                    Id = stringId,
                     video.Title,
                     video.Description,
                     video.Genre,

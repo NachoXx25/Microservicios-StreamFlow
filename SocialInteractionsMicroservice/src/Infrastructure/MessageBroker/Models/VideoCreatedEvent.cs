@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VideoMicroservice.src.Application.DTOs
+namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Models
 {
-    public class GetVideoDTO
+    public class VideoCreatedEvent
     {
         public required string Id { get; set; }
 
@@ -15,6 +15,6 @@ namespace VideoMicroservice.src.Application.DTOs
 
         public required string Genre { get; set; }
 
-        public required int Likes { get; set; }
+        public required bool IsDeleted { get; set; }
     }
 }

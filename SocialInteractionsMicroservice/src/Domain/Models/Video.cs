@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.EntityFrameworkCore;
 
-namespace VideoMicroservice.src.Application.DTOs
+namespace SocialInteractionsMicroservice.src.Domain.Models
 {
-    public class GetVideoDTO
+    [Collection("Videos")]
+    public class Video
     {
-        public required string Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public required string Title { get; set; }
 
@@ -15,6 +18,6 @@ namespace VideoMicroservice.src.Application.DTOs
 
         public required string Genre { get; set; }
 
-        public required int Likes { get; set; }
+        public required bool IsDeleted { get; set; } = false;
     }
 }
