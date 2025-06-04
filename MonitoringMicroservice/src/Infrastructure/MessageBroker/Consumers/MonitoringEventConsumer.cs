@@ -37,6 +37,9 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
             {
                 _connection = _rabbitMQService.CreateConnection();
 
+                _channelAction = _connection.CreateModel();
+                _channelError = _connection.CreateModel();
+
                 _channelAction.BasicQos(0, 1, false);
                 _channelAction.QueueDeclare(
                     "Action_queue",
@@ -148,14 +151,14 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
 
             // Consumption of action
             _channelAction.BasicConsume(
-                "action_queue",
+                "Action_queue",
                 false,
                 actionConsumer
             );
 
             // Consumption of error
             _channelError.BasicConsume(
-                "error_queue",
+                "Error_queue",
                 false,
                 errorConsumer
             );
