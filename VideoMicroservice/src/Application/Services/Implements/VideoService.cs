@@ -99,15 +99,15 @@ namespace VideoMicroservice.src.Application.Services.Implements
         public async Task<UpdateVideoDTO> UpdateVideo(string id, UpdateVideoDTO updateVideo)
         {
            // Obtener el video por id
-            var video = await _videoRepository.GetVideoById(id) ?? throw new ArgumentException("Video no encontrado");
+            var video = await _videoRepository.GetVideoById(id) ?? throw new KeyNotFoundException("Video no encontrado");
 
             // Validar que el video no esté eliminado antes de actualizarlo
             if(video.IsDeleted){
-                throw new ArgumentException("No se puede actualizar un video eliminado");
+                throw new InvalidOperationException("No se puede actualizar un video eliminado");
             }
 
             //Actualizar el video y obtenerlo
-            var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new ArgumentException("Error al actualizar el video");
+            var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new InvalidOperationException("Error al actualizar el video");
 
             await _videoEventService.PublishUpdatedVideo(updatedVideo);
 
@@ -140,7 +140,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
             };
 
             // Subir el video y obtenerlo
-            var uploadedVideo = await _videoRepository.UploadVideo(toUploadVideo) ?? throw new ArgumentException("Error al subir el video");
+            var uploadedVideo = await _videoRepository.UploadVideo(toUploadVideo) ?? throw new InvalidOperationException("Error al subir el video");
 
             await _videoEventService.PublishCreatedVideo(uploadedVideo);
 
