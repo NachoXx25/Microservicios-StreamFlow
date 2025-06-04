@@ -18,7 +18,8 @@ Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IVideoEventService, VideoEventService>();
-builder.Services.AddScoped<IVideoService,VideoService>();
+builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<IMonitoringEventService,MonitoringEventService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ISocialInteractionEventHandlerRepository, SocialInteractionEventHandlerRepository>();
 builder.Services.AddGrpc();
