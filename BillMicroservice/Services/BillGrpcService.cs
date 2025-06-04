@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using BillMicroservice.Protos;
 using BillMicroservice.src.Application.DTOs;
 using BillMicroservice.src.Application.Services.Interfaces;
+using BillMicroservice.src.Infrastructure.MessageBroker.Models;
 using Grpc.Core;
+using Microsoft.VisualBasic;
 
 namespace BillMicroservice.Services
 {
@@ -13,8 +15,11 @@ namespace BillMicroservice.Services
     {
         private readonly IBillService _billService;
 
-        public BillGrpcService(IBillService billService)
+        private readonly IMonitoringEventService _monitoringEventService;
+
+        public BillGrpcService(IBillService billService, IMonitoringEventService monitoringEventService)
         {
+            _monitoringEventService = monitoringEventService;
             _billService = billService;
         }
 
@@ -22,7 +27,15 @@ namespace BillMicroservice.Services
         {
             try
             {
-                Console.WriteLine($"Monto a pagar: {request.Amount}");
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Crear factura",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "POST/facturas"
+                });
+
                 if (request.Amount < 0)
                 {
                     throw new ArgumentException("El monto a pagar no puede ser negativo");
@@ -37,10 +50,15 @@ namespace BillMicroservice.Services
 
                 var createdBill = await _billService.AddBill(billDto);
 
+                if (createdBill == null)
+                {
+                    throw new KeyNotFoundException("Error al crear la factura");
+                }                   
+
                 var response = new Bill
                 {
-                    BillId = createdBill.Id,
-                    UserId = createdBill.UserId,
+                    BillId = createdBill.Id.ToString(),
+                    UserId = createdBill.UserId.ToString(),
                     BillStatus = createdBill.Status,
                     Amount = createdBill.AmountToPay,
                     CreatedAt = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(createdBill.CreatedAt.ToUniversalTime()),
@@ -55,8 +73,38 @@ namespace BillMicroservice.Services
                 };
 
             }
+            catch (KeyNotFoundException ex)
+            {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                });
+                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+            }
+            catch (ArgumentException ex)
+            {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                });
+                throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+            }
+
             catch (Exception ex)
             {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al crear la factura: {ex.Message}",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -65,11 +113,19 @@ namespace BillMicroservice.Services
         {
             try
             {
-                var bill = await _billService.GetBillById(request.BillId, request.UserId, request.UserRole) ?? throw new RpcException(new Status(StatusCode.NotFound, "Factura no encontrada"));
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Obtener factura por ID",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = $"GET/facturas/{request.BillId}"
+                });
+                var bill = await _billService.GetBillById(request.BillId, request.UserId, request.UserRole) ?? throw new KeyNotFoundException("Factura no encontrada");
                 var response = new Bill
                 {
-                    BillId = bill.Id,
-                    UserId = bill.UserId,
+                    BillId = bill.Id.ToString(),
+                    UserId = bill.UserId.ToString(),
                     BillStatus = bill.Status,
                     Amount = bill.AmountToPay,
                     CreatedAt = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(bill.CreatedAt.ToUniversalTime()),
@@ -83,8 +139,26 @@ namespace BillMicroservice.Services
                     Bill = response,
                 };
             }
+            catch (KeyNotFoundException ex)
+            {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                });
+                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+            }
             catch (Exception ex)
             {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al obtener la factura con id {request.BillId}: {ex.Message}",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -93,12 +167,21 @@ namespace BillMicroservice.Services
         {
             try
             {
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Actualizar estado de factura",
+                    Service = "BillMicroservice",
+                    UserId = request.UserData.Id,
+                    UserEmail = request.UserData.Email,
+                    UrlMethod = $"PATCH/facturas/{request.BillId}"
+                });
+
                 var updatedBill = await _billService.UpdateBillStatus(request.BillId, request.BillStatus);
 
                 var response = new Bill
                 {
-                    BillId = updatedBill.Id,
-                    UserId = updatedBill.UserId,
+                    BillId = updatedBill.Id.ToString(),
+                    UserId = updatedBill.UserId.ToString(),
                     BillStatus = updatedBill.Status,
                     Amount = updatedBill.AmountToPay,
                     CreatedAt = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(updatedBill.CreatedAt.ToUniversalTime()),
@@ -114,6 +197,13 @@ namespace BillMicroservice.Services
             }
             catch (Exception ex)
             {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al actualizar la factura con id {request.BillId}: {ex.Message}",
+                    Service = "BillMicroservice",
+                    UserId = request.UserData.Id,
+                    UserEmail = request.UserData.Email,
+                });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -122,6 +212,14 @@ namespace BillMicroservice.Services
         {
             try
             {
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Eliminar factura",
+                    Service = "BillMicroservice",
+                    UserId = request.UserData.Id,
+                    UserEmail = request.UserData.Email,
+                    UrlMethod = $"DELETE/facturas/{request.BillId}"
+                });
                 var deletedBill = await _billService.DeleteBill(request.BillId);
 
                 return new DeleteBillResponse
@@ -131,6 +229,13 @@ namespace BillMicroservice.Services
             }
             catch (Exception ex)
             {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al eliminar la factura con id {request.BillId}: {ex.Message}",
+                    Service = "BillMicroservice",
+                    UserId = request.UserData.Id,
+                    UserEmail = request.UserData.Email,
+                });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -139,8 +244,17 @@ namespace BillMicroservice.Services
         {
             try
             {
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Listar facturas por usuario",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail,
+                    UrlMethod = "GET/facturas"
+                });
+
                 var bills = await _billService.GetBills(request.UserId, request.UserRole, request.BillStatus)
-                ?? throw new RpcException(new Status(StatusCode.NotFound, "No se encontraron facturas"));
+                ?? throw new KeyNotFoundException("No se encontraron facturas");
 
                 var response = new GetAllBillsResponse();
 
@@ -148,8 +262,8 @@ namespace BillMicroservice.Services
                 {
                     var billResponse = new Bill
                     {
-                        BillId = bill.Id,
-                        UserId = bill.UserId,
+                        BillId = bill.Id.ToString(),
+                        UserId = bill.UserId.ToString(),
                         BillStatus = bill.Status,
                         Amount = bill.AmountToPay,
                         CreatedAt = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(bill.CreatedAt.ToUniversalTime()),
@@ -163,8 +277,26 @@ namespace BillMicroservice.Services
 
                 return response;
             }
+            catch (KeyNotFoundException ex)
+            {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = ex.Message,
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail
+                });
+                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+            }
             catch (Exception ex)
             {
+                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                {
+                    ErrorMessage = $"Error al obtener las facturas: {ex.Message}",
+                    Service = "BillMicroservice",
+                    UserId = request.UserId,
+                    UserEmail = request.UserEmail
+                });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
