@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AuthMicroservice.Services;
 using AuthMicroservice.src.Application.DTOs;
@@ -32,9 +33,12 @@ namespace AuthMicroservice.src.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
+                if(string.IsNullOrWhiteSpace(loginDTO.Email)) throw new ArgumentNullException("Email es requerido");
+                if(string.IsNullOrWhiteSpace(loginDTO.Password)) throw new ArgumentNullException("Password es requerido");
+                var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                if (!regex.IsMatch(loginDTO.Email)) throw new ArgumentException("El formato del email es invalido");
                 var result = await _authService.Login(loginDTO);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
@@ -44,7 +48,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     UrlMethod = "POST/auth/login",
                     Service = "AuthMicroservice"
                 });
-                return Ok(new { result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -53,7 +57,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     ErrorMessage = $"Intento de inicio de sesion: {ex.Message}",
                     Service = "AuthMicroservice"
                 });
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -61,9 +65,15 @@ namespace AuthMicroservice.src.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(int id, UpdatePasswordDTO updatePasswordDTO)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
+                if (string.IsNullOrWhiteSpace(updatePasswordDTO.CurrentPassword)) throw new ArgumentNullException("La contraseña actual es requerida");
+                if (string.IsNullOrWhiteSpace(updatePasswordDTO.NewPassword)) throw new ArgumentNullException("La nueva contraseña es requerida");
+                if (string.IsNullOrWhiteSpace(updatePasswordDTO.ConfirmPassword)) throw new ArgumentNullException("La confirmación de la nueva contraseña es requerida");
+                if (updatePasswordDTO.NewPassword != updatePasswordDTO.ConfirmPassword) throw new ArgumentException("Las contraseñas no coinciden");
+                if (updatePasswordDTO.NewPassword.Length < 8 || updatePasswordDTO.NewPassword.Length > 20) throw new ArgumentException("La contraseña debe tener entre 8 y 20 caracteres");
+                var regex = new Regex(@"^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ])[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9]+$");
+                if (!regex.IsMatch(updatePasswordDTO.NewPassword)) throw new ArgumentException("La contraseña debe ser alfanumérica y contener al menos una mayúscula");
                 if (!User.Identity?.IsAuthenticated ?? true) return Unauthorized(new { error = "No autenticado" });
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
@@ -79,7 +89,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     UrlMethod = $"PATCH/auth/usuarios/{id}",
                     Service = "AuthMicroservice"
                 });
-                return Ok(new { result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -90,7 +100,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
                     Service = "AuthMicroservice"
                 });
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -99,12 +109,12 @@ namespace AuthMicroservice.src.Api.Controllers
         /// </summary>
         /// <returns>Mensaje de éxito o error.</returns>
         [HttpPost("logout")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
+                if (!User.Identity?.IsAuthenticated ?? true) return Unauthorized("No autenticado");
                 var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
                 var result = await _authService.Logout(jti);
@@ -116,7 +126,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     UrlMethod = "POST/auth/logout",
                     Service = "AuthMicroservice"
                 });
-                return Ok(new { result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -127,7 +137,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
                     Service = "AuthMicroservice"
                 });
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
         
@@ -138,7 +148,14 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 if (string.IsNullOrEmpty(request.Token))
                 {
-                    return BadRequest(new { message = "Token is required" });
+                    await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                    {
+                        ErrorMessage = "El token es requerido para la validación",
+                        UserId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                        UserEmail = User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                        Service = "AuthMicroservice"
+                    });
+                    return BadRequest(new { message = "El token es requerido" });
                 }
                 var isBlacklisted = await _authService.IsTokenBlacklistedAsync(request.Token);
                 
