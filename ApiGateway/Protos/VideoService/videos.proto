@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option csharp_namespace = "ApiGateway.Protos.VideoService";
+
+package videogrpcservice;
+
+service VideoGrpcService {
+    // Upload a video
+    rpc UploadVideo (UploadVideoRequest) returns (Video);
+    // Get video details
+    rpc GetVideoById (GetVideoByIdRequest) returns (GetVideoByIdResponse);
+    // List videos
+    rpc UpdateVideo (UpdateVideoRequest) returns (UpdateVideoResponse);
+    // Delete video
+    rpc DeleteVideo (DeleteVideoRequest) returns (DeleteVideoResponse);
+    // List all videos
+    rpc GetAllVideos (GetAllVideosRequest) returns (GetAllVideosResponse);
+}
+
+message Video {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    uint32 likes = 4;
+    string genre = 5;
+    bool is_deleted = 6;
+}
+
+message UploadVideoRequest {
+    string title = 1;
+    string description = 2;
+    string genre = 3;
+}
+
+message GetVideoByIdRequest {
+    string id = 1;
+}
+
+message GetVideoByIdResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    uint32 likes = 4;
+    string genre = 5;
+}
+
+message UpdateVideoRequest {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string genre = 4;
+}
+
+message UpdateVideoResponse {
+    string title = 1;
+    string description = 2;
+    string genre = 3;
+}
+
+message DeleteVideoRequest {
+    string id = 1;
+}
+
+message DeleteVideoResponse {}
+
+message GetAllVideosRequest {
+    string title = 1;
+    string genre = 2;
+}
+
+message GetAllVideosResponse {
+    repeated Video videos = 1;
+}

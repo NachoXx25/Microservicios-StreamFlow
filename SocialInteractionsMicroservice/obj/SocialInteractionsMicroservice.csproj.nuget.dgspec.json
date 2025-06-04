@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj": {}
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj": {
+    "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj",
+        "projectUniqueName": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj",
         "projectName": "SocialInteractionsMicroservice",
-        "projectPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj",
+        "projectPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\SocialInteractionsMicroservice.csproj",
         "packagesPath": "C:\\Users\\TheNachoXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\obj\\",
+        "outputPath": "C:\\Users\\TheNachoXx\\OneDrive\\Escritorio\\Taller microservicios\\Microservicios-StreamFlow\\SocialInteractionsMicroservice\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -51,9 +51,51 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Bogus": {
+              "target": "Package",
+              "version": "[35.6.2, )"
+            },
+            "DotNetEnv": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
             "Grpc.AspNetCore": {
               "target": "Package",
               "version": "[2.64.0, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "MongoDB.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.2.3, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Serilog": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.3.2, )"
             }
           },
           "imports": [
