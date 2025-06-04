@@ -151,9 +151,6 @@ namespace VideoMicroservice.Services
 
                 var stringId = video.Id.ToString();
 
-
-                var stringId = video.Id.ToString();
-
                 var message = new
                 {
                     Id = stringId,
@@ -194,9 +191,7 @@ namespace VideoMicroservice.Services
            try
            {
                 var stringId = video.Id.ToString();
-
-                var stringId = video.Id.ToString();
-
+                
                 // Publish the event to the playlist service
                 var playlistMessage = new 
                 {
