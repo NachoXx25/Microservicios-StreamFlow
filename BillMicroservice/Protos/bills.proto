@@ -20,8 +20,8 @@ message UserData {
 }
 
 message Bill {
-    int32 bill_id = 1;
-    int32 user_id = 2;
+    string bill_id = 1;
+    string user_id = 2;
     string bill_status = 3;
     int32 amount = 4;
     google.protobuf.Timestamp created_at = 5;
@@ -29,10 +29,10 @@ message Bill {
 }
 
 message CreateBillRequest {
-    int32 user_id = 1;
+    string user_id = 1;
     string bill_status = 2;
     int32 amount = 3;
-    UserData user_data = 4;
+    string user_email = 4;
 }
 
 message CreateBillResponse {
@@ -40,10 +40,10 @@ message CreateBillResponse {
 }
 
 message GetBillByIdRequest {
-    int32 bill_id = 1;
-    int32 user_id = 2;
+    string bill_id = 1;
+    string user_id = 2;
     string user_role = 3;
-    UserData user_data = 4;
+    string user_email = 4;
 }
 
 message GetBillByIdResponse {
@@ -51,7 +51,7 @@ message GetBillByIdResponse {
 }
 
 message UpdateBillRequest {
-    int32 bill_id = 1;
+    string bill_id = 1;
     string bill_status = 2;
     UserData user_data = 3;
 }
@@ -61,7 +61,7 @@ message UpdateBillResponse {
 }
 
 message DeleteBillRequest {
-    int32 bill_id = 1;
+    string bill_id = 1;
     UserData user_data = 2;
 }
 
@@ -70,10 +70,10 @@ message DeleteBillResponse {
 }
 
 message GetAllBillsRequest {
-    int32 user_id = 1;
+    string user_id = 1;
     string user_role = 2;
     optional string bill_status = 3;
-    UserData user_data = 4;
+    string user_email = 4;
 }
 
 message GetAllBillsResponse {
