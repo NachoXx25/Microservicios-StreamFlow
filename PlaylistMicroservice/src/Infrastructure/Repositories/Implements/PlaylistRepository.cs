@@ -102,7 +102,6 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
                 .FirstOrDefaultAsync();
             if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}");
             if (playlist.IsDeleted) throw new Exception($"La playlist con ID: {playlistId} está eliminada");
-            if (playlist.Videos.Count == 0) throw new Exception($"No tienes videos en esta playlist");
             return playlist.Videos.Where(v => !v.IsDeleted).Select(v => new VideosByPlaylistDTO
             {
                 VideoId = v.Id,

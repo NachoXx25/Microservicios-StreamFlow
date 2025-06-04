@@ -102,7 +102,7 @@ namespace ApiGateway.src.Api.Controllers
 
         [HttpPatch("usuarios/{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUser(string id, [FromForm] UpdateUserRequest request)
         {
             try
             {

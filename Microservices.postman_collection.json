@@ -1,0 +1,578 @@
+{
+	"info": {
+		"_postman_id": "6d0703dc-cc98-4372-83d0-d3dc20766ae7",
+		"name": "Microservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33657530"
+	},
+	"item": [
+		{
+			"name": "Api Gateway",
+			"item": [
+				{
+					"name": "Playlist Service",
+					"item": [
+						{
+							"name": "Ver listas de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ver videos de lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crear lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "prueba2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Añadir video a lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "videoId",
+											"value": "6830ed4a8a55ed031cddac7b",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar video de lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "videoId",
+											"value": "6830ed4a8a55ed031cddac7b",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User service",
+					"item": [
+						{
+							"name": "Crear usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"Sebastián\",\r\n  \"lastName\": \"Núñez\",\r\n  \"email\": \"seba@gmail.com\",\r\n  \"password\": \"Seba1234\",\r\n  \"confirmPassword\": \"Seba1234\",\r\n  \"role\": \"Clientes\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener usuario por ID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/usuarios/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "FirstName",
+											"value": "Ignacio",
+											"type": "text"
+										},
+										{
+											"key": "LastName",
+											"value": "Valenzuela",
+											"type": "text"
+										},
+										{
+											"key": "Email",
+											"value": "none",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "Password",
+											"value": "xd",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar todos los usuarios",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "FirstName",
+											"value": "j",
+											"type": "text"
+										},
+										{
+											"key": "LastName",
+											"value": "R",
+											"type": "text"
+										},
+										{
+											"key": "Email",
+											"value": "big",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth Service",
+					"item": [
+						{
+							"name": "Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var res = pm.response.json();\r",
+											"pm.collectionVariables.set(\"authToken\", res.token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"juana@gmail.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/auth/login",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cambiar contraseña",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"currentPassword\": \"Password123!\",\r\n    \"newPassword\": \"Password12345\",\r\n    \"confirmPassword\": \"Password12345\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/auth/usuarios/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"usuarios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/auth/logout",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "http://localhost:5184",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "authToken",
+			"value": ""
+		}
+	]
+}
