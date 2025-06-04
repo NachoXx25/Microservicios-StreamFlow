@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+option csharp_namespace = "ApiGateway.Protos.BillService";
+
+import "google/protobuf/timestamp.proto";
+
+package bills;
+
+service BillGrpcService {
+  rpc CreateBill (CreateBillRequest) returns (CreateBillResponse);
+  rpc GetBillById (GetBillByIdRequest) returns (GetBillByIdResponse);
+  rpc UpdateBill (UpdateBillRequest) returns (UpdateBillResponse);
+  rpc DeleteBill (DeleteBillRequest) returns (DeleteBillResponse);
+  rpc GetAllBills (GetAllBillsRequest) returns (GetAllBillsResponse);
+}
+
+message Bill {
+    int32 bill_id = 1;
+    int32 user_id = 2;
+    string bill_status = 3;
+    int32 amount = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp payment_date = 6;
+}
+
+message CreateBillRequest {
+    int32 user_id = 1;
+    string bill_status = 2;
+    int32 amount = 3;
+}
+
+message CreateBillResponse {
+    Bill bill = 1;
+}
+
+message GetBillByIdRequest {
+    int32 bill_id = 1;
+    int32 user_id = 2;
+    string user_role = 3;
+}
+
+message GetBillByIdResponse {
+    Bill bill = 1;
+}
+
+message UpdateBillRequest {
+    int32 bill_id = 1;
+    string bill_status = 2;
+}
+
+message UpdateBillResponse {
+    Bill bill = 1;
+}
+
+message DeleteBillRequest {
+    int32 bill_id = 1;
+}
+
+message DeleteBillResponse {
+    
+}
+
+message GetAllBillsRequest {
+    int32 user_id = 1;
+    string user_role = 2;
+    optional string bill_status = 3;
+}
+
+message GetAllBillsResponse {
+    repeated Bill bills = 1;
+}

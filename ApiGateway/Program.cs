@@ -20,6 +20,7 @@ builder.Services.AddSingleton<UserGrpcClient>();
 builder.Services.AddSingleton<PlaylistGrpcClient>();
 builder.Services.AddSingleton<VideoGrpcClient>();
 builder.Services.AddSingleton<AuthHttpClient>();
+builder.Services.AddSingleton<BillGrpcClient>();
 builder.Services.AddHttpClient();
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication(options =>
