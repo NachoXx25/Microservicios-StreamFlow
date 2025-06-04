@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Bogus.DataSets;
+
+namespace PlaylistMicroservice.src.Domain.Models
+{
+    public class ActionEvent
+    {
+        public string ActionMessage { get; set; } = string.Empty;
+        public string Service { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public string UserEmail { get; set; } = string.Empty;
+        public string UrlMethod { get; set; } = string.Empty;
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    }
+}

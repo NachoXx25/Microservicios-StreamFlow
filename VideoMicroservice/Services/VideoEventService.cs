@@ -67,6 +67,7 @@ namespace VideoMicroservice.Services
                 DeclareAndBindQueue(playlistChannel, "playlist_video_created_queue", "playlist.video.created");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_updated_queue", "playlist.video.updated");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
+                DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
             }
             
             //Channel for social interactions service
@@ -150,6 +151,9 @@ namespace VideoMicroservice.Services
 
                 var stringId = video.Id.ToString();
 
+
+                var stringId = video.Id.ToString();
+
                 var message = new
                 {
                     Id = stringId,
@@ -189,6 +193,8 @@ namespace VideoMicroservice.Services
         {
            try
            {
+                var stringId = video.Id.ToString();
+
                 var stringId = video.Id.ToString();
 
                 // Publish the event to the playlist service
