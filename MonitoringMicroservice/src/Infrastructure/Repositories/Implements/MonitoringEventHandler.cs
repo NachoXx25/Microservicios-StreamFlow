@@ -27,10 +27,10 @@ namespace MonitoringMicroservice.src.Infrastructure.Repositories.Implements
 
                 await _context.Actions.AddAsync(new Domain.Models.Action
                 {
-                    Name = actionEvent.Name,
+                    Name = actionEvent.ActionMessage,
                     UserId = actionEvent.UserId,
                     UserEmail = actionEvent.UserEmail,
-                    MethodUrl = actionEvent.MethodUrl,
+                    MethodUrl = actionEvent.UrlMethod,
                     Timestamp = actionEvent.Timestamp
                 });
                 await _context.SaveChangesAsync();
@@ -51,7 +51,7 @@ namespace MonitoringMicroservice.src.Infrastructure.Repositories.Implements
 
                 await _context.Errors.AddAsync(new Domain.Models.Error
                 {
-                    Message = errorEvent.Message,
+                    Message = errorEvent.ErrorMessage,
                     UserId = errorEvent.UserId,
                     UserEmail = errorEvent.UserEmail,
                     Timestamp = errorEvent.Timestamp
