@@ -43,6 +43,8 @@ namespace BillMicroservice.src.Application.Services.Implements
             //Obtener el id del estado de la factura según el nombre
             int statusId = await _statusRepository.GetStatusIdByName(bill.StatusName);
 
+            var intUserId = int.Parse(bill.UserId);
+
             //Crear una nuevo objeto de factura
             var newBill = new Bill
             {
@@ -51,7 +53,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 CreatedAt = DateTime.UtcNow,
                 PaymentDate = bill.StatusName == "Pagado" ? DateTime.UtcNow : null, //Agregar la fecha de pago si el estado es "Pagado"
                 StatusId = statusId,
-                UserId = bill.UserId
+                UserId = intUserId
             };
 
             //Agregar la nueva factura a la base de datos
@@ -81,10 +83,13 @@ namespace BillMicroservice.src.Application.Services.Implements
         /// Método para borrar una factura de forma lógica.
         /// </summary>
         /// <param name="id">El id de la factura a borrar</param>
-        public async Task<CreatedBillDTO> DeleteBill(int id)
+        public async Task<CreatedBillDTO> DeleteBill(string id)
         {
+
+            var intId = int.Parse(id);
+
             //Obtener la factura por su id
-            var bill = await _billRepository.GetBillById(id) ?? throw new KeyNotFoundException("La factura no existe");
+            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("La factura no existe");
 
             //Obtener el nombre del estado de la factura
             var statusName = await _statusRepository.GetStatusNameById(bill.StatusId);
@@ -96,7 +101,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 throw new InvalidOperationException("No se puede eliminar una factura pagada");
             }
 
-            var deletedBill = await _billRepository.DeleteBill(id) ?? throw new InvalidOperationException("Error al eliminar la factura");
+            var deletedBill = await _billRepository.DeleteBill(intId) ?? throw new InvalidOperationException("Error al eliminar la factura");
             
             return new CreatedBillDTO
             {
@@ -114,7 +119,7 @@ namespace BillMicroservice.src.Application.Services.Implements
         /// </summary>
         /// <param name="id">El id de la factura a obtener</param>
         /// <returns>La factura solicitada</returns>
-        public async Task<CreatedBillDTO?> GetBillById(int id, int userId, string userRole)
+        public async Task<CreatedBillDTO?> GetBillById(string id, string userId, string userRole)
         {
             //Revisar si el usuario existe
             var userExists = await _userRepository.UserExists(userId);
@@ -124,8 +129,10 @@ namespace BillMicroservice.src.Application.Services.Implements
                 throw new KeyNotFoundException("El usuario no existe");
             }
             
+            var intId = int.Parse(id);
+
             //Obtener la factura por su id
-            var bill = await _billRepository.GetBillById(id);
+            var bill = await _billRepository.GetBillById(intId);
 
             if(bill == null){
                 return null;
@@ -146,7 +153,7 @@ namespace BillMicroservice.src.Application.Services.Implements
             };
 
             //Si el usuario no es administrador, verificar que el id de usuario de la factura sea igual al id del usuario que realiza la consulta
-            if(userRole != "Administrador" && bill.UserId != userId){
+            if(userRole != "Administrador" && bill.UserId.ToString() != userId){
                 //Si no es así, lanzar una excepción
                 throw new UnauthorizedAccessException("No tienes permisos para ver esta factura.");
             }
@@ -161,7 +168,7 @@ namespace BillMicroservice.src.Application.Services.Implements
         /// <param name="userRole">El rol del usuario que realiza la consulta</param>
         /// <param name="statusName">Filtro opcional por estado de factura</param>
         /// <returns>Listado de las facturas según el usuario y el filtro</returns>
-        public async Task<CreatedBillDTO[]?> GetBills(int userId, string userRole, string? statusName)
+        public async Task<CreatedBillDTO[]?> GetBills(string userId, string userRole, string? statusName)
         {
             //Obtener todos los estados de una factura la base de datos
             var statuses = await _statusRepository.GetAllStatuses() ?? throw new InvalidOperationException("No se pudieron cargar los estados.");
@@ -201,8 +208,10 @@ namespace BillMicroservice.src.Application.Services.Implements
             //Si el usuario es cliente, obtener solo las facturas del usuario
             }else if(userRole == "Cliente"){
 
+                var intUserId = int.Parse(userId);
+
                 //Obtener todas las facturas del usuario
-                var userBills = await _billRepository.GetAllBillsByUserId(userId);
+                var userBills = await _billRepository.GetAllBillsByUserId(intUserId) ?? throw new InvalidOperationException("No se pudieron cargar las facturas del usuario.");
 
                 //Mapear las facturas del usuario a un DTO con los datos necesarios
                 var mappedBills = userBills.Select(b => new CreatedBillDTO
@@ -240,10 +249,12 @@ namespace BillMicroservice.src.Application.Services.Implements
         /// </summary>
         /// <param name="id">El id de la factura a actualizar</param>
         /// <param name="status">El nuevo estado a asignar</param>
-        public async Task<CreatedBillDTO> UpdateBillStatus(int id, string status)
+        public async Task<CreatedBillDTO> UpdateBillStatus(string id, string status)
         {
+            var intId = int.Parse(id);
+
             //Obtener la factura por su id
-            var bill = await _billRepository.GetBillById(id) ?? throw new KeyNotFoundException("La factura no existe");
+            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("La factura no existe");
 
             //Revisar si la factura no está eliminada
             if (bill.IsDeleted)
@@ -258,10 +269,10 @@ namespace BillMicroservice.src.Application.Services.Implements
             DateTime? paymentDate = status == "Pagado" ? DateTime.UtcNow : null;
 
             // Actualizar la factura
-            var updatedBill = await _billRepository.UpdateBillState(id, statusId, paymentDate) ?? 
+            var updatedBill = await _billRepository.UpdateBillState(intId, statusId, paymentDate) ?? 
                 throw new InvalidOperationException("Error al actualizar la factura");
 
-            var user = await _userRepository.GetUserById(updatedBill.UserId) ?? 
+            var user = await _userRepository.GetUserById(updatedBill.UserId.ToString()) ?? 
                 throw new KeyNotFoundException("El usuario no existe");
 
             await _billEventService.PublishUpdatedBillEvent(new UpdatedBillDTO
