@@ -7,12 +7,14 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Models
 {
     public class ErrorEvent
     {
-        public required string Message { get; set; }
+        public required string ErrorMessage { get; set; }
+
+        public required string Service { get; set; }
 
         public required string UserId { get; set; }
 
         public required string UserEmail { get; set; }
 
-        public required DateTime Timestamp { get; set; } = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pacific SA Standard Time"));
+        public required DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }
