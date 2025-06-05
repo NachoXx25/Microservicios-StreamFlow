@@ -10,6 +10,7 @@ namespace ApiGateway.Services
     public class VideoGrpcClient
     {
         private readonly GrpcChannel _channel;
+
         private readonly VideoGrpcService.VideoGrpcServiceClient _client;
 
         public VideoGrpcClient(IConfiguration configuration)
@@ -19,34 +20,64 @@ namespace ApiGateway.Services
             _client = new VideoGrpcService.VideoGrpcServiceClient(_channel);
         }
 
-        public async Task<GetAllVideosResponse> GetAllVideosAsync()
+        public async Task<GetAllVideosResponse> GetAllVideosAsync(GetAllVideosRequest request)
         {
-            return await _client.GetAllVideosAsync(new GetAllVideosRequest());
+            try
+            {
+                return await _client.GetAllVideosAsync(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error obteniendo todos los videos: {ex.Message}", ex);
+            }
         }
 
-        public async Task<GetVideoByIdResponse> GetVideoByIdAsync(string videoId)
+        public async Task<GetVideoByIdResponse> GetVideoByIdAsync(GetVideoByIdRequest request)
         {
-            return await _client.GetVideoByIdAsync(new GetVideoByIdRequest { Id = videoId });
+            try
+            {
+                return await _client.GetVideoByIdAsync(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error obteniendo el video con ID {request.Id}: {ex.Message}", ex);
+            }
         }
 
-        public async Task<Video> UploadVideoAsync(UploadVideoRequest request)
+        public async Task<Video> CreateVideoAsync(UploadVideoRequest request)
         {
-            return await _client.UploadVideoAsync(request);
-        }
-
-        public async Task<UpdateVideoResponse> UpdateVideoAsync(UpdateVideoRequest request)
-        {
-            return await _client.UpdateVideoAsync(request);
+            try
+            {
+                return await _client.UploadVideoAsync(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error creando el video: {ex.Message}", ex);
+            }
         }
 
         public async Task<DeleteVideoResponse> DeleteVideoAsync(DeleteVideoRequest request)
         {
-            return await _client.DeleteVideoAsync(request);
+            try
+            {
+                return await _client.DeleteVideoAsync(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error eliminando el video con ID {request.Id}: {ex.Message}", ex);
+            }
         }
-
-        public void Dispose()
+        
+        public async Task<UpdateVideoResponse> UpdateVideoAsync(UpdateVideoRequest request)
         {
-            _channel?.Dispose();
+            try
+            {
+                return await _client.UpdateVideoAsync(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error actualizando el video con ID {request.Id}: {ex.Message}", ex);
+            }
         }
     }
 }
