@@ -145,7 +145,7 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Repositories.Impleme
                     var likes = await _context.Likes.AsNoTracking().ToListAsync();
                     foreach (var like in likes)
                     {
-                        await _socialInteractionsEventService.PublishLikeEvent(like.VideoId.ToString(), like.Id.ToString());
+                        await _socialInteractionsEventService.PublishLikeEvent(like.VideoId.ToString());
                     }
                 }
                 else

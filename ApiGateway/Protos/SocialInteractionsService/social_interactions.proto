@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "SocialInteractionsMicroservice.Protos";
+option csharp_namespace = "ApiGateway.Protos.SocialInteractionsService";
 
 package social_interactions;
 

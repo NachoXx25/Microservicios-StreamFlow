@@ -18,27 +18,27 @@ namespace BillMicroservice.src.Application.Services.Interfaces
         /// Obtener una factura por su id.
         /// </summary>
         /// <param name="id">El id de la factura a obtener</param>
-        Task<CreatedBillDTO?> GetBillById(int id, int userId, string userRole);
+        Task<CreatedBillDTO?> GetBillById(string id, string userId, string userRole);
 
         /// <summary>
         /// Cambiar el estado de una factura.
         /// </summary>
         /// <param name="id">El id de la factura a actualizar</param>
         /// <param name="status">El nuevo estado a asignar</param>
-        Task<CreatedBillDTO> UpdateBillStatus(int id, string status);
+        Task<CreatedBillDTO> UpdateBillStatus(string id, string status);
 
         /// <summary>
         /// Obtener todas las facturas.
         /// </summary>
         /// <param name="search">Búsqueda de una factura</param>
         /// <returns></returns>
-        Task<CreatedBillDTO[]?> GetBills(int userId, string userRole, string? statusName);
+        Task<CreatedBillDTO[]?> GetBills(string userId, string userRole, string? statusName);
 
         /// <summary>
         /// Hace un borrado lógico de una factura.
         /// </summary>
         /// <param name="id">El id de la factura a borrar</param>
         /// <returns></returns>
-        Task<CreatedBillDTO> DeleteBill(int id);
+        Task<CreatedBillDTO> DeleteBill(string id);
     }
 }

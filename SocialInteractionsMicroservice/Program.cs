@@ -21,6 +21,7 @@ builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<IVideoEventHandlerRepository,VideoEventHandlerRepository>();
 builder.Services.AddScoped<ISocialInteractionsService, SocialInteractionsService>();
 builder.Services.AddScoped<ISocialInteractionsEventService, SocialInteractionsEventService>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 
 try
 {

@@ -18,9 +18,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<UserGrpcClient>();
 builder.Services.AddSingleton<PlaylistGrpcClient>();
-builder.Services.AddSingleton<VideoGrpcClient>();
 builder.Services.AddSingleton<AuthHttpClient>();
+builder.Services.AddSingleton<MonitoringGrpcClient>();
 builder.Services.AddSingleton<BillGrpcClient>();
+builder.Services.AddSingleton<VideoGrpcClient>();
+builder.Services.AddSingleton<SocialInteractionsGrpcClient>();
 builder.Services.AddHttpClient();
 //Configuración de middleware de autenticación
 builder.Services.AddAuthentication(options =>

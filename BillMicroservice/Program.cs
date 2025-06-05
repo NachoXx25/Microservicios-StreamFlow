@@ -24,6 +24,7 @@ builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
 builder.Services.AddScoped<IBillEventService, BillEventService>();
 builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddScoped<IMonitoringEventService,MonitoringEventService>();
 
 try
 {

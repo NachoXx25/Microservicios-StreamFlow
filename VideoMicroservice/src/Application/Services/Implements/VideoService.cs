@@ -98,14 +98,6 @@ namespace VideoMicroservice.src.Application.Services.Implements
         /// <returns>El video actualizado</returns>
         public async Task<UpdateVideoDTO> UpdateVideo(string id, UpdateVideoDTO updateVideo)
         {
-           // Obtener el video por id
-            var video = await _videoRepository.GetVideoById(id) ?? throw new KeyNotFoundException("Video no encontrado");
-
-            // Validar que el video no esté eliminado antes de actualizarlo
-            if(video.IsDeleted){
-                throw new InvalidOperationException("No se puede actualizar un video eliminado");
-            }
-
             //Actualizar el video y obtenerlo
             var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new InvalidOperationException("Error al actualizar el video");
 

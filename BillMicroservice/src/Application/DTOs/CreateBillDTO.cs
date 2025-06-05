@@ -10,7 +10,7 @@ namespace BillMicroservice.src.Application.DTOs
     {
         [Required(ErrorMessage = "El id de usuario es requerido.")]
         [RegularExpression(@"^\d+$", ErrorMessage = "El id de usuario debe ser un número entero positivo.")]
-        public required int UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required(ErrorMessage = "El estado de la factura es requerido.")]
         [RegularExpression(@"^(Pagado|Pendiente|Vencido)$", ErrorMessage = "El estado de la factura debe ser sólo 'Pagado', 'Pendiente' o 'Vencido'.")]

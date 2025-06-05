@@ -11,7 +11,7 @@ namespace SocialInteractionsMicroservice.Services
 {
     public interface ISocialInteractionsEventService
     {
-        Task PublishLikeEvent(string videoId, string likeId);
+        Task PublishLikeEvent(string videoId);
     }
 
     public class SocialInteractionsEventService : ISocialInteractionsEventService
@@ -75,7 +75,7 @@ namespace SocialInteractionsMicroservice.Services
             );
         }
 
-        public Task PublishLikeEvent(string videoId, string likeId)
+        public Task PublishLikeEvent(string videoId)
         {
             try
             {
@@ -85,7 +85,6 @@ namespace SocialInteractionsMicroservice.Services
                     var message = new
                     {
                         VideoId = videoId,
-                        LikeId = likeId,
                         EventType = "SocialInteractionsLike"
                     };
 
