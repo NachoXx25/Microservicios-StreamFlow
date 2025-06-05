@@ -115,8 +115,8 @@ namespace AuthMicroservice.src.Api.Controllers
             try
             {
                 if (!User.Identity?.IsAuthenticated ?? true) return Unauthorized("No autenticado");
-                var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Jti no encontrado");
-                var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Id no encontrado");
+                var jti = User.Claims.FirstOrDefault(x => x.Type == "Jti")?.Value ?? throw new ArgumentNullException("Error en el sistema: Jti no encontrado");
+                var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? throw new ArgumentNullException("Error en el sistema: Id no encontrado");
                 var result = await _authService.Logout(jti);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
@@ -161,13 +161,26 @@ namespace AuthMicroservice.src.Api.Controllers
                 
                 if (isBlacklisted)
                 {
+                    await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
+                    {
+                        UserId = request.UserId ?? User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                        UserEmail = request.UserEmail ?? User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                        Service = "AuthMicroservice"
+                    });
                     return Ok(new TokenValidationResponseDTO
                     {
                         IsBlacklisted = true,
                         Message = "Token inválido"
                     });
                 }
-
+                await _monitoringEventService.PublishActionEventAsync(new ActionEvent
+                {
+                    ActionMessage = "Token validado correctamente",
+                    UserId = request.UserId ?? User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value ?? "",
+                    UserEmail = request.UserEmail ?? User.Claims.FirstOrDefault(x => x.Type == "Email")?.Value ?? "",
+                    UrlMethod = "POST/auth/validate-token",
+                    Service = "AuthMicroservice"
+                });
                 return Ok(new TokenValidationResponseDTO
                 {
                     IsBlacklisted = false,

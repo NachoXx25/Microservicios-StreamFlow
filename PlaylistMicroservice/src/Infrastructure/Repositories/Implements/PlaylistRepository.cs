@@ -51,10 +51,10 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
         public async Task<PlaylistWithVideosDTO> AddVideoToPlaylist(int playlistId, string videoId, int userId)
         {
             var playlist = await _context.Playlists.Where(p => p.Id == playlistId && p.UserId == userId).Include(p => p.Videos).FirstOrDefaultAsync();
-            if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}"); 
-            if (playlist.IsDeleted) throw new Exception($"La playlist con ID: {playlistId} no existe o está eliminada");
+            if (playlist == null) throw new Exception($"No encontrado: No tienes creada una playlist con este ID: {playlistId}"); 
+            if (playlist.IsDeleted) throw new Exception($"La playlist con ID: {playlistId} está eliminada");
             var video = await _context.Videos.Where(v => v.Id == videoId).FirstOrDefaultAsync();
-            if (video == null) throw new Exception($"No existe un video con ese ID: {videoId}");
+            if (video == null) throw new Exception($"No encontrado: No existe un video con ese ID: {videoId}");
             if (video.IsDeleted) throw new Exception($"El video con ID: {videoId} está eliminado");
             if (playlist.Videos.Any(v => v.Id == videoId)) throw new Exception($"Ya existe un video con ese ID en la playlist: {videoId}");
             playlist.Videos.Add(video);
@@ -100,7 +100,7 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
                 .Where(p => p.Id == playlistId && p.UserId == userId)
                 .Include(p => p.Videos)
                 .FirstOrDefaultAsync();
-            if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}");
+            if (playlist == null) throw new Exception($"No encontrado: No tienes creada una playlist con este ID: {playlistId}");
             if (playlist.IsDeleted) throw new Exception($"La playlist con ID: {playlistId} está eliminada");
             return playlist.Videos.Where(v => !v.IsDeleted).Select(v => new VideosByPlaylistDTO
             {
@@ -122,10 +122,10 @@ namespace PlaylistMicroservice.src.Infrastructure.Repositories.Implements
                 .Where(p => p.Id == playlistId && p.UserId == userId)
                 .Include(p => p.Videos)
                 .FirstOrDefaultAsync();
-            if (playlist == null) throw new Exception($"No tienes creada una playlist con este ID: {playlistId}");
+            if (playlist == null) throw new Exception($"No encontrado: No tienes creada una playlist con este ID: {playlistId}");
             var video = playlist.Videos.FirstOrDefault(v => v.Id == videoId);
-            if (video == null) throw new Exception($"No existe un video en la playlist con ese ID: {videoId}");
-            if (!playlist.Videos.Any(v => v.Id == videoId)) throw new Exception($"La playlist no contiene un video con ID: {videoId}");
+            if (video == null) throw new Exception($"No encontrado: No existe un video en la playlist con ese ID: {videoId}");
+            if (!playlist.Videos.Any(v => v.Id == videoId)) throw new Exception($"No encontrado: La playlist no contiene un video con ID: {videoId}");
             playlist.Videos.Remove(video);
             await _context.SaveChangesAsync();
             return new PlaylistWithVideosDTO

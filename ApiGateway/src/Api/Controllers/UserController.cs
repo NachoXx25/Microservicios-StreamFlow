@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ApiGateway.Protos.UserService;
 using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace ApiGateway.src.Api.Controllers
 {
@@ -26,22 +28,40 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-                if(!User.IsInRole("Administrador"))
-                {
-                    throw new Exception("No tienes permisos para acceder a esta información.");
-                }
                 request.UserId = User.FindFirst("Id")?.Value;
                 request.UserEmail = User.FindFirst("Email")?.Value;
+                request.Role = User.FindFirst(ClaimTypes.Role)?.Value;
                 var response = await _userGrpcClient.GetAllUsersAsync(request);
-                return Ok(response.Users);
+                var users = response.Users.Select(u => new
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email,
+                    CreatedAt = u.CreatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                }).ToList();
+                
+                return Ok(users);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
 
         }
@@ -51,23 +71,43 @@ namespace ApiGateway.src.Api.Controllers
         public async Task<IActionResult> GetUserById(string id)
         {
             try{
-                if(!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-                var userIdClaim = User.FindFirst("Id")?.Value;
-                if(userIdClaim != id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes acceder a otros usuarios.");
                 var request = new GetUserByIdRequest
                 {
                     Id = id,
                     UserId = User.FindFirst("Id")?.Value,
-                    UserEmail = User.FindFirst("Email")?.Value
+                    UserEmail = User.FindFirst("Email")?.Value,
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value
                 };
                 var response = await _userGrpcClient.GetUserByIdAsync(request);
-            return Ok(response.User);
-            }catch(Exception ex)
+                var user = new
+                {
+                    Id = response.User.Id,
+                    FirstName = response.User.FirstName,
+                    LastName = response.User.LastName,
+                    Email = response.User.Email,
+                    CreatedAt = response.User.CreatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                };
+                return Ok(user);
+            }
+            catch (Exception ex)
             {
-                return NotFound(new { Error = ex.Message});
+                if (ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if (ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if (ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -77,26 +117,49 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (request.Role?.ToLower() == "administrador")
-                {
-                    if (!User.Identity?.IsAuthenticated == true)
-                    {
-                        return Unauthorized(new { Error = "Se requiere autenticación para crear usuarios administradores." });
-                    }
-                    
-                    if (!User.IsInRole("Administrador"))
-                    {
-                        throw new Exception("No tienes permisos para crear usuarios administradores.");
-                    }
-                }
                 request.UserId = User.FindFirst("Id")?.Value;
-                request.UserEmail = User.FindFirst("Email")?.Value;       
+                request.UserEmail = User.FindFirst("Email")?.Value;  
+                request.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;     
                 var response = await _userGrpcClient.CreateUserAsync(request);
-                return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
+                var user = new
+                {
+                    Id = response.Id,
+                    FirstName = response.FirstName,
+                    LastName = response.LastName,
+                    Email = response.Email,
+                    RoleName = response.RoleName,
+                    CreatedAt = response.CreatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    UpdatedAt = response.UpdatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    IsActive = response.IsActive
+                };
+                return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, user);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if (ex.Message.ToLower().Contains("el correo electrónico ya está registrado"))
+                {
+                    return Conflict(new { error = "El correo electrónico ya está registrado" });
+                }
+                if (ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if (ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                else
+                {
+                    return BadRequest(new { error = ex.Message });
+                }
             }
         }
 
@@ -106,22 +169,50 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación." });
-                }
-                var userIdClaim = User.FindFirst("Id")?.Value;
-                if (userIdClaim != id.ToString() && !User.IsInRole("Administrador")) throw new Exception("No puedes editar a otros usuarios.");
-                if (!string.IsNullOrEmpty(request.Password)) throw new Exception("No puedes editar la contraseña campo aquí.");
                 request.Id = id;
                 request.UserId = User.FindFirst("Id")?.Value;
                 request.UserEmail = User.FindFirst("Email")?.Value;
+                request.Role = User.FindFirst(ClaimTypes.Role)?.Value;
                 var response = await _userGrpcClient.UpdateUserAsync(request);
-                return Ok(response);
+                var user = new
+                {
+                    Id = response.Id,
+                    FirstName = response.FirstName,
+                    LastName = response.LastName,
+                    Email = response.Email,
+                    RoleName = response.RoleName,
+                    CreatedAt = response.CreatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    UpdatedAt = response.UpdatedAt?.ToDateTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    IsActive = response.IsActive
+                };
+                return Ok(user);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if (ex.Message.ToLower().Contains("el correo electrónico ya está registrado"))
+                {
+                    return Conflict(new { error = "El correo electrónico ya está registrado" });
+                }
+                if (ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if (ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                else
+                {
+                    return BadRequest(new { error = ex.Message });
+                }
             }
         }
 
@@ -131,31 +222,36 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación." });
-                }
                 var userIdClaim = User.FindFirst("Id")?.Value;
-                if (userIdClaim == id.ToString())
-                {
-                    throw new Exception("No puedes eliminarte a ti mismo.");
-                }
-                if (!User.IsInRole("Administrador"))
-                {
-                    throw new Exception("No tienes permisos para eliminar usuarios.");
-                }
                 var request = new DeleteUserRequest
                 {
                     Id = id,
                     UserId = User.FindFirst("Id")?.Value,
-                    UserEmail = User.FindFirst("Email")?.Value
+                    UserEmail = User.FindFirst("Email")?.Value,
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value
                 };
                 await _userGrpcClient.DeleteUserAsync(request);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

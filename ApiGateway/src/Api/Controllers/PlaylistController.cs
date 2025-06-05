@@ -27,7 +27,6 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if(User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
                 var userId = User?.FindFirst("Id")?.Value;
                 var userEmail = User?.FindFirst("Email")?.Value;
                 var request = new GetPlaylistsByUserIdRequest();
@@ -38,7 +37,24 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -59,7 +75,23 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -69,13 +101,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
                 var userId = User?.FindFirst("Id")?.Value;
                 var userEmail = User?.FindFirst("Email")?.Value;
-                if (string.IsNullOrEmpty(videoId))
-                {
-                    return BadRequest(new { Error = "El ID del video es requerido" });
-                }
                 var request = new AddVideoToPlaylistRequest();
                 request.VideoId = videoId;
                 request.UserId = userId;
@@ -86,7 +113,23 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -96,21 +139,32 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
                 var request = new GetVideosByPlaylistIdRequest();
                 request.PlaylistId = id;
                 request.UserId = User?.FindFirst("Id")?.Value;
                 request.UserEmail = User?.FindFirst("Email")?.Value;
-                if (string.IsNullOrEmpty(id))
-                {
-                    return BadRequest(new { Error = "El ID de la lista de reproducción es requerido" });
-                }
                 var response = await _playlistGrpcClient.GetVideosByPlaylistIdAsync(request);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -120,13 +174,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
                 var userId = User?.FindFirst("Id")?.Value;
                 var userEmail = User?.FindFirst("Email")?.Value;
-                if (string.IsNullOrEmpty(videoId))
-                {
-                    return BadRequest(new { Error = "El ID del video es requerido" });
-                }
                 var request = new RemoveVideoFromPlaylistRequest
                 {
                     UserId = userId,
@@ -139,7 +188,23 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -149,7 +214,6 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User?.Identity?.IsAuthenticated != true) return Unauthorized(new { Error = "Se requiere autenticación." });
                 var userId = User?.FindFirst("Id")?.Value;
                 var userEmail = User?.FindFirst("Email")?.Value;
                 var request = new DeletePlaylistRequest
@@ -158,16 +222,28 @@ namespace ApiGateway.src.Api.Controllers
                     UserId = userId,
                     UserEmail = userEmail
                 };
-                if (string.IsNullOrEmpty(id))
-                {
-                    return BadRequest(new { Error = "El ID de la lista de reproducción es requerido" });
-                }
                 var response = await _playlistGrpcClient.DeletePlaylistAsync(request);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = "No autenticado" });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = "no encontrado" });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

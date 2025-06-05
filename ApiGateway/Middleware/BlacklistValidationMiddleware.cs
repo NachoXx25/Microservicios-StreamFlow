@@ -47,8 +47,8 @@ namespace ApiGateway.Middleware
 
                         var response = new
                         {
-                            error = "Token is blacklisted",
-                            message = "Your session has been invalidated. Please login again."
+                            error = "Token inválido",
+                            message = "Tu sesión ha sido invalidada. Por favor, inicia sesión nuevamente."
                         };
 
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
@@ -86,7 +86,7 @@ namespace ApiGateway.Middleware
                 var httpClient = _httpClientFactory.CreateClient();
                 httpClient.Timeout = TimeSpan.FromSeconds(5); 
 
-                var checkUrl = $"{_authServiceUrl}/auth/validate-token";
+                var checkUrl = $"{_authServiceUrl}auth/validate-token";
 
                 var requestBody = new
                 {

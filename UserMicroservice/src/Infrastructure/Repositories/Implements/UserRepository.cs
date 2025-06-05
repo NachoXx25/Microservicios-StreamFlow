@@ -15,7 +15,8 @@ namespace UserMicroservice.src.Infrastructure.Repositories.Implements
         {
             _context = context;
         }
-/// <summary>
+        
+        /// <summary>
         /// Hace un borrado logico del usuario
         /// </summary>
         /// <param name="user">Usuario a borrar.</param>
@@ -26,9 +27,9 @@ namespace UserMicroservice.src.Infrastructure.Repositories.Implements
                 user.Status = false;
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception("Error al procesar la operación", ex);
+                throw new Exception("Error en el sistema al procesar la operación", ex);
             }
         }
     }

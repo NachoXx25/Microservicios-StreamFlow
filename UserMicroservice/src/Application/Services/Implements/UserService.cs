@@ -39,7 +39,7 @@ namespace UserMicroservice.src.Application.Services.Implements
         /// <returns>Datos del usuario</returns>
         public async Task<UserDTO> GetUserById(int Id)
         {
-            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("El usuario especificado no existe.");
+            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("No encontrado: El usuario especificado no existe.");
             var role = await _roleManager.FindByIdAsync(user.RoleId.ToString());
             var userDTO = new UserDTO(){
                 Id = user.Id,
@@ -58,7 +58,7 @@ namespace UserMicroservice.src.Application.Services.Implements
         /// <param name="Id">Id del usuario.</param>
         public async Task DeleteUser(int Id)
         {
-            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("El usuario especificado no existe.");
+            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("No encontrado: El usuario especificado no existe.");
             await _userRepository.DeleteUser(user);
             await _userEventService.PublishUserDeletedEvent(user);
         }
@@ -74,7 +74,7 @@ namespace UserMicroservice.src.Application.Services.Implements
             {
                 var guid = Guid.NewGuid();
                 var role = await _roleManager.FindByNameAsync(userDTO.Role) ?? 
-                    throw new Exception("El rol especificado no existe.");
+                    throw new Exception("No encontrado: El rol especificado no existe.");
                 var user = new User(){
                     FirstName = userDTO.FirstName,
                     LastName = userDTO.LastName,
@@ -162,7 +162,7 @@ namespace UserMicroservice.src.Application.Services.Implements
                 Role = user.Role.Name ?? string.Empty,
                 CreatedAt = TimeZoneInfo.ConvertTime(user.CreatedAt, pacificTimeZone)
             }).ToListAsync();
-            if(result.Count() == 0) throw new Exception("No se encontraron usuarios con los parámetros de búsqueda especificados.");
+            if(result.Count() == 0) throw new Exception("No encontrado: No se encontraron usuarios con los parámetros de búsqueda especificados.");
             return result;
         }
 
@@ -174,7 +174,7 @@ namespace UserMicroservice.src.Application.Services.Implements
         /// <returns>Datos del usuario actualizado</returns>
         public async Task<ReturnUserDTO> UpdateUser(UpdateUserDTO updateUser, int Id)
         {
-            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("El usuario especificado no existe.");
+            var user = await _userManager.FindByIdAsync(Id.ToString()) ?? throw new Exception("No encontrado: El usuario especificado no existe.");
             if(string.IsNullOrWhiteSpace(updateUser.Email) && string.IsNullOrWhiteSpace(updateUser.FirstName) && string.IsNullOrWhiteSpace(updateUser.LastName)) throw new Exception("Debe modificar al menos un campo.");
             bool hasChanges = false;
             if(!string.IsNullOrWhiteSpace(updateUser.Email) && updateUser.Email != user.Email)

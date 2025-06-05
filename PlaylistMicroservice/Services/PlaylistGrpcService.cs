@@ -23,8 +23,8 @@ namespace PlaylistMicroservice.Services
             Log.Information("Obteniendo listas de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
-                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a las listas de reproducción");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 var playlists = await _playlistService.GetPlaylistsByUserId(userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
@@ -62,8 +62,8 @@ namespace PlaylistMicroservice.Services
             Log.Information("Creando lista de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
-                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
+                if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Requiere autenticación para crear una lista de reproducción");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: El id del usuario debe ser un número entero positivo");
                 if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("El nombre de la lista de reproducción no puede estar vacío");
                 var createdPlaylist = new CreatePlaylistDTO
                 {
@@ -107,8 +107,8 @@ namespace PlaylistMicroservice.Services
             {
                 if(string.IsNullOrWhiteSpace(request.VideoId)) throw new Exception("El id del video no puede estar vacío");
                 if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
-                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para agregar un video a la lista de reproducción");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var addVideoDTO = new AddVideoToPlaylistDTO
                 {
@@ -155,8 +155,8 @@ namespace PlaylistMicroservice.Services
             try
             {
                 if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
-                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para obtener los videos de la lista de reproducción");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var videos = await _playlistService.GetVideosByPlaylistId(playlistId, userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
@@ -195,9 +195,10 @@ namespace PlaylistMicroservice.Services
             Log.Information("Eliminando video de la lista de reproducción {PlaylistId} para el usuario {UserId}", request.PlaylistId, request.UserId);
             try
             {
-                if(string.IsNullOrWhiteSpace(request.VideoId)) throw new Exception("El id del video no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para eliminar un video de la lista de reproducción");
+                if (string.IsNullOrWhiteSpace(request.VideoId)) throw new Exception("El id del video no puede estar vacío");
                 if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
-                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("El id debe ser un número entero positivo");
+                if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
                 var removeVideoDTO = new RemoveVideoDTO
                 {
@@ -247,9 +248,9 @@ namespace PlaylistMicroservice.Services
             try
             {
                 if(string.IsNullOrWhiteSpace(request.PlaylistId)) throw new Exception("El id de la lista de reproducción no puede estar vacío");
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("El id del usuario no puede estar vacío");
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para eliminar una lista de reproducción");
                 if(!int.TryParse(request.PlaylistId, out int playlistId)) throw new Exception("El id de la lista de reproducción debe ser un número entero positivo");
-                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("El id del usuario debe ser un número entero positivo");
+                if(!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 var deleteDTO  = new DeletePlaylistDTO
                 {
                     PlaylistId = request.PlaylistId

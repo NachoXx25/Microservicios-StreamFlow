@@ -25,13 +25,14 @@ namespace UserMicroservice.Services
             Log.Information("recibida petición para obtener todos los usuarios");
             try
             {
+                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a esta información.");
+                if(request.Role.ToLower() != "administrador") throw new Exception("No tienes permisos para acceder a esta información.");
                 var search = new SearchByDTO
                 {
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     Email = request.Email
                 };
-
                 var users = await _userService.GetAllUsers(search);
 
                 var response = new GetAllUsersResponse();
@@ -75,6 +76,8 @@ namespace UserMicroservice.Services
             {
                 if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
                 if (!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
+                if (string.IsNullOrEmpty(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a esta información.");
+                if (request.UserId != request.Id && request.Role.ToLower() != "administrador") throw new Exception("No tienes permisos para acceder a esta información.");
                 var user = await _userService.GetUserById(userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
                 {
@@ -115,6 +118,12 @@ namespace UserMicroservice.Services
             try
             {
                 Log.Information("Recibida petición para crear un nuevo usuario");
+                if (request.Role.ToLower() == "administrador")
+                {
+                    if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para crear usuarios administradores.");
+                    if (request.UserRole.ToLower() != "administrador") throw new Exception("No tienes permisos para crear usuarios administradores.");
+
+                }
                 var nameRegex = new Regex(@"^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s\-]+$");
                 var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
                 if (request.FirstName.Length < 2 || request.FirstName.Length > 20) throw new Exception("El Nombre debe tener entre 2 y 20 letras.");
@@ -126,7 +135,6 @@ namespace UserMicroservice.Services
                 if (!nameRegex.IsMatch(request.FirstName)) throw new Exception("El Nombre solo puede contener carácteres del abecedario español.");
                 if (!nameRegex.IsMatch(request.LastName)) throw new Exception("El Apellido solo puede contener carácteres del abecedario español.");
                 if (!emailRegex.IsMatch(request.Email)) throw new Exception("El Correo electrónico no es válido.");
-    
                 var userDTO = new CreateUserDTO
                 {
                     FirstName = request.FirstName,
@@ -177,6 +185,9 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para actualizar usuario con ID: {request.Id}");
             try
             {
+                if (string.IsNullOrEmpty(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para actualizar usuarios.");
+                if (request.Role.ToLower() != "administrador" && request.UserId != request.Id) throw new Exception("No tienes permisos para actualizar este usuario.");
+                if (!string.IsNullOrWhiteSpace(request.Password)) throw new Exception("No puedes editar este campo aquí.");
                 if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
                 if (!int.TryParse(request.Id, out int userId)) throw new Exception("El ID debe ser un número entero positivo");
                 if (request.FirstName.Length > 20) throw new Exception("El nombre debe tener máximo 20 letras.");
@@ -234,6 +245,9 @@ namespace UserMicroservice.Services
             Log.Information($"Recibida petición para eliminar usuario con ID: {request.Id}");
             try
             {
+                if (string.IsNullOrEmpty(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para eliminar usuarios.");
+                if (request.Id == request.UserId) throw new Exception("No puedes eliminar tu propio usuario.");
+                if (request.Role.ToLower() != "administrador") throw new Exception("No tienes permisos para eliminar usuarios.");
                 if (string.IsNullOrEmpty(request.Id)) throw new Exception("El ID no puede estar vacío");
                 if (!int.TryParse(request.Id, out int userId)) throw new Exception("ID debe ser un número entero positivo");
                 await _userService.DeleteUser(userId);

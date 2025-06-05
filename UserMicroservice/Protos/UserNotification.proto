@@ -33,6 +33,7 @@ message GetAllUsersRequest {
     string Email = 3;
     string UserId = 4;
     string UserEmail = 5;
+    string Role = 6; // Rol del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para el servicio GetAllUsers
@@ -45,6 +46,7 @@ message GetUserByIdRequest{
     string Id = 1;
     string UserId = 2; // ID del usuario que realiza la solicitud
     string UserEmail = 3; // Email del usuario que realiza la solicitud
+    string Role = 4; // Rol del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para obtener un usuario por ID
@@ -62,6 +64,7 @@ message CreateUserRequest {
     string Role = 6;
     string UserId = 7; // ID del usuario que realiza la solicitud
     string UserEmail = 8; // Email del usuario que realiza la solicitud
+    string UserRole = 9; // Rol del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para crear un usuario
@@ -85,6 +88,7 @@ message UpdateUserRequest {
     string Password = 5;
     string UserEmail = 6; // Email del usuario que realiza la solicitud
     string UserId = 7; // ID del usuario que realiza la solicitud
+    string Role = 8; // Rol del usuario que realiza la solicitud
 }
 
 // Mensaje de respuesta para actualizar un usuario
@@ -104,4 +108,5 @@ message DeleteUserRequest {
     string Id = 1;
     string UserId = 2; // ID del usuario que realiza la solicitud
     string UserEmail = 3; // Email del usuario que realiza la solicitud
+    string Role = 4; // Rol del usuario que realiza la solicitud
 }

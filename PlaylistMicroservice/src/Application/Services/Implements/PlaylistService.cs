@@ -128,7 +128,7 @@ namespace PlaylistMicroservice.src.Application.Services.Implements
                 if(result) 
                     return "Playlist eliminada correctamente";
                 else
-                    throw new Exception("No se pudo eliminar la playlist, verifique que el ID sea correcto o que no esté eliminada");
+                    throw new Exception("No encontrado: No se pudo eliminar la playlist, verifique que el ID sea correcto o que no esté eliminada");
             }
             catch (Exception ex)
             {

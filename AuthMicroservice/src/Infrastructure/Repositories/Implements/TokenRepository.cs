@@ -35,11 +35,11 @@ namespace AuthMicroservice.src.Infrastructure.Repositories.Implements
         /// <summary>
         /// Verifica si un token está en la lista negra.
         /// </summary>
-        /// <param name="token">Token a verificar.</param>
+        /// <param name="jti">Token a verificar.</param>
         /// <returns>True si el token está en la lista negra, de lo contrario false.</returns>
-        public async Task<bool> IsTokenBlacklistedAsync(string token)
+        public async Task<bool> IsTokenBlacklistedAsync(string jti)
         {
-            return await _context.TokenBlacklists.AnyAsync(x => x.Jti == token);
+            return await _context.TokenBlacklists.AnyAsync(x => x.Jti == jti);
         }
 
         /// <summary>

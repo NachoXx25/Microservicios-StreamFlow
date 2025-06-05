@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApiGateway.Services;
 using ApiGateway.src.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGateway.src.Api.Controllers
@@ -30,6 +31,22 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
                 return BadRequest(new { error = ex.Message });
             }
         }
@@ -53,6 +70,22 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
                 return BadRequest(new { error = ex.Message });
             }
         }
@@ -76,6 +109,22 @@ namespace ApiGateway.src.Api.Controllers
             }
             catch (Exception ex)
             {
+                if(ex.Message.ToLower().Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if(ex.Message.ToLower().Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Message });
+                }
+                if(ex.Message.ToLower().Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
                 return BadRequest(new { error = ex.Message });
             }
         }

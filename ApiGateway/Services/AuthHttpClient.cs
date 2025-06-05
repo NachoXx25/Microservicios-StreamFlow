@@ -56,14 +56,13 @@ namespace ApiGateway.Services
                     var errorContent = await response.Content.ReadAsStringAsync();
                     Log.Warning("Login fallido para {Email}: {Error}", request.Email, errorContent);
                     if(errorContent.StartsWith("\"") && errorContent.EndsWith("\""))
-                        {
-                            errorMessage = JsonSerializer.Deserialize<string>(errorContent) ?? errorMessage;
-                        }
-
-                        else
-                        {
-                            errorMessage = errorContent;
-                        }
+                    {
+                        errorMessage = JsonSerializer.Deserialize<string>(errorContent) ?? errorMessage;
+                    }
+                    else
+                    {
+                        errorMessage = errorContent;
+                    }
                     throw new UnauthorizedAccessException(errorMessage);
                 }
             }

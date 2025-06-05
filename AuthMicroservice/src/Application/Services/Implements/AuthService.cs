@@ -1,8 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
 using AuthMicroservice.src.Application.DTOs;
 using AuthMicroservice.src.Application.Services.Interfaces;
 using AuthMicroservice.src.Domain.Models;
 using AuthMicroservice.src.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 namespace AuthMicroservice.src.Application.Services.Implements
 {
@@ -29,8 +31,8 @@ namespace AuthMicroservice.src.Application.Services.Implements
         /// <returns>Mensaje de éxito o error.</returns>
         public async Task<string> ChangePassword(UpdatePasswordDTO updatePasswordDTO)
         {
-            var user = await _userManager.FindByIdAsync(updatePasswordDTO.UserRequestId.ToString()) ?? throw new Exception("Usuario no encontrado");
-            var userRole = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("Rol no encontrado");
+            var user = await _userManager.FindByIdAsync(updatePasswordDTO.UserRequestId.ToString()) ?? throw new Exception("No encontrado: Usuario no encontrado");
+            var userRole = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("No encontrado: Rol no encontrado");
             if(userRole.Name != "Administrador" && user.Id.ToString() != updatePasswordDTO.UserId) throw new Exception("No tiene permisos para cambiar la contraseña de este usuario");
             if(updatePasswordDTO.CurrentPassword == updatePasswordDTO.NewPassword) throw new Exception("La nueva contraseña no puede ser igual a la actual");
             var token = await _tokenRepository.VerifyIfTokenExists(updatePasswordDTO.Jti);
@@ -45,9 +47,26 @@ namespace AuthMicroservice.src.Application.Services.Implements
         /// </summary>
         /// <param name="token">Token a validar.</param>
         /// <returns>Respuesta de validación del token.</returns>
-        public Task<bool> IsTokenBlacklistedAsync(string token)
+        public async Task<bool> IsTokenBlacklistedAsync(string token)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jsonToken = tokenHandler.ReadJwtToken(token);
+                var jti = jsonToken.Claims?.FirstOrDefault(c => c.Type == "Jti")?.Value ?? 
+                  jsonToken.Claims?.FirstOrDefault(c => c.Type == "jti")?.Value;
+                Log.Warning("Validando token: {Token}", jti);
+                if (string.IsNullOrEmpty(jti))
+                {
+                    return false; 
+                }
+                
+                return await _tokenRepository.IsTokenBlacklistedAsync(jti);
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
         }
 
         /// <summary>
@@ -59,8 +78,8 @@ namespace AuthMicroservice.src.Application.Services.Implements
         {
             User user = await _userManager.FindByEmailAsync(loginDTO.Email) ?? throw new Exception("Usuario o contraseña incorrectos");
             var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
-            var role = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("Rol no encontrado");
-            if (!result) throw new Exception("Contraseña o usuario incorrectos");
+            var role = await _roleManager.FindByIdAsync(user.RoleId.ToString()) ?? throw new Exception("No encontrado: Rol no encontrado");
+            if (!result) throw new Exception("Usuario o contraseña incorrectos");
             if(!user.Status) throw new Exception("Usuario inactivo, no puede iniciar sesión");
             var token = await _tokenService.CreateToken(user);
             return new ReturnUserWithTokenDTO
@@ -68,7 +87,7 @@ namespace AuthMicroservice.src.Application.Services.Implements
                 Id = user.Id,
                 Email = user.Email ?? string.Empty,
                 Token = token,
-                RoleName = role.Name ?? throw new ArgumentNullException("Rol no encontrado"),
+                RoleName = role.Name ?? throw new ArgumentNullException("No encontrado: Rol no encontrado"),
                 FirstName = user.FirstName ?? string.Empty,
                 LastName = user.LastName ?? string.Empty,
                 IsActive = user.Status,
@@ -85,7 +104,7 @@ namespace AuthMicroservice.src.Application.Services.Implements
         public async Task<string> Logout(string jti)
         {
             var result = await _tokenRepository.AddTokenToBlacklist(jti);
-            if(!result) throw new Exception("Token no encontrado o ya eliminado");
+            if(!result) throw new Exception("No encontrado: Token no encontrado o ya eliminado");
             return "Token eliminado correctamente";
         }
     }
