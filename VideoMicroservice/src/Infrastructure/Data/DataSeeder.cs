@@ -1,5 +1,7 @@
 using Bogus;
+using Bogus.Bson;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
 using VideoMicroservice.Services;
 using VideoMicroservice.src.Domain;
 
@@ -21,6 +23,35 @@ namespace VideoMicroservice.src.Infrastructure.Data
                 {
                     if (!await videoContext.Videos.AnyAsync())
                     {
+                        // Add some specific videos for testing purposes
+                        var firstTestVideoId = new ObjectId("507f1f77bcf86cd799439011");
+
+                        var firstTestVideo = new Video
+                        {
+                            Id = firstTestVideoId,
+                            Title = "Primer Video de Prueba",
+                            Description = "Este es un video de prueba para verificar la funcionalidad del microservicio de videos.",
+                            Genre = "Comedia",
+                            IsDeleted = false,
+                            Likes = 0
+                        };
+
+                        var secondTestVideoid = new ObjectId("507f1f77bcf86cd799439012");
+
+                        var secondTestVideo = new Video
+                        {
+                            Id = secondTestVideoid,
+                            Title = "Segundo Video de Prueba",
+                            Description = "Este es otro video de prueba para verificar la funcionalidad del microservicio de videos.",
+                            Genre = "Acción",
+                            IsDeleted = false,
+                            Likes = 0
+                        };
+
+                        videoContext.Videos.AddRange(firstTestVideo, secondTestVideo);
+                        await videoContext.SaveChangesAsync();
+
+                        // Generate random videos using Bogus
                         var faker = new Faker<Video>()
                             .RuleFor(v => v.Title, f => f.Lorem.Sentence(3))
                             .RuleFor(v => v.Description, f => f.Lorem.Paragraph(2))
