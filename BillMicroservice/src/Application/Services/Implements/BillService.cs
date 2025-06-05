@@ -34,7 +34,8 @@ namespace BillMicroservice.src.Application.Services.Implements
         public async Task<CreatedBillDTO> AddBill(CreateBillDTO bill)
         {
             //Revisar si el id de usuario es válido
-            var userExists = await _userRepository.UserExists(bill.UserId);
+            var intUserId = int.Parse(bill.UserId);
+            var userExists = await _userRepository.UserExists(intUserId);
             
             if(!userExists){
                 throw new KeyNotFoundException("El usuario no existe");
@@ -42,8 +43,6 @@ namespace BillMicroservice.src.Application.Services.Implements
 
             //Obtener el id del estado de la factura según el nombre
             int statusId = await _statusRepository.GetStatusIdByName(bill.StatusName);
-
-            var intUserId = int.Parse(bill.UserId);
 
             //Crear una nuevo objeto de factura
             var newBill = new Bill
@@ -122,7 +121,8 @@ namespace BillMicroservice.src.Application.Services.Implements
         public async Task<CreatedBillDTO?> GetBillById(string id, string userId, string userRole)
         {
             //Revisar si el usuario existe
-            var userExists = await _userRepository.UserExists(userId);
+            var userIdExists = int.TryParse(userId, out int userIdInt);
+            var userExists = await _userRepository.UserExists(userIdInt);
 
             //Si el usuario no existe, lanzar una excepción
             if(!userExists){
@@ -272,7 +272,7 @@ namespace BillMicroservice.src.Application.Services.Implements
             var updatedBill = await _billRepository.UpdateBillState(intId, statusId, paymentDate) ?? 
                 throw new InvalidOperationException("Error al actualizar la factura");
 
-            var user = await _userRepository.GetUserById(updatedBill.UserId.ToString()) ?? 
+            var user = await _userRepository.GetUserById(updatedBill.UserId) ?? 
                 throw new KeyNotFoundException("El usuario no existe");
 
             await _billEventService.PublishUpdatedBillEvent(new UpdatedBillDTO

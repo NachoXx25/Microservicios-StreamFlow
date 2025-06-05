@@ -9,8 +9,8 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        Task<bool> UserExists(string id);
+        Task<bool> UserExists(int id);
 
-        Task<GetUserDTO?> GetUserById(string id);
+        Task<GetUserDTO?> GetUserById(int id);
     }
 }

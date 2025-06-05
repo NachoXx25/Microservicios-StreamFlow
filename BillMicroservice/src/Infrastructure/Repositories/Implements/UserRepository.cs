@@ -18,7 +18,7 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
             _context = context;
         }
 
-        public async Task<GetUserDTO?> GetUserById(string id)
+        public async Task<GetUserDTO?> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -38,7 +38,7 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
             };
         }
 
-        public async Task<bool> UserExists(string id)
+        public async Task<bool> UserExists(int id)
         {
             return await _context.Users.FindAsync(id) != null;
         }
