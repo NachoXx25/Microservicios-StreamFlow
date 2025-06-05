@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using SocialInteractionsMicroservice.Services;
 using SocialInteractionsMicroservice.src.Application.DTOs;
 using SocialInteractionsMicroservice.src.Application.Services.Interfaces;
 using SocialInteractionsMicroservice.src.Infrastructure.Repositories.Interfaces;
@@ -13,14 +14,16 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
     {
         private readonly ILikeRepository _likeRepository;
         private readonly ICommentRepository _commentRepository;
-
         private readonly IVideoRepository _videoRepository;
 
-        public SocialInteractionsService(ILikeRepository likeRepository, ICommentRepository commentRepository, IVideoRepository videoRepository)
+        private readonly ISocialInteractionsEventService _socialInteractionsEventService;
+
+        public SocialInteractionsService(ILikeRepository likeRepository, ICommentRepository commentRepository, IVideoRepository videoRepository, ISocialInteractionsEventService socialInteractionsEventService)
         {
             _likeRepository = likeRepository;
             _commentRepository = commentRepository;
             _videoRepository = videoRepository;
+            _socialInteractionsEventService = socialInteractionsEventService;
         }
 
         public async Task<GetVideoInteractionsDTO> GetVideoInteractions(string videoId)
@@ -57,6 +60,8 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
             }
 
             await _likeRepository.GiveLike(videoId);
+
+            await _socialInteractionsEventService.PublishLikeEvent(videoId);
 
             var likes = await _likeRepository.GetVideoLikes(videoId);
 
