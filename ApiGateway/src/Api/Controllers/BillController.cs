@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 using ApiGateway.src.Application.DTOs.Bill;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGateway.src.Api.Controllers
@@ -28,19 +24,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-
-                if (userRole != "Administrador" && userRole != "Cliente")
-                {
-                    return StatusCode(403, "No tienes permisos para acceder a esta información.");
-                }
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.BillService.GetAllBillsRequest
                 {
@@ -58,9 +44,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Ha ocurrido un error cargando las facturas: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrada"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -70,19 +74,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-
-                if (userRole != "Administrador" && userRole != "Cliente")
-                {
-                    return StatusCode(403, "No tienes permisos para acceder a esta información.");
-                }
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.BillService.GetBillByIdRequest
                 {
@@ -94,16 +88,29 @@ namespace ApiGateway.src.Api.Controllers
 
                 var response = await _billGrpcClient.GetBillByIdAsync(request);
 
-                if (response.Bill == null)
-                {
-                    return NotFound(new { Message = "Factura no encontrada." });
-                }
-
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Ha ocurrido un error cargando la factura: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrada"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -113,19 +120,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para crear una factura." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-
-                if (userRole != "Administrador")
-                {
-                    return StatusCode(403, "No tienes permisos para crear una factura.");
-                }
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.BillService.CreateBillRequest
                 {
@@ -133,15 +130,34 @@ namespace ApiGateway.src.Api.Controllers
                     BillStatus = createBill.BillStatus,
                     Amount = createBill.Amount,
                     UserEmail = userEmail ?? "",
+                    UserRole = userRole ?? "",
                 };
 
                 var response = await _billGrpcClient.CreateBillAsync(request);
 
                 return StatusCode(201, response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Ha ocurrido un error creando la factura: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrada"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -151,19 +167,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para actualizar una factura." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-
-                if (userRole != "Administrador")
-                {
-                    return StatusCode(403, "No tienes permisos para actualizar una factura.");
-                }
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.BillService.UpdateBillRequest
                 {
@@ -173,6 +179,7 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
@@ -180,9 +187,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Ha ocurrido un error actualizando la factura: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrada"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -192,19 +217,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para eliminar una factura." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-
-                if (userRole != "Administrador")
-                {
-                    return StatusCode(403, "No tienes permisos para eliminar una factura.");
-                }
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.BillService.DeleteBillRequest
                 {
@@ -213,6 +228,7 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
@@ -220,9 +236,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Ha ocurrido un error eliminando la factura: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrada"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
     }

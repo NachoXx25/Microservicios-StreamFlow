@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using ApiGateway.Protos.BillService;
+using Grpc.Core;
 
 namespace ApiGateway.Services
 {
@@ -26,9 +27,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetAllBillsAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Ha ocurrido un error cargando las facturas: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -38,9 +39,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetBillByIdAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Ha ocurrido un error cargando la factura con ID {request.BillId}: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -50,9 +51,9 @@ namespace ApiGateway.Services
             {
                 return await _client.CreateBillAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Ha ocurrido un error creando la factura: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -62,9 +63,9 @@ namespace ApiGateway.Services
             {
                 return await _client.UpdateBillAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Ha ocurrido un error actualizando la factura con ID {request.BillId}: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -74,9 +75,9 @@ namespace ApiGateway.Services
             {
                 return await _client.DeleteBillAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Ha ocurrido un error eliminando la factura con ID {request.BillId}: {ex.Message}", ex);
+                throw;
             }
         }
     }
