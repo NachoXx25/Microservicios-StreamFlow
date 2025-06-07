@@ -449,7 +449,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"juana@gmail.com\",\r\n    \"password\": \"Password12345\"\r\n}",
+									"raw": "{\r\n    \"email\": \"juana@gmail.com\",\r\n    \"password\": \"Password123!\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -548,7 +548,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI5YjYyNDMxYi0yY2JlLTQxNzYtOGM4Yy1hNjc2YzA1NTAyNjkiLCJJZCI6IjEiLCJFbWFpbCI6Imp1YW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ2xpZW50ZSIsImV4cCI6MTc1NDUxNDU4OX0.QBU0NuBVC-th7Q2VG6zyLSYpldEcud_DaHx4s_f0q3s",
 											"type": "string"
 										}
 									]
@@ -566,7 +566,7 @@
 									"query": [
 										{
 											"key": "Status",
-											"value": "",
+											"value": "p",
 											"disabled": true
 										}
 									]
@@ -582,7 +582,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI5YjYyNDMxYi0yY2JlLTQxNzYtOGM4Yy1hNjc2YzA1NTAyNjkiLCJJZCI6IjEiLCJFbWFpbCI6Imp1YW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ2xpZW50ZSIsImV4cCI6MTc1NDUxNDU4OX0.QBU0NuBVC-th7Q2VG6zyLSYpldEcud_DaHx4s_f0q3s",
 											"type": "string"
 										}
 									]
@@ -619,7 +619,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userId\": \"151\",\r\n    \"amount\": 1000,\r\n    \"billStatus\": \"Pendiente\"\r\n}",
+									"raw": "{\r\n    \"userId\": \"1\",\r\n    \"amount\": 1000,\r\n    \"billStatus\": \"vencido\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -646,7 +646,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
 											"type": "string"
 										}
 									]
@@ -655,7 +655,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "\"Pagado\"",
+									"raw": "\"PaGADo\"",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -663,13 +663,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/facturas/3",
+									"raw": "{{URL}}/facturas/9",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"facturas",
-										"3"
+										"9"
 									]
 								}
 							},
@@ -679,25 +679,18 @@
 							"name": "Eliminar factura",
 							"request": {
 								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
-											"type": "string"
-										}
-									]
+									"type": "noauth"
 								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/facturas/3",
+									"raw": "{{URL}}/facturas/400",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"facturas",
-										"3"
+										"400"
 									]
 								}
 							},
@@ -724,13 +717,13 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/interacciones/6841b350da6e65dba7c19876/likes",
+									"raw": "{{URL}}/interacciones/6841b292da6e65dba7c196c0/likes",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"interacciones",
-										"6841b350da6e65dba7c19876",
+										"6841b292da6e65dba7c196c0",
 										"likes"
 									]
 								}
@@ -754,7 +747,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "\"Mal video, no me gusto para nada\"",
+									"raw": "\"Mas o menos el video, puede ser mejor\"",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -762,13 +755,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/interacciones/6841b350da6e65dba7c19876/comentarios",
+									"raw": "{{URL}}/interacciones/6841b292da6e65dba7c196c0/comentarios",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"interacciones",
-										"6841b350da6e65dba7c19876",
+										"6841b292da6e65dba7c196c0",
 										"comentarios"
 									]
 								}
@@ -791,13 +784,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/interacciones/6841b350da6e65dba7c19876",
+									"raw": "{{URL}}/interacciones/6841b292da6e65dba7c196c0",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"interacciones",
-										"6841b350da6e65dba7c19876"
+										"6841b292da6e65dba7c196c0"
 									]
 								}
 							},
@@ -914,13 +907,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/videos/6841b350da6e65dba7c19876",
+									"raw": "{{URL}}/videos/6841b292da6e65dba7c19872",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"videos",
-										"6841b350da6e65dba7c19876"
+										"6841b292da6e65dba7c19872"
 									]
 								}
 							},
@@ -970,7 +963,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
 											"type": "string"
 										}
 									]
@@ -987,13 +980,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/videos/6840c7f20e69f482ae79d246",
+									"raw": "{{URL}}/videos/6841b292da6e65dba7c19874",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"videos",
-										"6840c7f20e69f482ae79d246"
+										"6841b292da6e65dba7c19874"
 									]
 								}
 							},
@@ -1007,7 +1000,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
 											"type": "string"
 										}
 									]
@@ -1015,13 +1008,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/videos/6840c7f20e69f482ae79d246",
+									"raw": "{{URL}}/videos/6841b292da6e65dba7c19873",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"videos",
-										"6840c7f20e69f482ae79d246"
+										"6841b292da6e65dba7c19873"
 									]
 								}
 							},
@@ -1057,7 +1050,7 @@
 	"variable": [
 		{
 			"key": "URL",
-			"value": "http://localhost:5184",
+			"value": "http://localhost:5116",
 			"type": "string"
 		},
 		{
