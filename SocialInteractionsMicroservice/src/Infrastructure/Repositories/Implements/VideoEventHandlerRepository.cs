@@ -54,7 +54,7 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Repositories.Impleme
                 Log.Information("Video creado exitosamente: {@VideoCreatedEvent}", videoCreatedEvent);
 
                 var videoCount = await _context.Videos.CountAsync();
-                if (videoCount < 400 || videoCount > 600)
+                if (videoCount < 400)
                 {
                     Log.Information("No se cumplen las condiciones para ejecutar los seeders de interacciones sociales. Cantidad de videos: {VideoCount}", videoCount);
                     return;

@@ -15,7 +15,7 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.Repositories.Impleme
 
         public LikeRepository(SocialInteractionsContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
         }
 
         public async Task<List<Like>> GetVideoLikes(string videoId)
