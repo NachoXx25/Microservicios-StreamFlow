@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.VideoService;
+using Grpc.Core;
 using Grpc.Net.Client;
 
 namespace ApiGateway.Services
@@ -26,9 +27,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetAllVideosAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error obteniendo todos los videos: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -38,9 +39,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetVideoByIdAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error obteniendo el video con ID {request.Id}: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -50,9 +51,9 @@ namespace ApiGateway.Services
             {
                 return await _client.UploadVideoAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error creando el video: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -62,9 +63,9 @@ namespace ApiGateway.Services
             {
                 return await _client.DeleteVideoAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error eliminando el video con ID {request.Id}: {ex.Message}", ex);
+                throw;
             }
         }
         
@@ -74,9 +75,9 @@ namespace ApiGateway.Services
             {
                 return await _client.UpdateVideoAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error actualizando el video con ID {request.Id}: {ex.Message}", ex);
+                throw;
             }
         }
     }

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ApiGateway.src.Application.DTOs.Video;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -27,7 +29,7 @@ namespace ApiGateway.src.Api.Controllers
             {
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
-                var userRole = User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.VideoService.GetAllVideosRequest
                 {
@@ -35,6 +37,7 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
@@ -51,9 +54,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Error obteniendo todos los videos: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -63,13 +84,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.VideoService.GetVideoByIdRequest
                 {
@@ -78,6 +95,7 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
@@ -90,9 +108,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Error obteniendo el video con ID {id}: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -102,20 +138,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (videoDto == null)
-                {
-                    return BadRequest(new { Error = "Los datos del video son inválidos." });
-                }
-
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para crear un video." });
-                }
-
-                if (!User.IsInRole("Administrador"))
-                {
-                    return StatusCode(403, "No tienes permisos para crear un video.");
-                }
+                var userId = User.FindFirst("Id")?.Value;
+                var userEmail = User.FindFirst("Email")?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.VideoService.UploadVideoRequest
                 {
@@ -124,23 +149,37 @@ namespace ApiGateway.src.Api.Controllers
                     Genre = videoDto.Genre,
                     UserData = new Protos.VideoService.UserData
                     {
-                        Id = User.FindFirst("Id")?.Value ?? "",
-                        Email = User.FindFirst("Email")?.Value ?? "",
+                        Id = userId ?? "",
+                        Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
                 var response = await _videoGrpcClient.CreateVideoAsync(request);
 
-                if (response == null)
-                {
-                    return StatusCode(500, "Error al crear el video.");
-                }
-
                 return StatusCode(201, response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Error creando el video: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -150,18 +189,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para eliminar un video." });
-                }
-
-                if (!User.IsInRole("Administrador"))
-                {
-                    return StatusCode(403, "No tienes permisos para eliminar un video.");
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.VideoService.DeleteVideoRequest
                 {
@@ -170,21 +200,35 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
                 var response = await _videoGrpcClient.DeleteVideoAsync(request);
 
-                if (response == null)
-                {
-                    return NotFound(new { Message = "Video no encontrado o no se pudo eliminar." });
-                }
-
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Error eliminando el video con ID {id}: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -194,23 +238,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (videoDto == null || (string.IsNullOrWhiteSpace(videoDto.Title) & string.IsNullOrWhiteSpace(videoDto.Description) & string.IsNullOrWhiteSpace(videoDto.Genre)))
-                {
-                    return BadRequest(new { Error = "Los datos del video son inválidos." });
-                }
-
-                if (!User.Identity?.IsAuthenticated == true)
-                {
-                    return Unauthorized(new { Error = "Se requiere autenticación para actualizar un video." });
-                }
-
-                if (!User.IsInRole("Administrador"))
-                {
-                    return StatusCode(403, "No tienes permisos para actualizar un video.");
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
                 var request = new Protos.VideoService.UpdateVideoRequest
                 {
@@ -222,21 +252,35 @@ namespace ApiGateway.src.Api.Controllers
                     {
                         Id = userId ?? "",
                         Email = userEmail ?? "",
+                        Role = userRole ?? ""
                     }
                 };
 
                 var response = await _videoGrpcClient.UpdateVideoAsync(request);
 
-                if (response == null)
-                {
-                    return NotFound(new { Message = "Video no encontrado" });
-                }
-
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, $"Error actualizando el video con ID {id}: {ex.Message}");
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
     }
