@@ -34,12 +34,12 @@ namespace SocialInteractionsMicroservice.Services
                     UrlMethod = $"GET/interacciones/{request.VideoId}"
                 });
 
-                var response = await _socialInteractionsService.GetVideoInteractions(request.VideoId);
-
-                if (response == null)
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
                 {
-                    throw new KeyNotFoundException("No se encontraron interacciones para el video especificado.");
+                    throw new Exception("No autenticado: se require un usuario autenticado para obtener likes y comentarios de un video.");
                 }
+
+                var response = await _socialInteractionsService.GetVideoInteractions(request.VideoId);
 
                 var likes = response.Likes.Select(l => new Protos.Like
                 {
@@ -58,17 +58,6 @@ namespace SocialInteractionsMicroservice.Services
                     Likes = { likes },
                     Comments = { comments }
                 };
-            }
-            catch (KeyNotFoundException knfEx)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = knfEx.Message,
-                    Service = "SocialInteractionsMicroservice",
-                    UserId = request.UserData.Id,
-                    UserEmail = request.UserData.Email,
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, knfEx.Message));
             }
             catch (Exception ex)
             {
@@ -95,6 +84,11 @@ namespace SocialInteractionsMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"POST/interacciones/{request.VideoId}/likes"
                 });
+
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para dar like a un video.");
+                }
 
                 var response = await _socialInteractionsService.GiveLike(request.VideoId);
                 return new Protos.GiveLikeResponse
@@ -128,6 +122,11 @@ namespace SocialInteractionsMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"POST/interacciones/{request.VideoId}/comentarios"
                 });
+
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para dejar un comentario en un video.");
+                }
 
                 var response = await _socialInteractionsService.MakeComment(request.VideoId, request.Comment);
                 return new Protos.MakeCommentResponse

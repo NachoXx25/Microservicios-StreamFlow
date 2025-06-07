@@ -33,7 +33,7 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
                 throw new ArgumentException("El id no puede ser nulo o vacío.");
             }
 
-            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("El video no existe.");
+            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("Video no encontrado.");
 
             var likes = await _likeRepository.GetVideoLikes(videoId);
             var comments = await _commentRepository.GetVideoComments(videoId);
@@ -53,7 +53,7 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
                 throw new ArgumentException("El id no puede ser nulo o vacío.");
             }
 
-            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("El video no existe.");
+            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("Video no encontrado.");
 
             if (video.IsDeleted) { 
                 throw new InvalidOperationException("El video ha sido eliminado, no se puede dar like.");
@@ -84,7 +84,7 @@ namespace SocialInteractionsMicroservice.src.Application.Services.Implements
                 throw new ArgumentException("El comentario no puede ser nulo o vacío.");
             }
 
-            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("El video no existe.");
+            var video = await _videoRepository.VideoExists(videoId) ?? throw new KeyNotFoundException("Video no encontrado.");
            
             if (video.IsDeleted)
             {
