@@ -11,7 +11,6 @@ namespace VideoMicroservice.Services
 {
     public class VideoGrpcService : Protos.VideoGrpcService.VideoGrpcServiceBase
     {
-        
         private readonly IVideoService _videoService;
 
         private readonly IMonitoringEventService _monitoringEventService;
@@ -35,6 +34,17 @@ namespace VideoMicroservice.Services
                     UrlMethod = "POST/videos",
                 });
 
+                // Validar que el usuario esté autenticado y tenga el rol adecuado
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para subir un video.");
+                }
+
+                if (request.UserData.Role.ToLower() != "administrador")
+                { 
+                    throw new Exception("No autorizado: no tienes permisos para subir videos.");
+                }
+
                 var video = new src.Application.DTOs.UploadVideoDTO
                 {
                     Title = request.Title,
@@ -43,11 +53,6 @@ namespace VideoMicroservice.Services
                 };
 
                 var createdVideo = await _videoService.UploadVideo(video);
-
-                if (createdVideo == null)
-                {
-                    throw new Exception("Error al crear el video");
-                }
 
                 var response = new Protos.Video
                 {
@@ -87,11 +92,16 @@ namespace VideoMicroservice.Services
                     UrlMethod = $"GET/videos/{request.Id}",
                 });
 
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                { 
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para obtener un video por ID.");
+                }
+
                 var video = await _videoService.GetVideoById(request.Id);
 
                 if (video == null)
                 {
-                    throw new KeyNotFoundException($"Video con ID {request.Id} no encontrado");
+                    throw new KeyNotFoundException($"Video no encontrado");
                 }
 
                 var response = new Protos.GetVideoByIdResponse
@@ -104,17 +114,6 @@ namespace VideoMicroservice.Services
                 };
 
                 return response;
-            }
-            catch (KeyNotFoundException knfEx)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = knfEx.Message,
-                    Service = "VideoService",
-                    UserId = request.UserData.Id,
-                    UserEmail = request.UserData.Email,
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, knfEx.Message));
             }
             catch (Exception ex)
             {
@@ -141,6 +140,16 @@ namespace VideoMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"PATCH/videos/{request.Id}",
                 });
+
+                // Validar que el usuario esté autenticado y tenga el rol adecuado
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para actualizar un video.");
+                }
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new Exception("No autorizado: no tienes permisos para actualizar videos.");
+                }
 
                 var video = new src.Application.DTOs.UpdateVideoDTO
                 {
@@ -190,6 +199,17 @@ namespace VideoMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"DELETE/videos/{request.Id}",
                 });
+
+                // Validar que el usuario esté autenticado y tenga el rol adecuado
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para eliminar un video.");
+                }
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new Exception("No autorizado: no tienes permisos para eliminar videos.");
+                }
+
                 await _videoService.DeleteVideo(request.Id);
                 return new Protos.DeleteVideoResponse();
             }
@@ -247,17 +267,6 @@ namespace VideoMicroservice.Services
                 };
 
                 return getAllVideosResponse;
-            }
-            catch (KeyNotFoundException knfEx)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = knfEx.Message,
-                    Service = "VideoService",
-                    UserId = request.UserData.Id,
-                    UserEmail = request.UserData.Email,
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, knfEx.Message));
             }
             catch (Exception ex)
             {
