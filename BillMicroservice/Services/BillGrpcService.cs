@@ -8,6 +8,7 @@ using BillMicroservice.src.Application.Services.Interfaces;
 using BillMicroservice.src.Infrastructure.MessageBroker.Models;
 using Grpc.Core;
 using Microsoft.VisualBasic;
+using Serilog;
 
 namespace BillMicroservice.Services
 {
@@ -36,9 +37,29 @@ namespace BillMicroservice.Services
                     UrlMethod = "POST/facturas"
                 });
 
+                if(string.IsNullOrWhiteSpace(request.UserEmail))
+                {
+                    throw new ArgumentException("No autenticado: se requiere un usuario autenticado para crear una factura.");
+                }
+
+                if (request.UserRole.ToLower() != "administrador")
+                { 
+                    throw new ArgumentException("No autorizado: no tienes permisos para crear una factura.");
+                }
+
+                if (int.TryParse(request.UserId, out var userId) == false || userId <= 0)
+                { 
+                    throw new ArgumentException("El ID de usuario debe ser un número entero positivo.");
+                }
+
                 if (request.Amount < 0)
                 {
                     throw new ArgumentException("El monto a pagar no puede ser negativo");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.BillStatus))
+                {
+                    throw new ArgumentException("El estado de la factura no puede estar vacío");
                 }
 
                 var billDto = new CreateBillDTO
@@ -49,11 +70,6 @@ namespace BillMicroservice.Services
                 };
 
                 var createdBill = await _billService.AddBill(billDto);
-
-                if (createdBill == null)
-                {
-                    throw new KeyNotFoundException("Error al crear la factura");
-                }                   
 
                 var response = new Bill
                 {
@@ -73,29 +89,6 @@ namespace BillMicroservice.Services
                 };
 
             }
-            catch (KeyNotFoundException ex)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = ex.Message,
-                    Service = "BillMicroservice",
-                    UserId = request.UserId,
-                    UserEmail = request.UserEmail,
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-            }
-            catch (ArgumentException ex)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = ex.Message,
-                    Service = "BillMicroservice",
-                    UserId = request.UserId,
-                    UserEmail = request.UserEmail,
-                });
-                throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
-            }
-
             catch (Exception ex)
             {
                 await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
@@ -121,6 +114,22 @@ namespace BillMicroservice.Services
                     UserEmail = request.UserEmail,
                     UrlMethod = $"GET/facturas/{request.BillId}"
                 });
+
+                if (string.IsNullOrWhiteSpace(request.UserId))
+                { 
+                    throw new ArgumentException("No autenticado: se requiere un usuario autenticado para obtener una factura.");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.BillId))
+                { 
+                    throw new ArgumentException("El ID de la factura no puede estar vacío.");
+                }
+
+                if (!int.TryParse(request.BillId, out var billId) || billId <= 0)
+                {
+                    throw new ArgumentException("El ID de la factura debe ser un número entero positivo.");
+                }
+
                 var bill = await _billService.GetBillById(request.BillId, request.UserId, request.UserRole) ?? throw new KeyNotFoundException("Factura no encontrada");
                 var response = new Bill
                 {
@@ -138,17 +147,6 @@ namespace BillMicroservice.Services
                 {
                     Bill = response,
                 };
-            }
-            catch (KeyNotFoundException ex)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = ex.Message,
-                    Service = "BillMicroservice",
-                    UserId = request.UserId,
-                    UserEmail = request.UserEmail,
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
             catch (Exception ex)
             {
@@ -175,6 +173,26 @@ namespace BillMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"PATCH/facturas/{request.BillId}"
                 });
+
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new ArgumentException("No autenticado: se requiere un usuario autenticado para actualizar una factura.");
+                }
+
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new ArgumentException("No autorizado: no tienes permisos para actualizar una factura.");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.BillId))
+                {
+                    throw new ArgumentException("El ID de la factura no puede estar vacío.");
+                }
+
+                if (!int.TryParse(request.BillId, out var billId) || billId <= 0)
+                {
+                    throw new ArgumentException("El ID de la factura debe ser un número entero positivo.");
+                }
 
                 var updatedBill = await _billService.UpdateBillStatus(request.BillId, request.BillStatus);
 
@@ -220,6 +238,27 @@ namespace BillMicroservice.Services
                     UserEmail = request.UserData.Email,
                     UrlMethod = $"DELETE/facturas/{request.BillId}"
                 });
+
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new ArgumentException("No autenticado: se requiere un usuario autenticado para eliminar una factura.");
+                }
+
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new ArgumentException("No autorizado: no tienes permisos para eliminar una factura.");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.BillId))
+                {
+                    throw new ArgumentException("El ID de la factura no puede estar vacío.");
+                }
+
+                if (!int.TryParse(request.BillId, out var billId) || billId <= 0)
+                {
+                    throw new ArgumentException("El ID de la factura debe ser un número entero positivo.");
+                }
+
                 var deletedBill = await _billService.DeleteBill(request.BillId);
 
                 return new DeleteBillResponse
@@ -253,6 +292,11 @@ namespace BillMicroservice.Services
                     UrlMethod = "GET/facturas"
                 });
 
+                if (string.IsNullOrWhiteSpace(request.UserId))
+                {
+                    throw new ArgumentException("No autenticado: se requiere un usuario autenticado para listar las facturas.");
+                }
+
                 var bills = await _billService.GetBills(request.UserId, request.UserRole, request.BillStatus)
                 ?? throw new KeyNotFoundException("No se encontraron facturas");
 
@@ -276,17 +320,6 @@ namespace BillMicroservice.Services
                 }
 
                 return response;
-            }
-            catch (KeyNotFoundException ex)
-            {
-                await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
-                {
-                    ErrorMessage = ex.Message,
-                    Service = "BillMicroservice",
-                    UserId = request.UserId,
-                    UserEmail = request.UserEmail
-                });
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
             catch (Exception ex)
             {
