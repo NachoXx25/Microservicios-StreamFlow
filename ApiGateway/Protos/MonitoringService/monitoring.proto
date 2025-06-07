@@ -12,6 +12,12 @@ service MonitoringGrpcService {
     rpc GetAllErrors (GetAllErrorsRequest) returns (GetAllErrorsResponse);
 }
 
+message UserData {
+    string id = 1;
+    string email = 2;
+    string role = 3;
+}
+
 message Action {
     string id = 1;
     string user_id = 2;
@@ -30,6 +36,7 @@ message Error {
 }
 
 message GetAllActionsRequest {
+    UserData user_data = 1;
 }
 
 message GetAllActionsResponse {
@@ -37,6 +44,7 @@ message GetAllActionsResponse {
 }
 
 message GetAllErrorsRequest {
+    UserData user_data = 1;
 }
 
 message GetAllErrorsResponse {

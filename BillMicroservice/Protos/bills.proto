@@ -17,6 +17,7 @@ service BillGrpcService {
 message UserData {
     string id = 1;
     string email = 2;
+    string role = 3;
 }
 
 message Bill {
@@ -33,6 +34,7 @@ message CreateBillRequest {
     string bill_status = 2;
     int32 amount = 3;
     string user_email = 4;
+    string user_role = 5;
 }
 
 message CreateBillResponse {
