@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -25,22 +26,44 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User.Identity?.IsAuthenticated == false)
+                var userId = User?.FindFirst("Id")?.Value;
+                var userEmail = User?.FindFirst("Email")?.Value;
+                var userRole = User?.FindFirst(ClaimTypes.Role)?.Value;
+
+                var request = new Protos.MonitoringService.GetAllActionsRequest()
                 {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-                if (!User.IsInRole("Administrador"))
-                {
-                    return StatusCode(403, new { Error = "No tienes permisos para acceder a esta información." });
-                }
-                var request = new Protos.MonitoringService.GetAllActionsRequest();
+                    UserData = new Protos.MonitoringService.UserData
+                    {
+                        Id = userId ?? string.Empty,
+                        Email = userEmail ?? string.Empty,
+                        Role = userRole ?? string.Empty
+                    }
+                };
                 var response = await _monitoringGrpcClient.GetAllActionsAsync(request);
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -50,22 +73,44 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User.Identity?.IsAuthenticated == false)
+                var userId = User?.FindFirst("Id")?.Value;
+                var userEmail = User?.FindFirst("Email")?.Value;
+                var userRole = User?.FindFirst(ClaimTypes.Role)?.Value;
+
+                var request = new Protos.MonitoringService.GetAllErrorsRequest()
                 {
-                    return Unauthorized(new { Error = "Se requiere autenticación para acceder a esta información." });
-                }
-                if (!User.IsInRole("Administrador"))
-                {
-                    return StatusCode(403, new { Error = "No tienes permisos para acceder a esta información." });
-                }
-                var request = new Protos.MonitoringService.GetAllErrorsRequest();
+                    UserData = new Protos.MonitoringService.UserData
+                    {
+                        Id = userId ?? string.Empty,
+                        Email = userEmail ?? string.Empty,
+                        Role = userRole ?? string.Empty
+                    }
+                };
                 var response = await _monitoringGrpcClient.GetAllErrorsAsync(request);
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
     }
