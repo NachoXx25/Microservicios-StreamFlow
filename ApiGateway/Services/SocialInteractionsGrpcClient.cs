@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.SocialInteractionsService;
+using Grpc.Core;
 using Grpc.Net.Client;
 
 namespace ApiGateway.Services
@@ -25,9 +26,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetVideoLikesAndCommentsAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception("Error cargando los likes y comentarios del video", ex);
+                throw;
             }
         }
 
@@ -37,9 +38,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GiveLikeAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception("Error agregando like al video", ex);
+                throw;
             }
         }
 
@@ -49,9 +50,9 @@ namespace ApiGateway.Services
             {
                 return await _client.MakeCommentAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception("Error agregando comentario al video", ex);
+                throw;
             }
         }
     }

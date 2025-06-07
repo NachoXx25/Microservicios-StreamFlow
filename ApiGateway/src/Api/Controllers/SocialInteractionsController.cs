@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,12 +26,6 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-
-                if (User.Identity?.IsAuthenticated == false)
-                {
-                    return Unauthorized(new { Message = "Usuario no autenticado" });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
 
@@ -48,9 +43,27 @@ namespace ApiGateway.src.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, new { Message = "Error cargando las interacciones del video", Error = ex.Message });
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -60,12 +73,6 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-
-                if (User.Identity?.IsAuthenticated == false)
-                {
-                    return Unauthorized(new { Message = "Usuario no autenticado" });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
 
@@ -80,17 +87,29 @@ namespace ApiGateway.src.Api.Controllers
                 };
 
                 var response = await _socialInteractionsGrpcClient.GiveLikeAsync(request);
-
-                if (response == null)
-                {
-                    return BadRequest(new { Message = "Error al dar like al video." });
-                }
-
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, new { Message = "Error dando like al video", Error = ex.Message });
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
 
@@ -100,11 +119,6 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                if (User.Identity?.IsAuthenticated == false)
-                {
-                    return Unauthorized(new { Message = "Usuario no autenticado" });
-                }
-
                 var userId = User.FindFirst("Id")?.Value;
                 var userEmail = User.FindFirst("Email")?.Value;
 
@@ -121,16 +135,29 @@ namespace ApiGateway.src.Api.Controllers
 
                 var response = await _socialInteractionsGrpcClient.MakeCommentAsync(request);
 
-                if (response == null)
-                {
-                    return BadRequest(new { Message = "Error al agregar el comentario al video." });
-                }
-
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (RpcException ex)
             {
-                return StatusCode(500, new { Message = "Error agregando comentario al video", Error = ex.Message });
+                var errorMessage = ex.Status.Detail.ToLower();
+
+                if (errorMessage.Contains("no autenticado"))
+                {
+                    return Unauthorized(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("error en el sistema"))
+                {
+                    return StatusCode(500, new { error = "Error en el sistema, intente más tarde" });
+                }
+                if (errorMessage.Contains("no encontrado"))
+                {
+                    return NotFound(new { error = ex.Status.Detail });
+                }
+                if (errorMessage.Contains("no tienes permisos"))
+                {
+                    return StatusCode(403, new { error = "No tienes permisos para realizar esta acción" });
+                }
+                return BadRequest(new { error = ex.Status.Detail });
             }
         }
     }
