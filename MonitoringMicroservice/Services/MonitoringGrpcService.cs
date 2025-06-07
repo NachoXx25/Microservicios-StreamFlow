@@ -21,6 +21,16 @@ namespace MonitoringMicroservice.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para listar las acciones.");
+                }
+
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new Exception("No autorizado: no tienes permisos para listar las acciones.");
+                }
+
                 var actions = await _monitoringService.GetAllActions();
                 var response = new Protos.GetAllActionsResponse();
 
@@ -41,7 +51,6 @@ namespace MonitoringMicroservice.Services
             }
             catch (Exception ex)
             {
-
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -50,6 +59,16 @@ namespace MonitoringMicroservice.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(request.UserData.Id))
+                {
+                    throw new Exception("No autenticado: se requiere un usuario autenticado para listar los errores.");
+                }
+
+                if (request.UserData.Role.ToLower() != "administrador")
+                {
+                    throw new Exception("No autorizado: no tienes permisos para listar los errores.");
+                }
+
                 var errors = await _monitoringService.GetAllErrors();
                 var response = new Protos.GetAllErrorsResponse();
 
@@ -72,6 +91,5 @@ namespace MonitoringMicroservice.Services
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
-
     }
 }

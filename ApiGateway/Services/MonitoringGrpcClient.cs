@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.MonitoringService;
+using Grpc.Core;
 using Grpc.Net.Client;
 
 namespace ApiGateway.Services
@@ -26,9 +27,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetAllActionsAsync(request);
             }   
-            catch (Exception ex)
+            catch (RpcException)
             {
-                throw new Exception($"Error cargando las acciones: {ex.Message}", ex);
+                throw;
             }
         }
 
@@ -38,10 +39,9 @@ namespace ApiGateway.Services
             {
                 return await _client.GetAllErrorsAsync(request);
             }
-            catch (Exception ex)
+            catch (RpcException)
             {
-                
-                throw new Exception($"Error cargando los errores: {ex.Message}", ex);
+                throw;
             }
         }
 
