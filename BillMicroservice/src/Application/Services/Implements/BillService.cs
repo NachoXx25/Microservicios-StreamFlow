@@ -38,7 +38,7 @@ namespace BillMicroservice.src.Application.Services.Implements
             var userExists = await _userRepository.UserExists(intUserId);
             
             if(!userExists){
-                throw new KeyNotFoundException("El usuario no existe");
+                throw new KeyNotFoundException("Usuario no encontrado");
             }
 
             //Obtener el id del estado de la factura según el nombre
@@ -50,7 +50,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 AmountToPay = bill.AmountToPay,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow,
-                PaymentDate = bill.StatusName == "Pagado" ? DateTime.UtcNow : null, //Agregar la fecha de pago si el estado es "Pagado"
+                PaymentDate = bill.StatusName.Equals("Pagado",StringComparison.OrdinalIgnoreCase) ? DateTime.UtcNow : null, //Agregar la fecha de pago si el estado es "Pagado"
                 StatusId = statusId,
                 UserId = intUserId
             };
@@ -63,12 +63,16 @@ namespace BillMicroservice.src.Application.Services.Implements
                 throw new KeyNotFoundException("Error al crear la factura");
             }else {
                 //Crear un nuevo objeto de DTO para la factura creada
+
+                var normalizedStatusName = await _statusRepository.GetStatusNameById(createdBill.StatusId) 
+                    ?? throw new InvalidOperationException("Estado de factura no encontrado");
+
                 var createdBillDTO = new CreatedBillDTO
                 {
                     Id = createdBill.Id,
                     AmountToPay = createdBill.AmountToPay,
                     PaymentDate = createdBill.PaymentDate,
-                    Status = bill.StatusName,
+                    Status = normalizedStatusName,
                     UserId = createdBill.UserId,
                     CreatedAt = createdBill.CreatedAt
                 };
@@ -88,13 +92,13 @@ namespace BillMicroservice.src.Application.Services.Implements
             var intId = int.Parse(id);
 
             //Obtener la factura por su id
-            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("La factura no existe");
+            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("Factura no encontrada");
 
             //Obtener el nombre del estado de la factura
             var statusName = await _statusRepository.GetStatusNameById(bill.StatusId);
 
             //Revisar si el estado de la factura es 'Pagado'
-            if (statusName == "Pagado")
+            if (statusName.Equals("Pagado",StringComparison.OrdinalIgnoreCase))
             {
                 //No permitir la eliminación de una factura pagada
                 throw new InvalidOperationException("No se puede eliminar una factura pagada");
@@ -126,7 +130,7 @@ namespace BillMicroservice.src.Application.Services.Implements
 
             //Si el usuario no existe, lanzar una excepción
             if(!userExists){
-                throw new KeyNotFoundException("El usuario no existe");
+                throw new KeyNotFoundException("Usuario no encontrado.");
             }
             
             var intId = int.Parse(id);
@@ -170,78 +174,38 @@ namespace BillMicroservice.src.Application.Services.Implements
         /// <returns>Listado de las facturas según el usuario y el filtro</returns>
         public async Task<CreatedBillDTO[]?> GetBills(string userId, string userRole, string? statusName)
         {
-            //Obtener todos los estados de una factura la base de datos
-            var statuses = await _statusRepository.GetAllStatuses() ?? throw new InvalidOperationException("No se pudieron cargar los estados.");
-
-            //Si el usuario es administrador, obtener todas las facturas
-            if(userRole == "Administrador"){
-
-                var allBills = await _billRepository.GetAllBills();
-
-                //Mapear todas las facturas a un DTO con los datos necesarios
-                var mappedBills = allBills.Select( b => new CreatedBillDTO
-                {
-                    Id = b.Id,
-                    AmountToPay = b.AmountToPay,
-                    PaymentDate = b.PaymentDate,
-                    Status = statuses.FirstOrDefault(s => s.Id == b.StatusId)?.Name ?? "Estado no encontrado",
-                    UserId = b.UserId,
-                    CreatedAt = b.CreatedAt
-                }).ToArray();
-
-                //Si se proporciona un nombre de estado, filtrar las facturas por ese estado
-                if(!string.IsNullOrEmpty(statusName)){
-                    mappedBills = mappedBills.Where(b => b.Status.Contains(statusName)).ToArray();
-
-                    //Si no se encuentran facturas con ese estado, retornar nulo
-                    if(mappedBills.Length == 0){
-                        return null;
-                    }else{
-                        //Si se encuentran facturas, retornar el listado filtrado
-                        return mappedBills;
-                    }
-                }else {
-                    //Si no se proporciona un nombre de estado, retornar todas las facturas
-                    return mappedBills;
-                }
-
-            //Si el usuario es cliente, obtener solo las facturas del usuario
-            }else if(userRole == "Cliente"){
-
+            Bill[] bills;
+            
+            if (userRole.Equals("Administrador", StringComparison.OrdinalIgnoreCase))
+            {
+                bills = await _billRepository.GetAllBills(statusName);
+            }
+            else if (userRole.Equals("Cliente", StringComparison.OrdinalIgnoreCase))
+            {
                 var intUserId = int.Parse(userId);
-
-                //Obtener todas las facturas del usuario
-                var userBills = await _billRepository.GetAllBillsByUserId(intUserId) ?? throw new InvalidOperationException("No se pudieron cargar las facturas del usuario.");
-
-                //Mapear las facturas del usuario a un DTO con los datos necesarios
-                var mappedBills = userBills.Select(b => new CreatedBillDTO
-                {
-                    Id = b.Id,
-                    AmountToPay = b.AmountToPay,
-                    PaymentDate = b.PaymentDate,
-                    Status = statuses.FirstOrDefault(s => s.Id == b.StatusId)?.Name ?? "Estado no encontrado",
-                    UserId = b.UserId,
-                    CreatedAt = b.CreatedAt
-                }).ToArray();
-
-                //Si se proporciona un nombre de estado, filtrar las facturas por ese estado
-                if(!string.IsNullOrEmpty(statusName)){
-                    mappedBills = mappedBills.Where(b => b.Status.Contains(statusName)).ToArray();
-
-                    //Si no se encuentran facturas con ese estado, retornar nulo
-                    if(mappedBills.Length == 0){
-                        return null;
-                    }else{
-                        //Si se encuentran facturas, retornar el listado filtrado
-                        return mappedBills;
-                    }
-                }else {
-                    //Si no se proporciona un nombre de estado, retornar todas las facturas del usuario
-                    return mappedBills;
-                }
-            }else {
+                bills = await _billRepository.GetAllBillsByUserId(intUserId, statusName);
+            }
+            else
+            {
                 throw new ArgumentException("El rol de usuario no es válido.");
             }
+
+            if (bills.Length == 0)
+            {
+                return null;
+            }
+
+            var mappedBills = bills.Select(b => new CreatedBillDTO
+            {
+                Id = b.Id,
+                AmountToPay = b.AmountToPay,
+                PaymentDate = b.PaymentDate,
+                Status = b.Status?.Name ?? "Estado no encontrado",
+                UserId = b.UserId,
+                CreatedAt = b.CreatedAt
+            }).ToArray();
+
+            return mappedBills;
         }
 
         /// <summary>
@@ -254,7 +218,7 @@ namespace BillMicroservice.src.Application.Services.Implements
             var intId = int.Parse(id);
 
             //Obtener la factura por su id
-            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("La factura no existe");
+            var bill = await _billRepository.GetBillById(intId) ?? throw new KeyNotFoundException("Factura no encontrada");
 
             //Revisar si la factura no está eliminada
             if (bill.IsDeleted)
@@ -266,14 +230,17 @@ namespace BillMicroservice.src.Application.Services.Implements
             var statusId = await _statusRepository.GetStatusIdByName(status);
 
             // Determinar la fecha de pago basada en el estado
-            DateTime? paymentDate = status == "Pagado" ? DateTime.UtcNow : null;
+            DateTime? paymentDate = status.Equals("Pagado",StringComparison.OrdinalIgnoreCase) ? DateTime.UtcNow : null;
 
             // Actualizar la factura
             var updatedBill = await _billRepository.UpdateBillState(intId, statusId, paymentDate) ?? 
                 throw new InvalidOperationException("Error al actualizar la factura");
 
             var user = await _userRepository.GetUserById(updatedBill.UserId) ?? 
-                throw new KeyNotFoundException("El usuario no existe");
+                throw new KeyNotFoundException("Usuario no encontrado");
+
+            var normalizedStatus = await _statusRepository.GetStatusNameById(updatedBill.StatusId) ?? 
+                throw new InvalidOperationException("Estado no encontrado");
 
             await _billEventService.PublishUpdatedBillEvent(new UpdatedBillDTO
             {
@@ -282,7 +249,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 UserEmail = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                StatusName = status,
+                StatusName = normalizedStatus,
                 Amount = updatedBill.AmountToPay
             });
 
@@ -292,7 +259,7 @@ namespace BillMicroservice.src.Application.Services.Implements
                 Id = updatedBill.Id,
                 AmountToPay = updatedBill.AmountToPay,
                 PaymentDate = updatedBill.PaymentDate,
-                Status = status,
+                Status = normalizedStatus,
                 UserId = updatedBill.UserId,
                 CreatedAt = updatedBill.CreatedAt
             };
