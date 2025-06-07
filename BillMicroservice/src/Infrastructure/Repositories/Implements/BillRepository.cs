@@ -93,9 +93,21 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
         /// Obtiene todas las facturas
         /// </summary>
         /// <returns>Listado de facturas</returns>
-        public async Task<Bill[]> GetAllBills()
+        public async Task<Bill[]> GetAllBills(string? statusFilter = null)
         {
-            return await _context.Bills.AsNoTracking().ToArrayAsync();
+
+            var query = _context.Bills
+                .AsNoTracking()
+                .Include(b => b.Status).AsQueryable();
+
+            // Si se proporciona un filtro de estado, se aplica
+            if (!string.IsNullOrWhiteSpace(statusFilter))
+            {
+                var normalizedStatusFilter = statusFilter.Trim().ToLower();
+                query = query.Where(b => b.Status.Name.ToLower().Contains(normalizedStatusFilter));
+            }
+
+            return await query.ToArrayAsync();
         }
 
         /// <summary>
@@ -103,9 +115,20 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Implements
         /// </summary>
         /// <param name="userId">El id del usuario al que le corresponden las facturas</param>
         /// <returns>Listado de las facturas del usuario</returns>
-        public async Task<Bill[]> GetAllBillsByUserId(int userId)
+        public async Task<Bill[]> GetAllBillsByUserId(int userId, string? statusFilter)
         {
-            return await _context.Bills.AsNoTracking().Where(b => b.UserId == userId).ToArrayAsync();
+            var query = _context.Bills
+                         .AsNoTracking()
+                         .Include(b => b.Status).Where(b => b.UserId == userId);
+
+            // Si se proporciona un filtro de estado, se aplica
+            if (!string.IsNullOrWhiteSpace(statusFilter))
+            {
+                var normalizedStatusFilter = statusFilter.ToLower();
+                query = query.Where(b => b.Status.Name.ToLower().Contains(normalizedStatusFilter));
+            }
+
+            return await query.ToArrayAsync();
         }
 
     }

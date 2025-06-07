@@ -38,13 +38,13 @@ namespace BillMicroservice.src.Infrastructure.Repositories.Interfaces
         /// Obtiene todas las facturas
         /// </summary>
         /// <returns>Listado de facturas</returns>
-        Task<Bill[]> GetAllBills();
+        Task<Bill[]> GetAllBills(string? statusFilter);
 
         /// <summary>
         /// Obtiene todas las facturas de un usuario
         /// </summary>
         /// <param name="userId">El id del usuario al que le corresponden las facturas</param>
         /// <returns>Listado de facturas del usuario</returns>
-        Task<Bill[]> GetAllBillsByUserId(int userId);
+        Task<Bill[]> GetAllBillsByUserId(int userId, string? statusFilter);
     }
 }
