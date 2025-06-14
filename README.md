@@ -24,7 +24,8 @@ cd Microservicios-StreamFlow
 ``` 
 
 3. **Run the services and the API Gateway**
-Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
+
+    Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
 
 Execution order of the microservices and the API Gateway
 
@@ -50,7 +51,7 @@ cd MicroserviceProjectName
 
 3.2 **Restore the dependencies**
 ```
-cd dotnet restore
+dotnet restore
 ```
 
 3.3 **Create a ```.env``` file on the root of the project and fill the environment variables**
@@ -129,7 +130,7 @@ Once you have replaced everything, save the changes and move on to the next step
 dotnet run
 ```
 
-Repeat the steps 3.1 to 3.4 for each service until all are running. Make sure to run all the services in the order listed in [step 3](#run-the-services-and-the-api-gateway) before running the API Gateway.
+Repeat the steps 3.1 to 3.4 for each service until all are running. Make sure to run all the services in the order listed in [step 3](#installation-and-configuration) before running the API Gateway.
 
 ## Table of contents
 This section shows the steps to execute the application seeders and obtain the gmail application password for the EmailService.
