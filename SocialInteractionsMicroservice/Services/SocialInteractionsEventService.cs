@@ -27,11 +27,11 @@ namespace SocialInteractionsMicroservice.Services
 
         public SocialInteractionsEventService()
         {
-            _hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            _username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            _port = Env.GetInt("RABBITMQ_PORT");
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "SocialInteractionsExchange";
+            _hostname = "localhost";
+            _username = "guest";
+            _password = "guest";
+            _port = 5672;
+            _exchangeName = "StreamFlowExchange";
 
             _factory = new ConnectionFactory()
             {

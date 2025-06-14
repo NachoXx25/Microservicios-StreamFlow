@@ -28,9 +28,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                request.UserId = User.FindFirst("Id")?.Value;
-                request.UserEmail = User.FindFirst("Email")?.Value;
-                request.Role = User.FindFirst(ClaimTypes.Role)?.Value;
+                request.UserId = User.FindFirst("Id")?.Value ?? "";
+                request.UserEmail = User.FindFirst("Email")?.Value ?? "";
+                request.Role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
                 var response = await _userGrpcClient.GetAllUsersAsync(request);
                 var users = response.Users.Select(u => new
                 {
@@ -74,9 +74,9 @@ namespace ApiGateway.src.Api.Controllers
                 var request = new GetUserByIdRequest
                 {
                     Id = id,
-                    UserId = User.FindFirst("Id")?.Value,
-                    UserEmail = User.FindFirst("Email")?.Value,
-                    Role = User.FindFirst(ClaimTypes.Role)?.Value
+                    UserId = User.FindFirst("Id")?.Value ?? "",
+                    UserEmail = User.FindFirst("Email")?.Value ?? "",
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value ?? ""
                 };
                 var response = await _userGrpcClient.GetUserByIdAsync(request);
                 var user = new
@@ -117,9 +117,9 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                request.UserId = User.FindFirst("Id")?.Value;
-                request.UserEmail = User.FindFirst("Email")?.Value;  
-                request.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;     
+                request.UserId = User.FindFirst("Id")?.Value ?? "";
+                request.UserEmail = User.FindFirst("Email")?.Value ?? "";  
+                request.UserRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";     
                 var response = await _userGrpcClient.CreateUserAsync(request);
                 var user = new
                 {
@@ -170,9 +170,9 @@ namespace ApiGateway.src.Api.Controllers
             try
             {
                 request.Id = id;
-                request.UserId = User.FindFirst("Id")?.Value;
-                request.UserEmail = User.FindFirst("Email")?.Value;
-                request.Role = User.FindFirst(ClaimTypes.Role)?.Value;
+                request.UserId = User.FindFirst("Id")?.Value ?? "";
+                request.UserEmail = User.FindFirst("Email")?.Value ?? "";
+                request.Role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
                 var response = await _userGrpcClient.UpdateUserAsync(request);
                 var user = new
                 {
@@ -222,13 +222,13 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                var userIdClaim = User.FindFirst("Id")?.Value;
+                var userIdClaim = User.FindFirst("Id")?.Value ?? ""; 
                 var request = new DeleteUserRequest
                 {
                     Id = id,
-                    UserId = User.FindFirst("Id")?.Value,
-                    UserEmail = User.FindFirst("Email")?.Value,
-                    Role = User.FindFirst(ClaimTypes.Role)?.Value
+                    UserId = userIdClaim,
+                    UserEmail = User.FindFirst("Email")?.Value ?? "",
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value ?? ""
                 };
                 await _userGrpcClient.DeleteUserAsync(request);
                 return NoContent();

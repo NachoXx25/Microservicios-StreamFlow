@@ -24,10 +24,10 @@ builder.Services.AddGrpc();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-    connectionFactory.UserName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-    connectionFactory.Password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-    connectionFactory.Port = Env.GetInt("RABBITMQ_PORT");
+    connectionFactory.HostName = "localhost";
+    connectionFactory.UserName = "guest";
+    connectionFactory.Password = "guest";
+    connectionFactory.Port = 5672;
     var connection = connectionFactory.CreateConnection();
     builder.Services.AddHostedService<MonitoringEventConsumer>();
     builder.Services.AddSingleton<RabbitMQService>();

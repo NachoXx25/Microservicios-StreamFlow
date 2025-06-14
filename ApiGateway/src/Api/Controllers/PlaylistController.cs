@@ -27,8 +27,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                var userId = User?.FindFirst("Id")?.Value;
-                var userEmail = User?.FindFirst("Email")?.Value;
+                var userId = User?.FindFirst("Id")?.Value ?? "";
+                var userEmail = User?.FindFirst("Email")?.Value ?? "";
                 var request = new GetPlaylistsByUserIdRequest();
                 request.UserId = userId;
                 request.UserEmail = userEmail;
@@ -68,8 +68,8 @@ namespace ApiGateway.src.Api.Controllers
                 var request = new CreatePlaylistRequest();
                 Log.Information("Creando lista de reproducción: {Name}", name);
                 request.Name = name;
-                request.UserId = User?.FindFirst("Id")?.Value ?? request.UserId;
-                request.UserEmail = User?.FindFirst("Email")?.Value ?? request.UserEmail;
+                request.UserId = User?.FindFirst("Id")?.Value ?? request.UserId ?? "";
+                request.UserEmail = User?.FindFirst("Email")?.Value ?? request.UserEmail ?? "";
                 var response = await _playlistGrpcClient.CreatePlaylistAsync(request);
                 return CreatedAtAction(nameof(GetPlaylistsByUserId), response);
             }
@@ -101,8 +101,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                var userId = User?.FindFirst("Id")?.Value;
-                var userEmail = User?.FindFirst("Email")?.Value;
+                var userId = User?.FindFirst("Id")?.Value ?? "";
+                var userEmail = User?.FindFirst("Email")?.Value ?? "";
                 var request = new AddVideoToPlaylistRequest();
                 request.VideoId = videoId;
                 request.UserId = userId;
@@ -141,8 +141,8 @@ namespace ApiGateway.src.Api.Controllers
             {
                 var request = new GetVideosByPlaylistIdRequest();
                 request.PlaylistId = id;
-                request.UserId = User?.FindFirst("Id")?.Value;
-                request.UserEmail = User?.FindFirst("Email")?.Value;
+                request.UserId = User?.FindFirst("Id")?.Value ?? "";
+                request.UserEmail = User?.FindFirst("Email")?.Value ?? "";
                 var response = await _playlistGrpcClient.GetVideosByPlaylistIdAsync(request);
                 return Ok(response);
             }
@@ -174,8 +174,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                var userId = User?.FindFirst("Id")?.Value;
-                var userEmail = User?.FindFirst("Email")?.Value;
+                var userId = User?.FindFirst("Id")?.Value ?? "";
+                var userEmail = User?.FindFirst("Email")?.Value ?? "";
                 var request = new RemoveVideoFromPlaylistRequest
                 {
                     UserId = userId,
@@ -214,8 +214,8 @@ namespace ApiGateway.src.Api.Controllers
         {
             try
             {
-                var userId = User?.FindFirst("Id")?.Value;
-                var userEmail = User?.FindFirst("Email")?.Value;
+                var userId = User?.FindFirst("Id")?.Value ?? "";
+                var userEmail = User?.FindFirst("Email")?.Value ?? "";
                 var request = new DeletePlaylistRequest
                 {
                     PlaylistId = id,
