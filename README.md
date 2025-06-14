@@ -24,11 +24,16 @@ cd Microservicios-StreamFlow
 ``` 
 
 3. **Run RabbitMQ on Docker**
+
+If you do not have RabbitMQ, it is recommended to use this command in a terminal to install and run it.
+```bash
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
+```
+If you already have RabbitMQ on Docker, but with ports other than 5672:5672 and 15672:15672, then delete your container and image, and reinstall the image with the above command. Conversely, if you have RabbitMQ installed on Docker with these ports, simply run docker with replacing ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container.
 ```bash
 docker run your_rabbitmq_container_name
 ```
-
-Replace ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container.
+You can also run the container using the Docker Desktop Application.
 
 4. **Run the services and the API Gateway**
 
@@ -50,10 +55,11 @@ Execution order of the microservices and the API Gateway
 
 Microservices and the API Gateway share 4 common steps to execute them:
 
-4.1 **Navigate to the service project folder**
+4.1 **Navigate to the project folder**
 
+Replace ```ProjectFolderName``` with the project folder name from the above table. 
 ```
-cd MicroserviceProjectName
+cd ProjectFolderName
 ```
 
 4.2 **Restore the dependencies**
@@ -134,19 +140,16 @@ This section shows the steps to execute the application seeders and obtain the g
 
 ### How to execute the seeders
 1. **Run the RabbitMQ container on Docker**
+
+**It is recommended that you see the considerations of the RabbitMQ docker container on the [step 3 from Installation and Configuration](#installation-and-configuration) before running it in this step.** Once you've seen that section, run RabbitMQ from Docker
 ```
 docker run your_rabbitmq_container_name
 ```
-Replace ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container. You can also run the container using the Docker Desktop Application.
-**If you already have RabbitMQ running, go directly to the next step.**
+Replace ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container. **If you already have RabbitMQ running, go directly to the next step.**
 
 2. **Make sure that all the services are running**
-```
-dotnet run
-```
-Use the above command on each service and this will load the seeders for each and also stream them through RabbitMQ as appropriate. 
 
-**The services have to run in the order given in the [Installation and Configuration](#installation-and-configuration) section, otherwise the seeder's load can fail.**
+The services have to run in the order given in the [Installation and Configuration](#installation-and-configuration) section to initalize the seeders correctly. If you did not follow these steps carefully, the loading of the seeders may fail. If the services already ran correctly the first time, the seeders will not be reloaded unless the databases are dropped.
 
 ### Seed data
 There is seed data for the Video, Bill, User and Social Interactions services.
@@ -187,7 +190,7 @@ There are:
     These social interactions are only created when the video seeders of the Video service have been uploaded via RabbitMQ. Both likes and comments are randomly assigned, avoiding having a video that has all social interactions loaded.
 
 ### Obtain an App Password
-To use Gmail services via SMTP messaging protocol, it is no longer allowed to use your email password. For security reasons, "Application Passwords" are now used, which are unique and dedicated passwords for use with certain services. In the case of this project, the email service uses this protocol, so it is necessary to obtain this password for it to be able to send emails.  To obtain your application password, follow these steps:
+To use Gmail services via SMTP messaging protocol, it is no longer allowed to use your email password. For security and compatibility reasons, "Application Passwords" are now used, which are unique and dedicated passwords for use with certain services. In the case of this project, the email service uses this protocol, so it is necessary to obtain this password for it to be able to send emails.  To obtain your application password, follow these steps:
 
 1. **Enable 2-Step Verification**
 - Go to your Google Account settings by clicking on your profile picture and then "Manage your Google Account". 
@@ -196,10 +199,8 @@ To use Gmail services via SMTP messaging protocol, it is no longer allowed to us
 Follow the instructions to turn on 2-Step Verification. 
 
 2. **Generate the App Password**
-- Once 2-Step Verification is enabled, go to the App passwords page (you might need to sign in again). 
-- Click on "Select app" and choose the application you're using. 
-- Click on "Select device" and choose the device you're using. 
-- Click "Generate". 
+- Once 2-Step Verification is enabled, search "App passwords" in your account and then enter that option.(you might need to sign in again). 
+- Type the name of the application you want to generate the password for and press create.
 - Copy the generated 16-digit app password carefully. You won't be able to see it again after closing the window. 
 
 ## Authors
