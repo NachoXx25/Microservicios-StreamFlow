@@ -118,6 +118,10 @@ Once you have replaced everything, save the changes and move on to the next step
 - On the ```FROM_EMAIL_PASSWORD``` replace:
     - ```your_password``` with your gmail application password. This password **IS NOT** your gmail password, instead, is a dedicated password for an application. To obtain this password, go to the [Obtain an App Password](#obtain-an-app-password) section.
 
+#### For the API Gateway:
+- On the ```JWT_SECRET``` replace:
+    - ```your_jwt_secret_key``` with your JWT secret key.
+
 Once you have replaced everything, save the changes and move on to the next step.
 
 3.4 **Run the service**
@@ -125,7 +129,7 @@ Once you have replaced everything, save the changes and move on to the next step
 dotnet run
 ```
 
-Repeat the steps 3.1 to 3.4 for each service until all are running. Only run the API Gateway when all the services are correctly running.
+Repeat the steps 3.1 to 3.4 for each service until all are running. Make sure to run all the services in the order listed in [step 3](#run-the-services-and-the-api-gateway) before running the API Gateway.
 
 ## Table of contents
 This section shows the steps to execute the application seeders and obtain the gmail application password for the EmailService.
@@ -133,8 +137,10 @@ This section shows the steps to execute the application seeders and obtain the g
 ### How to execute the seeders
 1. **Run the RabbitMQ container on Docker**
 ```
-docker run <your_rabbitmq_container_name>
+docker run your_rabbitmq_container_name
 ```
+Replace ```your_rabbitmq_container_name``` with your the name of your RabbitMQ docker container.
+
 You can also run the container using the Docker Desktop Application.
 
 2. **Make sure that all the services are running**
@@ -143,13 +149,13 @@ dotnet run
 ```
 Use the above command on each service and this will load the seeders for each and also stream them through RabbitMQ as appropriate. 
 
-**The services have to run in the order given in the Installation and Configuration section, otherwise the seeder's load can fail.**
+**The services have to run in the order given in the [Installation and Configuration](#installation-and-configuration) section, otherwise the seeder's load can fail.**
 
 ### Seed data
 There is seed data for the Video, Bill, User and Social Interactions services.
 
 There are: 
-- **152 Users**, including 2 specific users with each system role ("administrador" and "cliente) for testing purposes. The data for each are:
+- **152 Users**, including 2 specific users with each system role ("administrador" and "cliente") for testing purposes. The data for each are:
     - Administrador:
         - Id: 2
         - First name: Juana
