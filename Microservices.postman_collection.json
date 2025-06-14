@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4bbbfba4-4ed1-452c-8091-4abe898da425",
+		"_postman_id": "4ce5431b-2fde-4795-95a2-0927d2069986",
 		"name": "Microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30508365"
+		"_exporter_id": "33657530"
 	},
 	"item": [
 		{
@@ -237,7 +237,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"firstName\": \"Sebastián\",\r\n  \"lastName\": \"Núñez\",\r\n  \"email\": \"seba@gmail.com\",\r\n  \"password\": \"Seba1234\",\r\n  \"confirmPassword\": \"Seba1234\",\r\n  \"role\": \"Cliente\"\r\n}",
+									"raw": "{\r\n  \"firstName\": \"Sebastián\",\r\n  \"lastName\": \"Núñez\",\r\n  \"email\": \"ignacio.alfonso2002@gmail.com\",\r\n  \"password\": \"Seba1234\",\r\n  \"confirmPassword\": \"Seba1234\",\r\n  \"role\": \"Cliente\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -610,7 +610,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -619,7 +619,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userId\": \"1\",\r\n    \"amount\": 1000,\r\n    \"billStatus\": \"vencido\"\r\n}",
+									"raw": "{\r\n    \"userId\": \"154\",\r\n    \"amount\": 1000,\r\n    \"billStatus\": \"vencido\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1023,6 +1023,307 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Flujo 1",
+			"item": [
+				{
+					"name": "Listar todos los videos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/videos",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"videos"
+							],
+							"query": [
+								{
+									"key": "Title",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "Genre",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Sebastián\",\r\n  \"lastName\": \"Núñez\",\r\n  \"email\": \"seba@gmail.com\",\r\n  \"password\": \"Seba1234\",\r\n  \"confirmPassword\": \"Seba1234\",\r\n  \"role\": \"Cliente\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/usuarios",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"authToken-Flujo1\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"seba@gmail.com\",\r\n    \"password\": \"Seba1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener video por ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/videos/507f1f77bcf86cd799439011",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"videos",
+								"507f1f77bcf86cd799439011"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dar like",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/interacciones/507f1f77bcf86cd799439011/likes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"interacciones",
+								"507f1f77bcf86cd799439011",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo 2",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"authToken-Flujo2\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"juana@gmail.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar facturas por usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/facturas",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"facturas"
+							],
+							"query": [
+								{
+									"key": "Status",
+									"value": "p",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualiza estado de factura Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"pendiente\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/facturas/351",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"facturas",
+								"351"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todas las acciones",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/monitoreo/acciones",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"monitoreo",
+								"acciones"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -1059,6 +1360,14 @@
 		},
 		{
 			"key": "authToken",
+			"value": ""
+		},
+		{
+			"key": "authToken-Flujo1",
+			"value": ""
+		},
+		{
+			"key": "authToken-Flujo2",
 			"value": ""
 		}
 	]
