@@ -23,7 +23,14 @@ git clone https://github.com/NachoXx25/Microservicios-StreamFlow.git
 cd Microservicios-StreamFlow
 ``` 
 
-3. **Run the services and the API Gateway**
+3. **Run RabbitMQ on Docker**
+```bash
+docker run your_rabbitmq_container_name
+```
+
+Replace ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container.
+
+4. **Run the services and the API Gateway**
 
     Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
 
@@ -43,18 +50,18 @@ Execution order of the microservices and the API Gateway
 
 Microservices and the API Gateway share 4 common steps to execute them:
 
-3.1 **Navigate to the service project folder**
+4.1 **Navigate to the service project folder**
 
 ```
 cd MicroserviceProjectName
 ```
 
-3.2 **Restore the dependencies**
+4.2 **Restore the dependencies**
 ```
 dotnet restore
 ```
 
-3.3 **Create a ```.env``` file on the root of the project and fill the environment variables**
+4.3 **Create a ```.env``` file on the root of the project and fill the environment variables**
 ```bash
 cp .env.example .env
 ```
@@ -67,8 +74,6 @@ In the ```.env``` file:
     - ```your_database``` with your database name.
     - ```your_username``` with your MySQL username.
     - ```your_password``` with your MySQL password.
-- On the ```RABBITMQ_EXCHANGE``` replace:
-    - ```your_rabbitmq_exchange``` with your RabbitMQ exchange name.
 
 Once you have replaced everything, save the changes and move on to the next step.
 
@@ -82,19 +87,15 @@ Once you have replaced everything, save the changes and move on to the next step
     - ```your-database-name``` with your database name.
     - ```your-username``` with your PostgreSQL username.
     - ```your-password``` with your PostgreSQL password.
-- On the ```RABBITMQ_EXCHANGE``` replace:
-    - ```your_rabbitmq_exchange``` with your RabbitMQ exchange name.
 
 Once you have replaced everything, save the changes and move on to the next step.
 
 #### For MariaDB databases:
 - On the ```MARIADB_CONNECTION``` replace:
-    - ```mariadb_port``` with your MySQL port.
+    - ```mariadb_port``` with your MariaDB port.
     - ```your_db``` with your database name.
-    - ```your_user``` with your MySQL username.
-    - ```your_password``` with your MySQL password.
-- On the ```RABBITMQ_EXCHANGE``` replace:
-    - ```your_rabbitmq_exchange``` with your RabbitMQ exchange name.
+    - ```your_user``` with your MariaDB username.
+    - ```your_password``` with your MariaDB password.
 
 Once you have replaced everything, save the changes and move on to the next step.
 
@@ -105,14 +106,10 @@ Once you have replaced everything, save the changes and move on to the next step
     - ```mongodb_port``` with your MongoDB Port.
 - On the ```MONGODB_DATABASE_NAME```:
     - ```your_mongodb_db_name``` with your MongoDB database name.
-- On the ```RABBITMQ_EXCHANGE``` replace:
-    - ```your_rabbitmq_exchange``` with your RabbitMQ exchange name.
 
 Once you have replaced everything, save the changes and move on to the next step.
 
 #### For the Email service: 
-- On the ```RABBITMQ_EXCHANGE``` replace:
-    - ```your_rabbitmq_exchange``` with your RabbitMQ exchange name.
 - On the ```FROM_EMAIL``` replace:
     - ```your_email@gmail.com"``` with your gmail.
 
@@ -125,12 +122,12 @@ Once you have replaced everything, save the changes and move on to the next step
 
 Once you have replaced everything, save the changes and move on to the next step.
 
-3.4 **Run the service**
+4.4 **Run the service**
 ```
 dotnet run
 ```
 
-Repeat the steps 3.1 to 3.4 for each service until all are running. Make sure to run all the services in the order listed in [step 3](#installation-and-configuration) before running the API Gateway.
+Repeat the steps 4.1 to 4.4 for each service until all are running. Make sure to run all the services in the order listed in [step 4](#installation-and-configuration) before running the API Gateway.
 
 ## Table of contents
 This section shows the steps to execute the application seeders and obtain the gmail application password for the EmailService.
@@ -140,9 +137,8 @@ This section shows the steps to execute the application seeders and obtain the g
 ```
 docker run your_rabbitmq_container_name
 ```
-Replace ```your_rabbitmq_container_name``` with your the name of your RabbitMQ docker container.
-
-You can also run the container using the Docker Desktop Application.
+Replace ```your_rabbitmq_container_name``` with the name of your RabbitMQ docker container. You can also run the container using the Docker Desktop Application.
+**If you already have RabbitMQ running, go directly to the next step.**
 
 2. **Make sure that all the services are running**
 ```
@@ -169,6 +165,7 @@ There are:
         - Last name: Perez
         - Email: juan@gmail.com
         - Password: Password123!
+    
     User seeders are sent by RabbitMQ to the Authentication and Billing services, keeping the system users synchronized.
 
 - **350 Bills**. As the Bill services is associated to the users, these seeders are executed only by having the seeders of the User service.
@@ -183,6 +180,7 @@ There are:
         - Title: Segundo Video de Prueba
         - Description: Este es otro video de prueba para verificar la funcionalidad del microservicio de videos.
         - Genre: Acción
+          
     Video seeders are sent by RabbitMQ to the Playlist and Social Interactions services, keeping the system videos synchronized.
 
 - **75 Likes and 35 Comments**.
