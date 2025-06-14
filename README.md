@@ -55,10 +55,11 @@ Execution order of the microservices and the API Gateway
 
 Microservices and the API Gateway share 4 common steps to execute them:
 
-4.1 **Navigate to the service project folder**
+4.1 **Navigate to the project folder**
 
+Replace ```ProjectFolderName``` with the project folder name from the above table. 
 ```
-cd MicroserviceProjectName
+cd ProjectFolderName
 ```
 
 4.2 **Restore the dependencies**
