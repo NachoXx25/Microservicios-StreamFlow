@@ -26,7 +26,7 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Services
             _userName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
             _password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
             _port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672");
-            _exchangeName = Environment.GetEnvironmentVariable("RABBITMQ_EXCHANGE") ?? "MonitoringExchange";
+            _exchangeName = "StreamFlowExchange";
 
             CreateConnection();
         }

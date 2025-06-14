@@ -27,7 +27,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Services
             _userName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
             _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
             _port = Env.GetInt("RABBITMQ_PORT");
-            _exchangeName = Env.GetString("RABBITMQ_EXCHANGE") ?? "VideoExchange";
+            _exchangeName = "StreamFlowExchange";
 
             CreateConnection();
         }
