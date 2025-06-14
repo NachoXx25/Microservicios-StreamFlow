@@ -73,8 +73,21 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
     .ReadFrom.Services(services));
 
-
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    try
+    {
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Log.Error("Error al aplicar migraciones a la base de datos: {Message}", ex.Message);
+    }
+}
+
 
 
 app.MapOpenApi();
