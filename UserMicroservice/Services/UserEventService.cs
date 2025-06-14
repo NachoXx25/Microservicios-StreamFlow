@@ -29,10 +29,10 @@ namespace UserMicroservice.Services
 
         public UserEventService()
         {
-            var hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            var username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            var port = Env.GetInt("RABBITMQ_PORT", 5672);
+            var hostname = "localhost";
+            var username = "guest";
+            var password = "guest";
+            var port = 5672;
 
             _userExchangeName = "StreamFlowExchange";
             _billExchangeName = "StreamFlowExchange";

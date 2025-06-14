@@ -23,10 +23,10 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Servic
 
         public RabbitMQService()
         {
-            _hostName = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            _userName = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            _password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            _port = Env.GetInt("RABBITMQ_PORT");
+            _hostName = "localhost";
+            _userName = "guest";
+            _password = "guest";
+            _port = 5672;
             _exchangeName = "StreamFlowExchange";
 
             CreateConnection();

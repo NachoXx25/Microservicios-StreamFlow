@@ -22,10 +22,10 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Services
 
         public RabbitMQService()
         {
-            _hostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
-            _userName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
-            _password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
-            _port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672");
+            _hostName = "localhost";
+            _userName = "guest";
+            _password = "guest";
+            _port = 5672;
             _exchangeName = "StreamFlowExchange";
 
             CreateConnection();
