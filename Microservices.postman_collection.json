@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4ce5431b-2fde-4795-95a2-0927d2069986",
+		"_postman_id": "da34a71e-46df-406e-9d20-18c04090c10f",
 		"name": "Microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33657530"
+		"_exporter_id": "30508365"
 	},
 	"item": [
 		{
@@ -285,6 +285,38 @@
 							"response": []
 						},
 						{
+							"name": "Eliminar usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken-Flujo3}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios/120",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"120"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Actualizar usuario",
 							"request": {
 								"auth": {
@@ -340,89 +372,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "Eliminar usuario",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": []
-								},
-								"url": {
-									"raw": "{{URL}}/usuarios/1",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"usuarios",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Listar todos los usuarios",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "FirstName",
-											"value": "j",
-											"type": "text"
-										},
-										{
-											"key": "LastName",
-											"value": "R",
-											"type": "text"
-										},
-										{
-											"key": "Email",
-											"value": "big",
-											"type": "text",
-											"disabled": true
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/usuarios",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"usuarios"
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				},
@@ -470,6 +419,34 @@
 							"response": []
 						},
 						{
+							"name": "Logout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/auth/logout",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Cambiar contraseña",
 							"request": {
 								"auth": {
@@ -502,34 +479,6 @@
 										"auth",
 										"usuarios",
 										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Logout",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/auth/logout",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"auth",
-										"logout"
 									]
 								}
 							},
@@ -863,6 +812,42 @@
 					"name": "Video Service",
 					"item": [
 						{
+							"name": "Subir video",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"El señor de los anillos\",\r\n    \"description\": \"Un señor de muchos anillos\",\r\n    \"genre\": \"Aventura, Mitólogico\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Listar todos los videos",
 							"request": {
 								"method": "GET",
@@ -914,42 +899,6 @@
 									"path": [
 										"videos",
 										"6841b292da6e65dba7c19872"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Subir video",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"title\": \"El señor de los anillos\",\r\n    \"description\": \"Un señor de muchos anillos\",\r\n    \"genre\": \"Aventura, Mitólogico\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{URL}}/videos",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"videos"
 									]
 								}
 							},
@@ -1324,6 +1273,373 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Flujo 3",
+			"item": [
+				{
+					"name": "Login como administrador",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"authToken-Flujo3\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"juana@gmail.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos los usuarios",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo3}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "FirstName",
+									"value": "j",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "LastName",
+									"value": "R",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "Email",
+									"value": "big",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/usuarios",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo3}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/usuarios/120",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"usuarios",
+								"120"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subir video",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo3}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"El señor de los anillos\",\r\n    \"description\": \"Un señor de muchos anillos\",\r\n    \"genre\": \"Aventura, Mitólogico\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/videos",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"videos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo 4",
+			"item": [
+				{
+					"name": "Login como Cliente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"authToken-Flujo4\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"juan@gmail.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar contraseña",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo4}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"currentPassword\": \"Password123!\",\r\n    \"newPassword\": \"Password12345\",\r\n    \"confirmPassword\": \"Password12345\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/usuarios/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"usuarios",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear lista de reproducción",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set(\"playlist-id\", res.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo4}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "prueba3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/listas-reproduccion",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"listas-reproduccion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos los videos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/videos",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"videos"
+							],
+							"query": [
+								{
+									"key": "Title",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "Genre",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir video a lista de reproducción",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken-Flujo4}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "videoId",
+									"value": "507f1f77bcf86cd799439012",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/listas-reproduccion/{{playlist-id}}/videos",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"listas-reproduccion",
+								"{{playlist-id}}",
+								"videos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -1368,6 +1684,18 @@
 		},
 		{
 			"key": "authToken-Flujo2",
+			"value": ""
+		},
+		{
+			"key": "authToken-Flujo3",
+			"value": ""
+		},
+		{
+			"key": "authToken-Flujo4",
+			"value": ""
+		},
+		{
+			"key": "playlist-id",
 			"value": ""
 		}
 	]

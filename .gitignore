@@ -401,3 +401,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+mycert.pem
+mykey.pem
+myrequest.csr
