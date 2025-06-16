@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj": {}
+    "C:\\Users\\cococ\\Desktop\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj": {
+    "C:\\Users\\cococ\\Desktop\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj",
+        "projectUniqueName": "C:\\Users\\cococ\\Desktop\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj",
         "projectName": "VideoMicroservice",
-        "projectPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj",
-        "packagesPath": "C:\\Users\\TheNachoXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\TheNachoXx\\Desktop\\Taller microservicios\\Microservicios-StreamFlow\\VideoMicroservice\\obj\\",
+        "projectPath": "C:\\Users\\cococ\\Desktop\\Microservicios-StreamFlow\\VideoMicroservice\\VideoMicroservice.csproj",
+        "packagesPath": "C:\\Users\\cococ\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cococ\\Desktop\\Microservicios-StreamFlow\\VideoMicroservice\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\TheNachoXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\cococ\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,15 +38,73 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Bogus": {
+              "target": "Package",
+              "version": "[35.6.2, )"
+            },
+            "DotNetEnv": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
             "Grpc.AspNetCore": {
               "target": "Package",
               "version": "[2.64.0, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "MongoDB.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.2.3, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Serilog": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Settings.Configuration": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.3.2, )"
             }
           },
           "imports": [
@@ -75,7 +126,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

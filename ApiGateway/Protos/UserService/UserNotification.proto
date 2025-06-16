@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "ApiGateway.Protos.UserService";
+
+package usergrpcservice;
+
+
+service UserGrpcService {
+    rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse);
+    rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse);
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
+}
+
+
+//Usuario que retorna el get all users
+message User {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    google.protobuf.Timestamp CreatedAt = 5;
+}
+
+// Mensaje de solicitud para el servicio GetAllUsers
+message GetAllUsersRequest {
+    string FirstName = 1;
+    string LastName = 2;
+    string Email = 3;
+    string UserId = 4;
+    string UserEmail = 5;
+    string Role = 6; // Rol del usuario que realiza la solicitud
+}
+
+// Mensaje de respuesta para el servicio GetAllUsers
+message GetAllUsersResponse {
+    repeated User Users = 1;
+}
+
+// Mensajes para obtener un usuario por ID
+message GetUserByIdRequest{
+    string Id = 1;
+    string UserId = 2; // ID del usuario que realiza la solicitud
+    string UserEmail = 3; // Email del usuario que realiza la solicitud
+    string Role = 4; // Rol del usuario que realiza la solicitud
+}
+
+// Mensaje de respuesta para obtener un usuario por ID
+message GetUserByIdResponse {
+    User User = 1;
+}
+
+// Mensaje de solicitud para crear un usuario
+message CreateUserRequest {
+    string FirstName = 1;
+    string LastName = 2;
+    string Email = 3;
+    string Password = 4;
+    string ConfirmPassword = 5;
+    string Role = 6;
+    string UserId = 7; // ID del usuario que realiza la solicitud
+    string UserEmail = 8; // Email del usuario que realiza la solicitud
+    string UserRole = 9; // Rol del usuario que realiza la solicitud
+}
+
+// Mensaje de respuesta para crear un usuario
+message CreateUserResponse {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    string RoleName = 5;
+    google.protobuf.Timestamp CreatedAt = 6;
+    google.protobuf.Timestamp UpdatedAt = 7;
+    bool IsActive = 8;
+}
+
+// Mensaje de solicitud para actualizar un usuario
+message UpdateUserRequest {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    string Password = 5;
+    string UserEmail = 6; // Email del usuario que realiza la solicitud
+    string UserId = 7; // ID del usuario que realiza la solicitud
+    string Role = 8; // Rol del usuario que realiza la solicitud
+}
+
+// Mensaje de respuesta para actualizar un usuario
+message UpdateUserResponse {
+    string Id = 1;
+    string FirstName = 2;
+    string LastName = 3;
+    string Email = 4;
+    string RoleName = 5;
+    google.protobuf.Timestamp CreatedAt = 6;
+    google.protobuf.Timestamp UpdatedAt = 7;
+    bool IsActive = 8;
+}
+
+// Mensaje de solicitud para eliminar un usuario
+message DeleteUserRequest {
+    string Id = 1;
+    string UserId = 2; // ID del usuario que realiza la solicitud
+    string UserEmail = 3; // Email del usuario que realiza la solicitud
+    string Role = 4; // Rol del usuario que realiza la solicitud
+}
