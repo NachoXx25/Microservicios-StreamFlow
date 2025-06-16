@@ -23,7 +23,19 @@ git clone https://github.com/NachoXx25/Microservicios-StreamFlow.git
 cd Microservicios-StreamFlow
 ``` 
 
-3. **Run RabbitMQ on Docker**
+3. Navigate to the SSL folder
+```bash
+cd Nginx\ssl
+```
+
+4. Create your own SSL certificates
+Open a bash terminal and run
+```bash
+bash openssl.sh
+```
+Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: ```mycert.pem```, ```mykey.pem``` and ```myrequest.csr``` on the SSL folder.
+
+5. **Run RabbitMQ on Docker**
 
 If you do not have RabbitMQ, it is recommended to use this command in a terminal to install and run it.
 ```bash
@@ -35,7 +47,7 @@ docker run your_rabbitmq_container_name
 ```
 You can also run the container using the Docker Desktop Application.
 
-4. **Run the services and the API Gateway**
+6. **Run the services and the API Gateway**
 
     Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
 
@@ -55,19 +67,19 @@ Execution order of the microservices and the API Gateway
 
 Microservices and the API Gateway share 4 common steps to execute them:
 
-4.1 **Navigate to the project folder**
+6.1 **Navigate to the project folder**
 
 Replace ```ProjectFolderName``` with the project folder name from the above table. 
 ```
 cd ProjectFolderName
 ```
 
-4.2 **Restore the dependencies**
+6.2 **Restore the dependencies**
 ```
 dotnet restore
 ```
 
-4.3 **Create a ```.env``` file on the root of the project and fill the environment variables**
+6.3 **Create a ```.env``` file on the root of the project and fill the environment variables**
 ```bash
 cp .env.example .env
 ```
@@ -128,12 +140,12 @@ Once you have replaced everything, save the changes and move on to the next step
 
 Once you have replaced everything, save the changes and move on to the next step.
 
-4.4 **Run the service**
+6.4 **Run the service**
 ```
 dotnet run
 ```
 
-Repeat the steps 4.1 to 4.4 for each service until all are running. Make sure to run all the services in the order listed in [step 4](#installation-and-configuration) before running the API Gateway.
+Repeat the steps 6.1 to 6.4 for each service until all are running. Make sure to run all the services in the order listed in [step 6](#installation-and-configuration) before running the API Gateway.
 
 ## Table of contents
 This section shows the steps to execute the application seeders, obtain the gmail application password for the EmailService and use Nginx.
@@ -213,15 +225,19 @@ The project comes with Nginx configuration to do 4 things:
 #### How to run Nginx
 To run the Nginx and test the functionalities described above, follow these steps:
 
-1. Create your own SSL certificates
+1. Navigate to the SSL folder
+```bash
+cd Nginx\ssl
+```
 
+2. Create your own SSL certificates
 Open a bash terminal and run
 ```bash
-bash Nginx\ssl\openssl.sh
+bash openssl.sh
 ```
-This will create 3 files: ```mycert.pem```, ```mykey.pem``` and ```myrequest.csr``` on the SSL folder.
+Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: ```mycert.pem```, ```mykey.pem``` and ```myrequest.csr``` on the SSL folder.
 
-2. Run Nginx on Docker
+3. Run Nginx on Docker
 ```bash
 docker compose -f 'Nginx\docker-compose.yml' up -d --build
 ```
