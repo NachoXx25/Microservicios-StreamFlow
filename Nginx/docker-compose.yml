@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  nginx-load-balancer:
+    image: nginx:latest
+    container_name: nginx-load-balancer
+    ports:
+      - "80:80"      
+      - "443:443"    
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./logs:/var/log/nginx
+      - nginx_temp:/tmp/nginx_client_body
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+volumes:
+  nginx_temp:
+
+networks:
+  nginx-network:
+    driver: bridge

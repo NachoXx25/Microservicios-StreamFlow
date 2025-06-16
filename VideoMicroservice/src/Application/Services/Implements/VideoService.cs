@@ -55,6 +55,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = video.Title,
                 Description = video.Description,
                 Genre = video.Genre,
+                Likes = video.Likes
             }).ToArray();
 
             return mappedVideos;
@@ -83,6 +84,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = video.Title,
                 Description = video.Description,
                 Genre = video.Genre,
+                Likes = video.Likes
             };
 
             return mappedVideo;
@@ -96,16 +98,8 @@ namespace VideoMicroservice.src.Application.Services.Implements
         /// <returns>El video actualizado</returns>
         public async Task<UpdateVideoDTO> UpdateVideo(string id, UpdateVideoDTO updateVideo)
         {
-           // Obtener el video por id
-            var video = await _videoRepository.GetVideoById(id) ?? throw new ArgumentException("Video no encontrado");
-
-            // Validar que el video no esté eliminado antes de actualizarlo
-            if(video.IsDeleted){
-                throw new ArgumentException("No se puede actualizar un video eliminado");
-            }
-
             //Actualizar el video y obtenerlo
-            var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new ArgumentException("Error al actualizar el video");
+            var updatedVideo = await _videoRepository.UpdateVideo(id, updateVideo) ?? throw new InvalidOperationException("Error al actualizar el video");
 
             await _videoEventService.PublishUpdatedVideo(updatedVideo);
 
@@ -134,10 +128,11 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Description = video.Description,
                 Genre = video.Genre,
                 IsDeleted = false,
+                Likes = 0,
             };
 
             // Subir el video y obtenerlo
-            var uploadedVideo = await _videoRepository.UploadVideo(toUploadVideo) ?? throw new ArgumentException("Error al subir el video");
+            var uploadedVideo = await _videoRepository.UploadVideo(toUploadVideo) ?? throw new InvalidOperationException("Error al subir el video");
 
             await _videoEventService.PublishCreatedVideo(uploadedVideo);
 
@@ -148,6 +143,7 @@ namespace VideoMicroservice.src.Application.Services.Implements
                 Title = uploadedVideo.Title,
                 Description = uploadedVideo.Description,
                 Genre = uploadedVideo.Genre,
+                Likes = uploadedVideo.Likes,
             };
 
             return mappedVideo;

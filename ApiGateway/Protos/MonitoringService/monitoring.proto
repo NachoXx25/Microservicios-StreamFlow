@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option csharp_namespace = "ApiGateway.Protos.MonitoringService";
+
+package monitoring;
+
+import "google/protobuf/timestamp.proto";
+
+service MonitoringGrpcService {
+  
+    rpc GetAllActions (GetAllActionsRequest) returns (GetAllActionsResponse);
+    rpc GetAllErrors (GetAllErrorsRequest) returns (GetAllErrorsResponse);
+}
+
+message UserData {
+    string id = 1;
+    string email = 2;
+    string role = 3;
+}
+
+message Action {
+    string id = 1;
+    string user_id = 2;
+    string method_url = 3;
+    string user_email = 4;
+    google.protobuf.Timestamp timestamp = 5;
+    string name = 6;
+}
+
+message Error {
+    string id = 1;
+    string user_id = 2;
+    string user_email = 3;
+    google.protobuf.Timestamp timestamp = 4;
+    string message = 5;
+}
+
+message GetAllActionsRequest {
+    UserData user_data = 1;
+}
+
+message GetAllActionsResponse {
+    repeated Action actions = 1;
+}
+
+message GetAllErrorsRequest {
+    UserData user_data = 1;
+}
+
+message GetAllErrorsResponse {
+    repeated Error errors = 1;
+}

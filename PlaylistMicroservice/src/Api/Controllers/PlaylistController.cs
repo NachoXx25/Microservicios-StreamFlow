@@ -21,7 +21,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreatePlaylist(CreatePlaylistDTO createPlaylist)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -39,7 +38,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpPost("video")]
-        [Authorize]
         public async Task<IActionResult> AddVideoToPlaylist(AddVideoToPlaylistDTO videoDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -47,7 +45,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var playlist = await _playlistService.AddVideoToPlaylist(videoDTO.PlaylistId, videoDTO.VideoId, id);
+                int.TryParse(videoDTO.PlaylistId, out int playlistId);
+                var playlist = await _playlistService.AddVideoToPlaylist(playlistId, videoDTO.VideoId, id);
                 return CreatedAtAction(nameof(AddVideoToPlaylist), new { id = playlist.Id }, playlist);
             }
             catch (Exception ex)
@@ -57,7 +56,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetPlaylistsByUserId()
         {
             try
@@ -76,7 +74,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpGet("{playlistId}")]
-        [Authorize]
         public async Task<IActionResult> GetVideosByPlaylistId(int playlistId)
         {
             try
@@ -95,7 +92,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpDelete("video")]
-        [Authorize]
         public async Task<IActionResult> RemoveVideoFromPlaylist(RemoveVideoDTO removeVideoDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -103,7 +99,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var videos = await _playlistService.RemoveVideoFromPlaylist(removeVideoDTO.PlaylistId, removeVideoDTO.VideoId, id);
+                int.TryParse(removeVideoDTO.PlaylistId, out int playlistId);
+                var videos = await _playlistService.RemoveVideoFromPlaylist(playlistId, removeVideoDTO.VideoId, id);
                 return Ok(videos);
             }
             catch (Exception ex)
@@ -113,7 +110,6 @@ namespace PlaylistMicroservice.src.Api.Controllers
         }
 
         [HttpDelete()]
-        [Authorize]
         public async Task<IActionResult> DeletePlaylist(DeletePlaylistDTO deleteDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -121,7 +117,8 @@ namespace PlaylistMicroservice.src.Api.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value ?? throw new Exception("Error en la autenticación del usuario");
                 int id = int.Parse(userId);
-                var message = await _playlistService.DeletePlaylist(deleteDTO.PlaylistId, id);
+                int.TryParse(deleteDTO.PlaylistId, out int playlistId);
+                var message = await _playlistService.DeletePlaylist(playlistId, id);
                 return Ok(new { message });
             }
             catch (Exception ex)

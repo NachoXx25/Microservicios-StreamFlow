@@ -14,5 +14,7 @@ namespace VideoMicroservice.src.Application.DTOs
         public required string Description { get; set; }
 
         public required string Genre { get; set; }
+
+        public required int Likes { get; set; }
     }
 }

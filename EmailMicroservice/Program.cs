@@ -1,14 +1,26 @@
-using EmailMicroservice.Services;
+using DotNetEnv;
+using EmailMicroservice.src.Implements;
+using EmailMicroservice.src.Infrastructure.MessageBroker.Consumers;
+using EmailMicroservice.src.Infrastructure.MessageBroker.Services;
+using EmailMicroservice.src.Interfaces;
+using Serilog;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddGrpc();
 
-var app = builder.Build();
+builder.Services.AddScoped<IBillEventHandler, BillEventHandler>();
+builder.Services.AddHostedService<BillEventConsumer>();
+builder.Services.AddSingleton<RabbitMQService>();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Host.UseSerilog();
+var app = builder.Build();
 
 app.Run();

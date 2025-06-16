@@ -83,8 +83,13 @@ namespace VideoMicroservice.src.Infrastructure.Repositories.Implements
             //Buscar el video por su id
             var video = await _context.Videos.FirstOrDefaultAsync(v => v.Id.ToString() == id) ?? throw new Exception("Video no encontrado");
 
+            if (video.IsDeleted)
+            {
+                throw new Exception("No se puede actualizar un video eliminado");
+            }
+
             //Si titulo, descripcion o genero no son nulos o vacios y son diferentes a los del video, se actualizan
-            if(!string.IsNullOrWhiteSpace(updateVideo.Title) && updateVideo.Title != video.Title)
+            if (!string.IsNullOrWhiteSpace(updateVideo.Title) && updateVideo.Title != video.Title)
             {
                 video.Title = updateVideo.Title;
             }
