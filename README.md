@@ -136,7 +136,7 @@ dotnet run
 Repeat the steps 4.1 to 4.4 for each service until all are running. Make sure to run all the services in the order listed in [step 4](#installation-and-configuration) before running the API Gateway.
 
 ## Table of contents
-This section shows the steps to execute the application seeders and obtain the gmail application password for the EmailService.
+This section shows the steps to execute the application seeders, obtain the gmail application password for the EmailService and use Nginx.
 
 ### How to execute the seeders
 1. **Run the RabbitMQ container on Docker**
@@ -201,7 +201,66 @@ Follow the instructions to turn on 2-Step Verification.
 2. **Generate the App Password**
 - Once 2-Step Verification is enabled, search "App passwords" in your account and then enter that option.(you might need to sign in again). 
 - Type the name of the application you want to generate the password for and press create.
-- Copy the generated 16-digit app password carefully. You won't be able to see it again after closing the window. 
+- Copy the generated 16-digit app password carefully. You won't be able to see it again after closing the window.
+
+### Nginx
+The project comes with Nginx configuration to do 4 things:
+- Call the endpoint ```/comedia``` to receive a funny phrase.
+- Automatic redirection from HTTP to HTTPS.
+- Writing the body of a request in the access log.
+- Load balancing of requests between 3 API Gateways running.
+
+#### How to run Nginx
+To run the Nginx and test the functionalities described above, follow these steps:
+
+1. Create your own SSL certificates
+
+Open a bash terminal and run
+```bash
+bash Nginx\ssl\openssl.sh
+```
+This will create 3 files: ```mycert.pem```, ```mykey.pem``` and ```myrequest.csr``` on the SSL folder.
+
+2. Run Nginx on Docker
+```bash
+docker compose -f 'Nginx\docker-compose.yml' up -d --build
+```
+This will bring up Nginx on ports 80 and 443 for HTTP and HTTPS requests, respectively.
+
+#### Test functionalities
+  
+##### Comedia endpoint and HTTPS redirection
+To call the comedy endpoint, type ```http://localhost:80/comedia``` in a web browser. This connection will be marked as insecure in some browsers, so you will have to press continue without security. When you have passed that check, you will notice that the URL changed from HTTP to HTTPS by Nginx action.
+
+#### Load balancing
+To test load balancing between 3 API Gateways, follow these steps:
+
+1. Navigate to the ApiGateway
+Open 3 terminals and do this step on each one.
+```bash
+cd ApiGateway
+```
+
+2. Run 3 API Gateway instances
+Execute a single command for each terminal
+
+API Gateway on port 5000
+```bash
+dotnet run --launch-profile http
+```
+
+API Gateway on port 5001
+```bash
+dotnet run --launch-profile instance-2
+```
+
+API Gateway on port 5002
+```bash
+dotnet run --launch-profile instance-3
+```
+
+3. Test with Postman
+Run any endpoint on Postman using ```https://localhost:443``` on the URL environment variable. To check load balancing, check the ports listed in the request body in the access.log file in the Nginx logs folder for each request you make.
 
 ## Authors
 - [@Sebastián Núñez](https://github.com/2kSebaNG)
