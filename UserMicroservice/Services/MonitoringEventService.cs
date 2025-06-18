@@ -30,7 +30,7 @@ namespace UserMicroservice.Services
             var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
             var port = Env.GetInt("RABBITMQ_PORT", 5672);
 
-            _exchangeName = "MonitoringExchange";
+            _exchangeName = "StreamFlowExchange";
 
             var factory = new ConnectionFactory
             {

@@ -28,7 +28,7 @@ namespace PlaylistMicroservice.Services
         {
             
 
-            _exchangeName = "MonitoringExchange";
+            _exchangeName = "StreamFlowExchange";
 
             var factory = new ConnectionFactory
             {
