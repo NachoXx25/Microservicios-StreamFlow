@@ -39,7 +39,13 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
 
                 _channelAction = _connection.CreateModel();
                 _channelError = _connection.CreateModel();
-
+                _channelAction.ExchangeDeclare(
+                            exchange: "StreamFlowExchange",
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                        );
+                        
                 _channelAction.BasicQos(0, 1, false);
                 _channelAction.QueueDeclare(
                     "Action_queue",
