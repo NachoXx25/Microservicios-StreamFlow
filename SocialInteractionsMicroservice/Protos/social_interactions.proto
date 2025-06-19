@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "SocialInteractionsMicroservice.Protos";
 
+import "google/protobuf/empty.proto";
+
 package social_interactions;
 
 service SocialInteractionsGrpcService {
@@ -9,6 +11,7 @@ service SocialInteractionsGrpcService {
     rpc GiveLike (GiveLikeRequest) returns (GiveLikeResponse);
     rpc MakeComment (MakeCommentRequest) returns (MakeCommentResponse);
     rpc GetVideoLikesAndComments (GetVideoLikesAndCommentsRequest) returns (GetVideoLikesAndCommentsResponse);
+    rpc CheckHealth (google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 // Message for monitoring events
@@ -56,4 +59,8 @@ message GetVideoLikesAndCommentsResponse {
     string video_id = 1;
     repeated Like likes = 2;
     repeated Comment comments = 3;
+}
+
+message CheckHealthResponse {
+    bool is_running = 1;
 }

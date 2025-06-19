@@ -3,6 +3,7 @@ syntax = "proto3";
 option csharp_namespace = "BillMicroservice.Protos";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 package bills;
 
@@ -12,6 +13,7 @@ service BillGrpcService {
   rpc UpdateBill (UpdateBillRequest) returns (UpdateBillResponse);
   rpc DeleteBill (DeleteBillRequest) returns (DeleteBillResponse);
   rpc GetAllBills (GetAllBillsRequest) returns (GetAllBillsResponse);
+  rpc CheckHealth (google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 message UserData {
@@ -80,4 +82,8 @@ message GetAllBillsRequest {
 
 message GetAllBillsResponse {
     repeated Bill bills = 1;
+}
+
+message CheckHealthResponse {
+    bool is_running = 1;
 }

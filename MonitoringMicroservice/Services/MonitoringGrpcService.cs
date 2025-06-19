@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.Identity.Client;
+using MonitoringMicroservice.Protos;
 using MonitoringMicroservice.src.Application.Services.Interfaces;
+using Serilog;
 
 namespace MonitoringMicroservice.Services
 {
@@ -54,7 +58,7 @@ namespace MonitoringMicroservice.Services
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
-        
+
         public override async Task<Protos.GetAllErrorsResponse> GetAllErrors(Protos.GetAllErrorsRequest request, ServerCallContext context)
         {
             try
@@ -89,6 +93,19 @@ namespace MonitoringMicroservice.Services
             catch (Exception ex)
             {
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
+        }
+        
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            try
+            {
+                return Task.FromResult(new CheckHealthResponse { IsRunning = true });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                throw new RpcException(new Status(StatusCode.Internal, "Error al verificar la salud del servicio de monitoreo."));
             }
         }
     }

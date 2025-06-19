@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "VideoMicroservice.Protos";
 
+import "google/protobuf/empty.proto";
+
 package videogrpcservice;
 
 service VideoGrpcService {
@@ -15,6 +17,8 @@ service VideoGrpcService {
     rpc DeleteVideo (DeleteVideoRequest) returns (DeleteVideoResponse);
     // List all videos
     rpc GetAllVideos (GetAllVideosRequest) returns (GetAllVideosResponse);
+    // Check service health
+    rpc CheckHealth (google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 // User data for Monitoring Service
@@ -82,4 +86,8 @@ message GetAllVideosRequest {
 
 message GetAllVideosResponse {
     repeated Video videos = 1;
+}
+
+message CheckHealthResponse {
+    bool is_running = 1;
 }

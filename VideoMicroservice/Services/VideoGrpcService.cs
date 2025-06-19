@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Serilog;
+using VideoMicroservice.Protos;
 using VideoMicroservice.src.Application.Services.Interfaces;
 using VideoMicroservice.src.Infrastructure.MessageBroker.Models;
 
@@ -41,7 +44,7 @@ namespace VideoMicroservice.Services
                 }
 
                 if (request.UserData.Role.ToLower() != "administrador")
-                { 
+                {
                     throw new Exception("No autorizado: no tienes permisos para subir videos.");
                 }
 
@@ -93,7 +96,7 @@ namespace VideoMicroservice.Services
                 });
 
                 if (string.IsNullOrWhiteSpace(request.UserData.Id))
-                { 
+                {
                     throw new Exception("No autenticado: se requiere un usuario autenticado para obtener un video por ID.");
                 }
 
@@ -109,7 +112,7 @@ namespace VideoMicroservice.Services
                     Id = video.Id,
                     Title = video.Title,
                     Description = video.Description,
-                    Likes = video.Likes, 
+                    Likes = video.Likes,
                     Genre = video.Genre,
                 };
 
@@ -278,6 +281,19 @@ namespace VideoMicroservice.Services
                     UserEmail = request.UserData.Email,
                 });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
+        }
+
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            try
+            {
+                return Task.FromResult(new CheckHealthResponse { IsRunning = true });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                throw new RpcException(new Status(StatusCode.Internal, "Error al verificar la salud del servicio de videos."));
             }
         }
     }
