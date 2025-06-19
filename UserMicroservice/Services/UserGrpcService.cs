@@ -20,13 +20,28 @@ namespace UserMicroservice.Services
             _monitoringEventService = monitoringEventService;
         }
 
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            Log.Information("Recibida petición para verificar la salud del servicio");
+            try
+            {
+                Log.Information($"Estado del servicio: {true}");
+                return Task.FromResult(new CheckHealthResponse { IsRunning = true });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                throw new RpcException(new Status(StatusCode.Internal, $"Error al verificar la salud del servicio: {ex.Message}"));
+            }
+        }
+
         public override async Task<GetAllUsersResponse> GetAllUsers(GetAllUsersRequest request, ServerCallContext context)
         {
             Log.Information("recibida petición para obtener todos los usuarios");
             try
             {
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a esta información.");
-                if(request.Role.ToLower() != "administrador") throw new Exception("No tienes permisos para acceder a esta información.");
+                if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a esta información.");
+                if (request.Role.ToLower() != "administrador") throw new Exception("No tienes permisos para acceder a esta información.");
                 var search = new SearchByDTO
                 {
                     FirstName = request.FirstName,

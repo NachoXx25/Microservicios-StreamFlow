@@ -35,8 +35,8 @@ namespace AuthMicroservice.src.Api.Controllers
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(loginDTO.Email)) throw new ArgumentNullException("Email es requerido");
-                if(string.IsNullOrWhiteSpace(loginDTO.Password)) throw new ArgumentNullException("Password es requerido");
+                if (string.IsNullOrWhiteSpace(loginDTO.Email)) throw new ArgumentNullException("Email es requerido");
+                if (string.IsNullOrWhiteSpace(loginDTO.Password)) throw new ArgumentNullException("Password es requerido");
                 var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
                 if (!regex.IsMatch(loginDTO.Email)) throw new ArgumentException("El formato del email es invalido");
                 var result = await _authService.Login(loginDTO);
@@ -140,7 +140,7 @@ namespace AuthMicroservice.src.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpPost("validate-token")]
         public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenRequestDTO request)
         {
@@ -158,7 +158,7 @@ namespace AuthMicroservice.src.Api.Controllers
                     return BadRequest(new { message = "El token es requerido" });
                 }
                 var isBlacklisted = await _authService.IsTokenBlacklistedAsync(request.Token);
-                
+
                 if (isBlacklisted)
                 {
                     await _monitoringEventService.PublishErrorEventAsync(new ErrorEvent
@@ -191,6 +191,22 @@ namespace AuthMicroservice.src.Api.Controllers
             {
                 Log.Error(ex, "Error validating token");
                 return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        [HttpGet("health")]
+        [AllowAnonymous]
+        public IActionResult CheckHealth()
+        {
+            try
+            {
+                Log.Information("Recibida petición para verificar la salud del servicio");
+                return Ok(new { IsRunning = true });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                return StatusCode(500, new { message = "Error al verificar la salud del servicio" });
             }
         }
     }

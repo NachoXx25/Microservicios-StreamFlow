@@ -4,6 +4,7 @@ using PlaylistMicroservice.src.Application.DTOs;
 using Grpc.Core;
 using Serilog;
 using PlaylistMicroservice.src.Domain.Models;
+using Google.Protobuf.WellKnownTypes;
 
 namespace PlaylistMicroservice.Services
 {
@@ -18,12 +19,29 @@ namespace PlaylistMicroservice.Services
             _monitoringEventService = monitoringEventService;
         }
 
+
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            Log.Information("Recibida petición para verificar la salud del servicio");
+            try
+            {
+                Log.Information($"Estado del servicio: {true}");
+                return Task.FromResult(new CheckHealthResponse { IsRunning = true });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                return Task.FromException<CheckHealthResponse>(
+                    new RpcException(new Status(StatusCode.Internal, $"Error al verificar la salud del servicio: {ex.Message}")));
+            }
+        }
+        
         public override async Task<GetPlaylistsByUserIdResponse> GetPlaylistsByUserId(GetPlaylistsByUserIdRequest request, ServerCallContext context)
         {
             Log.Information("Obteniendo listas de reproducción para el usuario {UserId}", request.UserId);
             try
             {
-                if(string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a las listas de reproducción");
+                if (string.IsNullOrWhiteSpace(request.UserId)) throw new Exception("No autenticado: Se requiere autenticación para acceder a las listas de reproducción");
                 if (!int.TryParse(request.UserId, out int userId)) throw new Exception("Error en el sistema: Error en la autenticación");
                 var playlists = await _playlistService.GetPlaylistsByUserId(userId);
                 await _monitoringEventService.PublishActionEventAsync(new ActionEvent
