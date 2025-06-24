@@ -23,7 +23,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Services
 
         public RabbitMQService()
         {
-            _hostName = "localhost";
+            _hostName = "rabbit_mq";
             _userName = "guest";
             _password = "guest";
             _port = 5672;

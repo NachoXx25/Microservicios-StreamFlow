@@ -35,7 +35,7 @@ namespace VideoMicroservice.Services
 
         public VideoEventService()
         {
-            _hostname = "localhost";
+            _hostname = "rabbit_mq";
             _password = "guest";
             _username = "guest";
             _port = 5672;
