@@ -1,6 +1,228 @@
-version: '3.8'
-
 services:
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbit_mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  monitoring-service:
+    image: seitaenyi/monitoring-microservice:latest
+    container_name: monitoring_service
+    environment:
+      - MONGODB_CONNECTION=${MONGODB_CONNECTION}
+      - MONGODB_DATABASE_NAME=${MONGODB_DATABASE_NAME_MONITORING}
+    depends_on:
+      - rabbitmq
+      - mongo
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  user-service:
+    image: thenachoxx/user-microservice:latest
+    container_name: user_service
+    environment:
+      - MYSQL_CONNECTION=${MYSQL_CONNECTION_USER}
+    depends_on:
+      - mysql
+      - monitoring-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  auth-service:
+    image: thenachoxx/auth-microservice:latest
+    container_name: auth_service
+    environment:
+      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING_AUTH}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - postgres
+      - user-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  bill-service:
+    image: seitaenyi/bill-microservice:latest
+    container_name: bill_service
+    environment:
+      - MARIADB_CONNECTION=${MARIADB_CONNECTION_BILL}
+    depends_on:
+      - mariadb
+      - auth-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  video-service:
+    image: seitaenyi/video-microservice:latest
+    container_name: video_service
+    environment:
+      - MONGODB_CONNECTION=${MONGODB_CONNECTION}
+      - MONGODB_DATABASE_NAME=${MONGODB_DATABASE_NAME_VIDEO}
+    depends_on:
+      - mongo
+      - bill-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  social-interactions-service:
+    image: seitaenyi/social-interactions-microservice:latest
+    container_name: social_interactions_service
+    environment:
+      - MONGODB_CONNECTION=${MONGODB_CONNECTION}
+      - MONGODB_DATABASE_NAME=${MONGODB_DATABASE_NAME_SOCIAL_INTERACTIONS}
+    depends_on:
+      - mongo
+      - video-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  playlist-service:
+    image: thenachoxx/playlist-microservice:latest
+    container_name: playlist_service
+    environment:
+      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING_PLAYLIST}
+    depends_on:
+      - postgres
+      - social-interactions-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  email-service:
+    image: thenachoxx/email-microservice:latest
+    container_name: email_service
+    environment:
+      - FROM_EMAIL=${FROM_EMAIL}
+      - FROM_EMAIL_PASSWORD=${FROM_EMAIL_PASSWORD}
+    depends_on:
+      - social-interactions-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  api-gateway-1:
+    image: thenachoxx/api-gateway:latest
+    container_name: api_gateway_1
+    environment:
+      - Services__AuthService=http://auth_service:8080/
+      - GrpcServices__VideoService=http://video_service:8080/
+      - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/
+      - GrpcServices__UserService=http://user_service:8080/
+      - GrpcServices__BillService=http://bill_service:8080/
+      - GrpcServices__PlaylistService=http://playlist_service:8080/
+      - GrpcServices__MonitoringService=http://monitoring_service:8080/
+    depends_on:
+      - auth-service
+      - video-service
+      - social-interactions-service
+      - user-service
+      - bill-service
+      - playlist-service
+      - monitoring-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  api-gateway-2:
+    image: thenachoxx/api-gateway:latest
+    container_name: api_gateway_2
+    environment:
+      - Services__AuthService=http://auth_service:8080/
+      - GrpcServices__VideoService=http://video_service:8080/
+      - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/
+      - GrpcServices__UserService=http://user_service:8080/
+      - GrpcServices__BillService=http://bill_service:8080/
+      - GrpcServices__PlaylistService=http://playlist_service:8080/
+      - GrpcServices__MonitoringService=http://monitoring_service:8080/
+    depends_on:
+      - auth-service
+      - video-service
+      - social-interactions-service
+      - user-service
+      - bill-service
+      - playlist-service
+      - monitoring-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
+  api-gateway-3:
+    image: thenachoxx/api-gateway:latest
+    container_name: api_gateway_3
+    environment:
+      - Services__AuthService=http://auth_service:8080/
+      - GrpcServices__VideoService=http://video_service:8080/
+      - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/
+      - GrpcServices__UserService=http://user_service:8080/
+      - GrpcServices__BillService=http://bill_service:8080/
+      - GrpcServices__PlaylistService=http://playlist_service:8080/
+      - GrpcServices__MonitoringService=http://monitoring_service:8080/
+    depends_on:
+      - auth-service
+      - video-service
+      - social-interactions-service
+      - user-service
+      - bill-service
+      - playlist-service
+      - monitoring-service
+    restart: unless-stopped
+    networks:
+      - nginx-network
+
   nginx-load-balancer:
     image: nginx:latest
     container_name: nginx-load-balancer
@@ -12,12 +234,20 @@ services:
       - ./ssl:/etc/nginx/ssl:ro
       - ./logs:/var/log/nginx
       - nginx_temp:/tmp/nginx_client_body
+    depends_on:
+      - api-gateway-1
+      - api-gateway-2
+      - api-gateway-3
     restart: unless-stopped
     networks:
       - nginx-network
 
 volumes:
   nginx_temp:
+  mysql_data:
+  postgres_data:
+  mariadb_data:
+  mongo_data:
 
 networks:
   nginx-network:

@@ -30,7 +30,7 @@ builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
+    connectionFactory.HostName = "rabbit-mq";
     connectionFactory.UserName = "guest";
     connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;

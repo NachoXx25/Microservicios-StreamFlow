@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using ApiGateway.Protos.BillService;
 using Grpc.Core;
+using DotNetEnv;
 
 namespace ApiGateway.Services
 {
@@ -16,7 +17,7 @@ namespace ApiGateway.Services
 
         public BillGrpcClient(IConfiguration configuration)
         {
-            var billServiceUrl = configuration["GrpcServices:BillService"] ?? "http://localhost:5086/";
+            var billServiceUrl = Env.GetString("GrpcServices__BillService") ?? "http://localhost:5086/";
             _channel = GrpcChannel.ForAddress(billServiceUrl);
             _client = new BillGrpcService.BillGrpcServiceClient(_channel);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.VideoService;
+using DotNetEnv;
 using Grpc.Core;
 using Grpc.Net.Client;
 
@@ -16,7 +17,7 @@ namespace ApiGateway.Services
 
         public VideoGrpcClient(IConfiguration configuration)
         {
-            var videoServiceUrl = configuration["GrpcServices:VideoService"] ?? "http://localhost:5025/";
+            var videoServiceUrl = Env.GetString("GrpcServices__VideoService") ?? "http://localhost:5025/";
             _channel = GrpcChannel.ForAddress(videoServiceUrl);
             _client = new VideoGrpcService.VideoGrpcServiceClient(_channel);
         }

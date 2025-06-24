@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ApiGateway.src.Application.DTOs;
+using DotNetEnv;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -19,7 +20,7 @@ namespace ApiGateway.Services
 
         public AuthHttpClient(HttpClient client, IConfiguration configuration)
         {
-            _baseUrl = configuration["AuthService"] ?? "http://localhost:5184/";
+            _baseUrl = Env.GetString("Services__AuthService") ?? "http://localhost:5184/";
             _client = client;
             _client.BaseAddress = new Uri(_baseUrl);
             _client.DefaultRequestHeaders.Add("Accept", "application/json");

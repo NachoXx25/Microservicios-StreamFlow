@@ -28,11 +28,11 @@ namespace PlaylistMicroservice.Services
         {
             
 
-            _exchangeName = "MonitoringExchange";
+            _exchangeName = "StreamFlowExchange";
 
             var factory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = "rabbit_mq",
                 UserName = "guest",
                 Password = "guest",
                 Port = 5672
