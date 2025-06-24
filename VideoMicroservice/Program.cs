@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IVideoEventService, VideoEventService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
-builder.Services.AddScoped<IMonitoringEventService,MonitoringEventService>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ISocialInteractionEventHandlerRepository, SocialInteractionEventHandlerRepository>();
 builder.Services.AddGrpc();
@@ -27,7 +27,7 @@ builder.Services.AddGrpc();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
+    connectionFactory.HostName = "rabbit_mq";
     connectionFactory.UserName = "guest";
     connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;
@@ -40,8 +40,8 @@ catch (Exception ex)
     Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
 }
 
-builder.Services.AddDbContext<VideoContext>(options => 
-    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"),Env.GetString("MONGODB_DATABASE_NAME")));
+builder.Services.AddDbContext<VideoContext>(options =>
+    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"), Env.GetString("MONGODB_DATABASE_NAME")));
 
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)

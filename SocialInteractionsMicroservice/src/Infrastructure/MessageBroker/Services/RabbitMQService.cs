@@ -23,7 +23,7 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Servic
 
         public RabbitMQService()
         {
-            _hostName = "localhost";
+            _hostName = "rabbit_mq";
             _userName = "guest";
             _password = "guest";
             _port = 5672;
@@ -34,8 +34,8 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Servic
 
         public IConnection CreateConnection()
         {
-           _connectionFactory = new ConnectionFactory
-           {
+            _connectionFactory = new ConnectionFactory
+            {
                 HostName = _hostName,
                 UserName = _userName,
                 Password = _password,

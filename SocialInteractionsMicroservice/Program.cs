@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
-builder.Services.AddScoped<IVideoEventHandlerRepository,VideoEventHandlerRepository>();
+builder.Services.AddScoped<IVideoEventHandlerRepository, VideoEventHandlerRepository>();
 builder.Services.AddScoped<ISocialInteractionsService, SocialInteractionsService>();
 builder.Services.AddScoped<ISocialInteractionsEventService, SocialInteractionsEventService>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
@@ -26,9 +26,9 @@ builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
+    connectionFactory.HostName = "rabbit_mq";
     connectionFactory.UserName = "guest";
-    connectionFactory.Password ="guest";
+    connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;
     var connection = connectionFactory.CreateConnection();
     builder.Services.AddHostedService<VideoEventConsumer>();
@@ -40,8 +40,8 @@ catch (Exception ex)
 }
 
 builder.Services.AddGrpc();
-builder.Services.AddDbContext<SocialInteractionsContext>(options => 
-    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"),Env.GetString("MONGODB_DATABASE_NAME")));
+builder.Services.AddDbContext<SocialInteractionsContext>(options =>
+    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"), Env.GetString("MONGODB_DATABASE_NAME")));
 
 
 builder.Host.UseSerilog((context, services, configuration) => configuration

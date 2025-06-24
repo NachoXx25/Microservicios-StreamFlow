@@ -24,20 +24,21 @@ builder.Services.AddGrpc();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
+    connectionFactory.HostName = "rabbit_mq";
     connectionFactory.UserName = "guest";
     connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;
     var connection = connectionFactory.CreateConnection();
     builder.Services.AddHostedService<MonitoringEventConsumer>();
     builder.Services.AddSingleton<RabbitMQService>();
-}catch (Exception ex)
+}
+catch (Exception ex)
 {
     Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
 }
 
-builder.Services.AddDbContext<MonitoringContext>(options => 
-    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"),Env.GetString("MONGODB_DATABASE_NAME")));
+builder.Services.AddDbContext<MonitoringContext>(options =>
+    options.UseMongoDB(Env.GetString("MONGODB_CONNECTION"), Env.GetString("MONGODB_DATABASE_NAME")));
 
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)

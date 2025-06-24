@@ -24,12 +24,12 @@ builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
 builder.Services.AddScoped<IBillEventService, BillEventService>();
 builder.Services.AddScoped<IBillService, BillService>();
-builder.Services.AddScoped<IMonitoringEventService,MonitoringEventService>();
+builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
+    connectionFactory.HostName = "rabbit_mq";
     connectionFactory.UserName = "guest";
     connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;
@@ -45,9 +45,9 @@ catch (Exception ex)
 builder.Services.AddGrpc();
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
-builder.Services.AddDbContext<BillContext>(options => 
-    options.UseMySql(Env.GetString("MARIADB_CONNECTION"), serverVersion, 
-        mySqlOptions => 
+builder.Services.AddDbContext<BillContext>(options =>
+    options.UseMySql(Env.GetString("MARIADB_CONNECTION"), serverVersion,
+        mySqlOptions =>
         {
             mySqlOptions.MigrationsAssembly(typeof(BillContext).Assembly.FullName);
             mySqlOptions.EnableRetryOnFailure(

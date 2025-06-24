@@ -26,7 +26,7 @@ namespace SocialInteractionsMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = "localhost";
+            var hostname = "rabbit_mq";
             var username = "guest";
             var password = "guest";
             var port = 5672;
