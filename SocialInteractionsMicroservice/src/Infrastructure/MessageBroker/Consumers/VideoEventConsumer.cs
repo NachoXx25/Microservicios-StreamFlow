@@ -47,21 +47,21 @@ namespace SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Consum
 
                 _channelCreated.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
 
                 _channelUpdated.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
 
                 _channelDeleted.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );

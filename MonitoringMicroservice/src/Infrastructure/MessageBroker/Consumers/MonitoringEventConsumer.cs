@@ -43,13 +43,13 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
                 _channelError = _connection.CreateModel();
                 _channelAction.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
                 _channelError.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );

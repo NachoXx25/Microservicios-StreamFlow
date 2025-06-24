@@ -41,7 +41,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Consumers
 
                 _channelLiked.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );

@@ -48,19 +48,19 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
 
                 _channelCreated.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
                 _channelUpdated.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
                 _channelDeleted.ExchangeDeclare(
                             exchange: _exchangeName,
-                            type: _exchangeName,
+                            type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
                 );
