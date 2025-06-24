@@ -158,6 +158,7 @@ services:
     image: thenachoxx/api-gateway:latest
     container_name: api_gateway_1
     environment:
+      - JWT_SECRET=${JWT_SECRET}
       - Services__AuthService=http://auth_service:8080/
       - GrpcServices__VideoService=http://video_service:8080/
       - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/
@@ -181,6 +182,7 @@ services:
     image: thenachoxx/api-gateway:latest
     container_name: api_gateway_2
     environment:
+      - JWT_SECRET=${JWT_SECRET}
       - Services__AuthService=http://auth_service:8080/
       - GrpcServices__VideoService=http://video_service:8080/
       - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/
@@ -204,6 +206,7 @@ services:
     image: thenachoxx/api-gateway:latest
     container_name: api_gateway_3
     environment:
+      - JWT_SECRET=${JWT_SECRET}
       - Services__AuthService=http://auth_service:8080/
       - GrpcServices__VideoService=http://video_service:8080/
       - GrpcServices__SocialInteractionsService=http://social_interactions_service:8080/

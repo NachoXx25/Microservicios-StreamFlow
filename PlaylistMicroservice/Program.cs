@@ -46,11 +46,17 @@ catch (Exception ex)
 // Configurar URLs explícitamente
 builder.WebHost.ConfigureKestrel(options =>
 {
-    // Puerto para HTTP/REST API
-    options.ListenLocalhost(5249, o => o.Protocols = HttpProtocols.Http1);
-
-    // Puerto para gRPC (HTTP/2)
-    options.ListenLocalhost(5250, o => o.Protocols = HttpProtocols.Http2);
+    var isInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+    
+    if (isInContainer)
+    {
+        options.ListenAnyIP(8080, o => o.Protocols = HttpProtocols.Http2);
+    }
+    else
+    {
+        options.ListenLocalhost(5249, o => o.Protocols = HttpProtocols.Http1);
+        options.ListenLocalhost(5250, o => o.Protocols = HttpProtocols.Http2);
+    }
 
 });
 

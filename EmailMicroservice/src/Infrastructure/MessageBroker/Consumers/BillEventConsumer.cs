@@ -25,6 +25,12 @@ namespace EmailMicroservice.src.Infrastructure.MessageBroker.Consumers
             {
                 _channelBillUpdated = _rabbitMQService.CreateConnection().CreateModel();
                 _channelBillUpdated.BasicQos(0, 1, false);
+                _channelBillUpdated.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelBillUpdated.QueueDeclare(
                     queue: "bill_updated_queue",
                     durable: true,
