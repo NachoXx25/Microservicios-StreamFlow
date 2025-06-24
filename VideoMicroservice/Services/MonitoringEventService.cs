@@ -26,7 +26,7 @@ namespace VideoMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = "rabbit_mq";
+            var hostname = "localhost";
             var username = "guest";
             var password = "guest";
             var port = 5672;

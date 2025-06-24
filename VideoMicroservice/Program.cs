@@ -27,7 +27,7 @@ builder.Services.AddGrpc();
 try
 {
     var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "rabbit_mq";
+    connectionFactory.HostName = "localhost";
     connectionFactory.UserName = "guest";
     connectionFactory.Password = "guest";
     connectionFactory.Port = 5672;

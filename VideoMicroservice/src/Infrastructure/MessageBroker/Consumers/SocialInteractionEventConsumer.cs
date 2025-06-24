@@ -17,6 +17,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Consumers
     {
         private readonly RabbitMQService _rabbitMQService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly string _exchangeName;
 
         public required IConnection _connection { get; set; }
 
@@ -26,6 +27,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Consumers
         {
             _rabbitMQService = rabbitMQService;
             _serviceProvider = serviceProvider;
+            _exchangeName = _rabbitMQService.ExchangeName;
             InitializeRabbitMQ();
         }
 
@@ -36,6 +38,13 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Consumers
                 _connection = _rabbitMQService.CreateConnection();
 
                 _channelLiked = _connection.CreateModel();
+
+                _channelLiked.ExchangeDeclare(
+                            exchange: _exchangeName,
+                            type: _exchangeName,
+                            durable: true,
+                            autoDelete: false
+                );
 
                 _channelLiked.BasicQos(0, 1, false);
                 _channelLiked.QueueDeclare(
@@ -109,7 +118,7 @@ namespace VideoMicroservice.src.Infrastructure.MessageBroker.Consumers
             Log.Information("Consumidores de eventos iniciados");
             return Task.CompletedTask;
         }
-        
+
         public override void Dispose()
         {
             _channelLiked.Close();
