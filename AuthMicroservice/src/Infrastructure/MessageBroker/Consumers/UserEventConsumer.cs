@@ -37,6 +37,12 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                 _connection = _rabbitMQService.CreateConnection();
 
                 _channelCreated = _connection.CreateModel();
+                _channelCreated.ExchangeDeclare(
+                            exchange: "StreamFlowExchange",
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                        );
                 _channelCreated.BasicQos(0, 1, false);
                 _channelCreated.QueueDeclare(
                     queue: "user_created_queue",
@@ -50,6 +56,12 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                     routingKey: "user.created");
 
                 _channelUpdated = _connection.CreateModel();
+                _channelUpdated.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelUpdated.BasicQos(0, 1, false);
                 _channelUpdated.QueueDeclare(
                     queue: "user_updated_queue",
@@ -63,6 +75,12 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                     routingKey: "user.updated");
 
                 _channelDeleted = _connection.CreateModel();
+                _channelDeleted.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelDeleted.BasicQos(0, 1, false);
                 _channelDeleted.QueueDeclare(
                     queue: "user_deleted_queue",

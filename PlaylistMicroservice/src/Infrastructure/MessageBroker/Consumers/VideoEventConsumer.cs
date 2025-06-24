@@ -40,6 +40,12 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
             {
                 _connection = _rabbitMQService.CreateConnection();
                 _channelCreated = _connection.CreateModel();
+                _channelCreated.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelCreated.BasicQos(0, 1, false);
                 _channelCreated.QueueDeclare(
                     queue: "playlist_video_created_queue",
@@ -55,6 +61,12 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                 );
 
                 _channelUpdated = _connection.CreateModel();
+                _channelUpdated.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelUpdated.BasicQos(0, 1, false);
                 _channelUpdated.QueueDeclare(
                     queue: "playlist_video_updated_queue",
@@ -70,6 +82,12 @@ namespace PlaylistMicroservice.src.Infrastructure.MessageBroker.Consumers
                 );
 
                 _channelDeleted = _connection.CreateModel();
+                _channelDeleted.ExchangeDeclare(
+                    exchange: "StreamFlowExchange",
+                    type: ExchangeType.Topic,
+                    durable: true,
+                    autoDelete: false
+                );
                 _channelDeleted.BasicQos(0, 1, false);
                 _channelDeleted.QueueDeclare(
                     queue: "playlist_video_deleted_queue",
