@@ -1,0 +1,170 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  auth-service:
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with: 
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Build and push auth service
+      uses: docker/build-push-action@v5
+      with:
+        context: ./AuthMicroservice
+        push: true
+        tags: thenachoxx/auth-microservice:latest
+        cache-from: type=gha                   
+        cache-to: type=gha,mode=max            
+
+  user-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Build and push user-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./UserMicroservice
+        push: true
+        tags: thenachoxx/user-microservice:latest
+        cache-from: type=gha                   
+        cache-to: type=gha,mode=max            
+
+  playlist-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Build and push playlist-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./PlaylistMicroservice
+        push: true
+        tags: thenachoxx/playlist-microservice:latest
+        cache-from: type=gha                    
+        cache-to: type=gha,mode=max           
+
+  email-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Build and push email-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./EmailMicroservice
+        push: true
+        tags: thenachoxx/email-microservice:latest
+        cache-from: type=gha                    
+        cache-to: type=gha,mode=max            
+
+  video-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub (seitaenyi)
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME_SEITAENYI }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN_SEITAENYI }}
+    - name: Build and push video-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./VideoMicroservice
+        push: true
+        tags: seitaenyi/video-microservice:latest
+        cache-from: type=gha                    
+        cache-to: type=gha,mode=max            
+
+
+  bill-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub (seitaenyi)
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME_SEITAENYI }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN_SEITAENYI }}
+    - name: Build and push bill-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./BillMicroservice
+        push: true
+        tags: seitaenyi/bill-microservice:latest
+        cache-from: type=gha                    
+        cache-to: type=gha,mode=max            
+
+
+  monitoring-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub (seitaenyi)
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME_SEITAENYI }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN_SEITAENYI }}
+    - name: Build and push monitoring-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./MonitoringMicroservice
+        push: true
+        tags: seitaenyi/monitoring-microservice:latest
+        cache-from: type=gha                    
+        cache-to: type=gha,mode=max           
+
+  social-interactions-service:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub (seitaenyi)
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME_SEITAENYI }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN_SEITAENYI }}
+    - name: Build and push social-interactions-microservice
+      uses: docker/build-push-action@v5
+      with:
+        context: ./SocialInteractionsMicroservice
+        push: true
+        tags: seitaenyi/social-interactions-microservice:latest
+        cache-from: type=gha                   
+        cache-to: type=gha,mode=max          
