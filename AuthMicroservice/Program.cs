@@ -35,20 +35,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
-try
-{
-    var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "rabbit_mq";
-    connectionFactory.UserName = "guest";
-    connectionFactory.Password = "guest";
-    connectionFactory.Port = 5672;
-    var connection = connectionFactory.CreateConnection();
-    builder.Services.AddHostedService<UserEventConsumer>();
-    builder.Services.AddSingleton<RabbitMQService>();
-}catch (Exception ex)
-{
-    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
-}
+builder.Services.AddHostedService<UserEventConsumer>();
+builder.Services.AddSingleton<RabbitMQService>();
 
 //Conexión a base de datos de módulo de autenticación (PostgreSQL)
 builder.Services.AddDbContext<DataContext>(options =>

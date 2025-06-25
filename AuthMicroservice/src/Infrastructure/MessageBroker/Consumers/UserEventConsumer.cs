@@ -102,7 +102,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
 
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
             Log.Information("Iniciando el consumidor de eventos de usuario.");
@@ -134,7 +134,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                 {
                     Log.Error(ex, "Error al recibir el mensaje de RabbitMQ.");
                     bool requeue = ex is DbUpdateException || ex is TimeoutException;
-                    _channelCreated.BasicNack(ea.DeliveryTag, false, requeue);
+                    _channelCreated.BasicNack(ea.DeliveryTag, false, true);
                 }
             };
 
@@ -165,7 +165,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                 {
                     Log.Error(ex, "Error al recibir el mensaje de RabbitMQ.");
                     bool requeue = ex is DbUpdateException || ex is TimeoutException;
-                    _channelUpdated.BasicNack(ea.DeliveryTag, false, requeue);
+                    _channelUpdated.BasicNack(ea.DeliveryTag, false, true);
                 }
             };
 
@@ -196,7 +196,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
                 {
                     Log.Error(ex, "Error al recibir el mensaje de RabbitMQ.");
                     bool requeue = ex is DbUpdateException || ex is TimeoutException;
-                    _channelDeleted.BasicNack(ea.DeliveryTag, false, requeue);
+                    _channelDeleted.BasicNack(ea.DeliveryTag, false, true);
                 }
             };
 
@@ -204,17 +204,21 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Consumers
             _channelUpdated.BasicConsume(queue: "user_updated_queue", autoAck: false, consumer: consumerUpdated);
             _channelDeleted.BasicConsume(queue: "user_deleted_queue", autoAck: false, consumer: consumerDeleted);
 
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await Task.Delay(1000, stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    Log.Information("BillEventConsumer: Shutdown requested");
+                    break;
+                }
+            }
             Log.Information("Consumidores de eventos iniciados");
-            return Task.CompletedTask;
-        }
 
-        public override void Dispose()
-        {
-            _channelCreated?.Close();
-            _channelUpdated?.Close();
-            _channelDeleted?.Close();
-            _connection?.Close();
-            base.Dispose();
+            return;
         }
     }
 }
