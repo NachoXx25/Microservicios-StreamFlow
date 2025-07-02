@@ -32,11 +32,13 @@ var connection = connectionFactory.CreateConnection();
 builder.Services.AddHostedService<SocialInteractionEventConsumer>();
 builder.Services.AddSingleton<RabbitMQService>();
 
-builder.Services.AddDbContext<VideoContext>(options =>
+try
 {
     var mongoConnectionString = Env.GetString("MONGODB_CONNECTION");
     var databaseName = Env.GetString("MONGODB_DATABASE_NAME");
-
+    
+    Log.Information("SocialInteractionsMicroservice: Configuring MongoDB connection...");
+    
     MongoClient mongoClient = null;
     int maxRetryCount = 5;
     TimeSpan maxRetryDelay = TimeSpan.FromSeconds(60);
@@ -61,7 +63,7 @@ builder.Services.AddDbContext<VideoContext>(options =>
             mongoClient = new MongoClient(mongoClientSettings);
 
             var databases = mongoClient.ListDatabaseNames().ToList();
-            Log.Information($"Conexión establecida después de {retryCount + 1} intento(s)");
+            Log.Information($"SocialInteractionsMicroservice: MongoDB connection established after {retryCount + 1} attempt(s)");
             break;
         }
         catch (Exception ex) when (ex is MongoConnectionException || ex is TimeoutException || ex is System.Net.Sockets.SocketException)
@@ -70,18 +72,37 @@ builder.Services.AddDbContext<VideoContext>(options =>
 
             if (retryCount >= maxRetryCount)
             {
-                Log.Error($"Falló la conexión después de {maxRetryCount} reitentos");
+                Log.Fatal($"SocialInteractionsMicroservice: MongoDB connection failed after {maxRetryCount} attempts");
                 throw;
             }
 
             var delay = TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryCount), maxRetryDelay.TotalSeconds));
-            Log.Error($"Intento de conexión {retryCount} fallida: {ex.Message}. Reitentando en {delay.TotalSeconds} segundos...");
+            Log.Warning($"SocialInteractionsMicroservice: Connection attempt {retryCount} failed: {ex.Message}. Retrying in {delay.TotalSeconds} seconds...");
             Thread.Sleep(delay);
         }
     }
 
-    options.UseMongoDB(mongoClient, databaseName);
-});
+    builder.Services.AddSingleton<IMongoClient>(mongoClient);
+    
+    builder.Services.AddDbContext<VideoContext>((serviceProvider, options) =>
+    {
+        var client = serviceProvider.GetRequiredService<IMongoClient>();
+        options.UseMongoDB(client, databaseName);
+        
+
+        options.ConfigureWarnings(warnings =>
+        {
+            warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.ManyServiceProvidersCreatedWarning);
+        });
+    });
+
+    Log.Information("SocialInteractionsMicroservice: MongoDB configuration completed successfully");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "SocialInteractionsMicroservice: Failed to configure MongoDB");
+    throw;
+}
 
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
