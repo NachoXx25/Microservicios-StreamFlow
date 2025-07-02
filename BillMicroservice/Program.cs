@@ -26,21 +26,14 @@ builder.Services.AddScoped<IBillEventService, BillEventService>();
 builder.Services.AddScoped<IBillService, BillService>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 
-try
-{
-    var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "rabbit_mq";
-    connectionFactory.UserName = "guest";
-    connectionFactory.Password = "guest";
-    connectionFactory.Port = 5672;
-    var connection = connectionFactory.CreateConnection();
-    builder.Services.AddHostedService<UserEventConsumer>();
-    builder.Services.AddSingleton<RabbitMQService>();
-}
-catch (Exception ex)
-{
-    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
-}
+var connectionFactory = new ConnectionFactory();
+connectionFactory.HostName = "rabbit_mq";
+connectionFactory.UserName = "guest";
+connectionFactory.Password = "guest";
+connectionFactory.Port = 5672;
+var connection = connectionFactory.CreateConnection();
+builder.Services.AddHostedService<UserEventConsumer>();
+builder.Services.AddSingleton<RabbitMQService>();
 
 builder.Services.AddGrpc();
 
