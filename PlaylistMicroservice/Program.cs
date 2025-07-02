@@ -27,21 +27,9 @@ builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
 builder.Services.AddScoped<IVideoEventHandlerRepository, VideoEventHandlerRepository>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
-try
-{
-    var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "rabbit-mq";
-    connectionFactory.UserName = "guest";
-    connectionFactory.Password = "guest";
-    connectionFactory.Port = 5672;
-    var connection = connectionFactory.CreateConnection();
-    builder.Services.AddHostedService<VideoEventConsumer>();
-    builder.Services.AddSingleton<RabbitMQService>();
-}
-catch (Exception ex)
-{
-    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
-}
+builder.Services.AddHostedService<VideoEventConsumer>();
+builder.Services.AddSingleton<RabbitMQService>();
+
 
 // Configurar URLs explícitamente
 builder.WebHost.ConfigureKestrel(options =>

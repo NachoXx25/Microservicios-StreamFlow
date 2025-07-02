@@ -38,7 +38,10 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Services
                 UserName = _username,
                 Password = _password,
                 Port = _port,
-                DispatchConsumersAsync = true
+                DispatchConsumersAsync = true,
+                AutomaticRecoveryEnabled = true,
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(15),
+                UseBackgroundThreadsForIO = true
             };
 
             lock (_connectionLock)
