@@ -35,7 +35,7 @@ namespace VideoMicroservice.Services
 
         public VideoEventService()
         {
-            _hostname = "localhost";
+            _hostname = "rabbit_mq";
             _password = "guest";
             _username = "guest";
             _port = 5672;
@@ -69,7 +69,7 @@ namespace VideoMicroservice.Services
                 DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
                 DeclareAndBindQueue(playlistChannel, "playlist_video_deleted_queue", "playlist.video.deleted");
             }
-            
+
             //Channel for social interactions service
             socialInteractionsChannel = _connection.CreateModel();
             {
@@ -96,7 +96,7 @@ namespace VideoMicroservice.Services
                 var stringId = video.Id.ToString();
 
                 // Publish the event to the playlist service
-                var playlistMessage = new 
+                var playlistMessage = new
                 {
                     Id = stringId,
                     video.Title,
@@ -117,7 +117,7 @@ namespace VideoMicroservice.Services
                 );
 
                 // Publish the event to the social interactions service
-                var socialInteractionsMessage = new 
+                var socialInteractionsMessage = new
                 {
                     Id = stringId,
                     video.Title,
@@ -135,7 +135,7 @@ namespace VideoMicroservice.Services
                     basicProperties: properties,
                     body: socialInteractionsBody
                 );
-                
+
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -177,7 +177,7 @@ namespace VideoMicroservice.Services
                     basicProperties: properties,
                     body: body
                 );
-                    
+
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -188,12 +188,12 @@ namespace VideoMicroservice.Services
 
         public Task PublishUpdatedVideo(Video video)
         {
-           try
-           {
+            try
+            {
                 var stringId = video.Id.ToString();
-                
+
                 // Publish the event to the playlist service
-                var playlistMessage = new 
+                var playlistMessage = new
                 {
                     Id = stringId,
                     video.Title,
@@ -214,7 +214,7 @@ namespace VideoMicroservice.Services
                 );
 
                 // Publish the event to the social interactions service
-                var socialInteractionsMessage = new 
+                var socialInteractionsMessage = new
                 {
                     Id = stringId,
                     video.Title,
@@ -233,11 +233,11 @@ namespace VideoMicroservice.Services
                 );
 
                 return Task.CompletedTask;
-           }
-           catch (Exception ex)
-           {
+            }
+            catch (Exception ex)
+            {
                 throw new Exception("Error al publicar el evento de video modificado", ex);
-           }
+            }
         }
 
         private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey)

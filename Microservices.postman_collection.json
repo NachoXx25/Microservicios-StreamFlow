@@ -1,8 +1,10 @@
 {
 	"info": {
 		"_postman_id": "a64b312f-ed8d-4f60-b618-745e82329589",
+		"_postman_id": "a64b312f-ed8d-4f60-b618-745e82329589",
 		"name": "Microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33657530"
 		"_exporter_id": "33657530"
 	},
 	"item": [
@@ -12,62 +14,6 @@
 				{
 					"name": "Playlist Service",
 					"item": [
-						{
-							"name": "Ver listas de reproducción",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/listas-reproduccion",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"listas-reproduccion"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Ver videos de lista de reproducción",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/listas-reproduccion/10/videos",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"listas-reproduccion",
-										"10",
-										"videos"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "Crear lista de reproducción",
 							"request": {
@@ -184,6 +130,62 @@
 							"response": []
 						},
 						{
+							"name": "Ver listas de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ver videos de lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Eliminar lista de reproducción",
 							"request": {
 								"auth": {
@@ -285,38 +287,6 @@
 							"response": []
 						},
 						{
-							"name": "Eliminar usuario",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken-Flujo3}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": []
-								},
-								"url": {
-									"raw": "{{URL}}/usuarios/120",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"usuarios",
-										"120"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Actualizar usuario",
 							"request": {
 								"auth": {
@@ -372,6 +342,91 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Eliminar usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken-Flujo3}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios/120",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"120"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar todos los usuarios",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken-Flujo3}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "FirstName",
+											"value": "j",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "LastName",
+											"value": "R",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "Email",
+											"value": "big",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -419,34 +474,6 @@
 							"response": []
 						},
 						{
-							"name": "Logout",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/auth/logout",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"auth",
-										"logout"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Cambiar contraseña",
 							"request": {
 								"auth": {
@@ -483,74 +510,40 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Logout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/auth/logout",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
 				{
 					"name": "Bill Service",
 					"item": [
-						{
-							"name": "Listar facturas por usuario",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/facturas",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"facturas"
-									],
-									"query": [
-										{
-											"key": "Status",
-											"value": "p",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Obtener factura por ID",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/facturas/2",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"facturas",
-										"2"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "Crear factura",
 							"request": {
@@ -559,6 +552,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -582,6 +576,35 @@
 									],
 									"path": [
 										"facturas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener factura por ID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/facturas/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"facturas",
+										"2"
 									]
 								}
 							},
@@ -633,6 +656,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -651,6 +675,48 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Listar facturas por usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/facturas",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"facturas"
+									],
+									"query": [
+										{
+											"key": "Status",
+											"value": "p",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -665,6 +731,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -694,6 +761,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -733,6 +801,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -766,6 +835,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -793,6 +863,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -827,6 +898,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -855,35 +927,6 @@
 							"response": []
 						},
 						{
-							"name": "Listar todos los videos",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/videos",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"videos"
-									],
-									"query": [
-										{
-											"key": "Title",
-											"value": null,
-											"disabled": true
-										},
-										{
-											"key": "Genre",
-											"value": null,
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Obtener video por ID",
 							"request": {
 								"auth": {
@@ -891,6 +934,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -919,6 +963,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -957,6 +1002,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -971,6 +1017,35 @@
 									"path": [
 										"videos",
 										"6841b292da6e65dba7c19873"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar todos los videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"videos"
+									],
+									"query": [
+										{
+											"key": "Title",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "Genre",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -1216,6 +1291,7 @@
 				},
 				{
 					"name": "Actualiza estado de factura",
+					"name": "Actualiza estado de factura",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1240,11 +1316,13 @@
 						},
 						"url": {
 							"raw": "{{URL}}/facturas/350",
+							"raw": "{{URL}}/facturas/350",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"facturas",
+								"350"
 								"350"
 							]
 						}

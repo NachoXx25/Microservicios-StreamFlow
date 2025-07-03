@@ -7,6 +7,7 @@ using ApiGateway.Protos.PlaylistService;
 using Grpc.Net.Client;
 using Grpc.Core;
 using Serilog;
+using DotNetEnv;
 namespace ApiGateway.Services
 {
     public class PlaylistGrpcClient
@@ -16,7 +17,7 @@ namespace ApiGateway.Services
 
         public PlaylistGrpcClient(IConfiguration configuration)
         {
-            var playlistServiceUrl = configuration["GrpcServices:PlaylistService"] ?? "http://localhost:5250/";
+            var playlistServiceUrl = Env.GetString("GrpcServices__PlaylistService") ?? "http://localhost:5250/";
             _channel = GrpcChannel.ForAddress(playlistServiceUrl);
             _client = new PlaylistService.PlaylistServiceClient(_channel);
         }

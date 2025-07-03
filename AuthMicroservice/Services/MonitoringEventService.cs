@@ -27,16 +27,11 @@ namespace AuthMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            var username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            var port = Env.GetInt("RABBITMQ_PORT", 5672);
-
-            _exchangeName = "MonitoringExchange";
+            _exchangeName = "StreamFlowExchange";
 
              var factory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = "rabbit_mq",
                 UserName = "guest",
                 Password = "guest",
                 Port = 5672

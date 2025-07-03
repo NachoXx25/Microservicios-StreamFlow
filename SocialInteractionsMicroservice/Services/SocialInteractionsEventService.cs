@@ -27,7 +27,7 @@ namespace SocialInteractionsMicroservice.Services
 
         public SocialInteractionsEventService()
         {
-            _hostname = "localhost";
+            _hostname = "rabbit_mq";
             _username = "guest";
             _password = "guest";
             _port = 5672;
@@ -101,7 +101,7 @@ namespace SocialInteractionsMicroservice.Services
                         body: body
                     );
                 }
-                
+
                 return Task.CompletedTask;
             }
             catch (Exception ex)

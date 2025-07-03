@@ -14,6 +14,7 @@ service UserGrpcService {
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
     rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
+    rpc CheckHealth (google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 
@@ -109,4 +110,9 @@ message DeleteUserRequest {
     string UserId = 2; // ID del usuario que realiza la solicitud
     string UserEmail = 3; // Email del usuario que realiza la solicitud
     string Role = 4; // Rol del usuario que realiza la solicitud
+}
+
+// Mensaje para verificar la salud del servicio
+message CheckHealthResponse {
+    bool IsRunning = 1;
 }

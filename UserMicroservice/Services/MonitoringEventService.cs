@@ -25,10 +25,10 @@ namespace UserMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = Env.GetString("RABBITMQ_HOST") ?? "localhost";
-            var username = Env.GetString("RABBITMQ_USERNAME") ?? "guest";
-            var password = Env.GetString("RABBITMQ_PASSWORD") ?? "guest";
-            var port = Env.GetInt("RABBITMQ_PORT", 5672);
+            var hostname = "rabbit_mq";
+            var username = "guest";
+            var password = "guest";
+            var port = 5672;
 
             _exchangeName = "StreamFlowExchange";
 

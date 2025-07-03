@@ -17,6 +17,7 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
     {
         private readonly RabbitMQService _rabbitMQService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly string _exchangeName;
 
         public required IConnection _connection { get; set; }
 
@@ -28,6 +29,7 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
         {
             _rabbitMQService = rabbitMQService;
             _serviceProvider = serviceProvider;
+            _exchangeName = _rabbitMQService.ExchangeName;
             InitializeRabbitMQ();
         }
 
@@ -40,12 +42,18 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Consumers
                 _channelAction = _connection.CreateModel();
                 _channelError = _connection.CreateModel();
                 _channelAction.ExchangeDeclare(
-                            exchange: "StreamFlowExchange",
+                            exchange: _exchangeName,
                             type: ExchangeType.Topic,
                             durable: true,
                             autoDelete: false
-                        );
-                        
+                );
+                _channelError.ExchangeDeclare(
+                            exchange: _exchangeName,
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                );
+
                 _channelAction.BasicQos(0, 1, false);
                 _channelAction.QueueDeclare(
                     "Action_queue",

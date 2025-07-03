@@ -1,4 +1,5 @@
 using ApiGateway.Protos.UserService;
+using DotNetEnv;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Serilog;
@@ -11,7 +12,7 @@ namespace ApiGateway.Services
 
         public UserGrpcClient(IConfiguration configuration)
         {
-            var userServiceUrl = configuration["GrpcServices:UserService"] ?? "http://localhost:5136/";
+            var userServiceUrl = Env.GetString("GrpcServices__UserService") ?? "http://localhost:5136/";
             _channel = GrpcChannel.ForAddress(userServiceUrl);
             _client = new UserGrpcService.UserGrpcServiceClient(_channel);
         }

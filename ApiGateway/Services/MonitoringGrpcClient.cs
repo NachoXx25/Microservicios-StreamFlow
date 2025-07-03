@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.MonitoringService;
+using DotNetEnv;
 using Grpc.Core;
 using Grpc.Net.Client;
 
@@ -16,7 +17,7 @@ namespace ApiGateway.Services
 
         public MonitoringGrpcClient(IConfiguration configuration)
         {
-            var monitoringServiceUrl = configuration["GrpcServices:MonitoringService"] ?? "http://localhost:5038/";
+            var monitoringServiceUrl = Env.GetString("GrpcServices__MonitoringService") ?? "http://localhost:5038/";
             _channel = GrpcChannel.ForAddress(monitoringServiceUrl);
             _client = new MonitoringGrpcService.MonitoringGrpcServiceClient(_channel);
         }

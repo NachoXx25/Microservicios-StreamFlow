@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option csharp_namespace = "PlaylistMicroservice.Protos";
-
+import "google/protobuf/empty.proto";
 package playlist;
 
 
@@ -12,6 +12,7 @@ service PlaylistService {
     rpc GetVideosByPlaylistId(GetVideosByPlaylistIdRequest) returns (GetVideosByPlaylistIdResponse);
     rpc RemoveVideoFromPlaylist(RemoveVideoFromPlaylistRequest) returns (RemoveVideoFromPlaylistResponse);
     rpc DeletePlaylist(DeletePlaylistRequest) returns (DeletePlaylistResponse);
+    rpc CheckHealth(google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 // Mensaje de respuesta para obtener las listas de reproducción por ID de usuario
@@ -103,4 +104,9 @@ message DeletePlaylistRequest {
 // Mensaje de respuesta para eliminar una lista de reproducción
 message DeletePlaylistResponse {
     string Response = 1;
+}
+
+// Mensaje para verificar la salud del servicio
+message CheckHealthResponse {
+    bool IsRunning = 1;
 }

@@ -1,0 +1,237 @@
+name: E2E Tests - User and Auth Microservice
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: 
+      - 'UserMicroservice/**'
+      - 'AuthMicroservice/**'
+      - 'Nginx/**'
+      - '.github/workflows/e2e-tests.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'UserMicroservice/**'
+      - 'AuthMicroservice/**'
+      - 'Nginx/**'
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Generate SSL certificates for testing
+      run: |
+        echo "Generando certificados SSL para testing..."
+        
+        # Crear directorio ssl si no existe
+        mkdir -p ssl
+        
+        # Generar certificados self-signed con los nombres correctos que espera Nginx
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+          -keyout ssl/mykey.pem \
+          -out ssl/mycert.pem \
+          -subj "/C=US/ST=Test/L=Test/O=StreamFlow/OU=Testing/CN=localhost" \
+          -addext "subjectAltName=DNS:localhost,DNS:127.0.0.1,IP:127.0.0.1"
+        
+        # Verificar que se crearon correctamente
+        echo "Certificados SSL generados:"
+        ls -la ssl/
+        
+        # Verificar contenido del certificado
+        echo "Información del certificado:"
+        openssl x509 -in ssl/mycert.pem -text -noout | grep -A1 "Subject:"
+        
+        # Dar permisos correctos
+        chmod 644 ssl/mycert.pem
+        chmod 600 ssl/mykey.pem
+        
+        echo "Certificados SSL listos para uso"
+      working-directory: Nginx
+
+    - name: Create test environment file
+      run: |
+        cd Nginx
+        cp .env.test .env
+
+    - name: Verify configuration
+      run: |
+        echo "Verificando configuración antes del build..."
+        
+        echo "Archivos en directorio Nginx:"
+        ls -la
+        
+        echo "Verificando docker-compose.yml:"
+        if [ -f docker-compose.yml ]; then
+          echo "docker-compose.yml encontrado"
+          # Mostrar servicios principales
+          grep -A1 "services:" docker-compose.yml | head -5
+        else
+          echo "docker-compose.yml no encontrado"
+          exit 1
+        fi
+        
+        echo "Verificando nginx.conf:"
+        if [ -f nginx.conf ]; then
+          echo "nginx.conf encontrado"
+          # Verificar puertos configurados
+          grep -E "(listen|server_name)" nginx.conf | head -5
+        else
+          echo "nginx.conf no encontrado"
+          exit 1
+        fi
+        
+        echo "Verificando certificados SSL:"
+        ls -la ssl/
+        
+        echo "Configuración verificada"
+      working-directory: Nginx
+
+    - name: Build and start services
+      run: |
+        cd Nginx
+        docker compose --env-file .env.test up -d --build
+        
+    - name: Wait for services to be ready
+      run: |
+        echo "Verificando que los servicios estén listos..."
+        
+        echo "Estado de contenedores después del inicio:"
+        docker compose ps
+        
+        echo "Verificando puertos expuestos:"
+        docker compose ps --format "table {{.Name}}\t{{.Ports}}"
+        
+        echo "Verificando conectividad de red:"
+        netstat -tuln | grep -E "(443|80|8080)" || echo "Puertos no encontrados aún"
+        
+        # Verificar logs de nginx para errores SSL
+        echo "Verificando configuración SSL en Nginx:"
+        docker compose logs nginx-load-balancer | grep -i ssl | tail -5 || echo "No hay mensajes SSL específicos"
+        
+        # Health check con retry inteligente
+        echo "Iniciando health check..."
+        timeout=400
+        retry_count=0
+        max_retries=80
+        
+        while [ $timeout -gt 0 ] && [ $retry_count -lt $max_retries ]; do
+          retry_count=$((retry_count + 1))
+          
+          echo "Intento $retry_count/$max_retries - Verificando HTTPS en puerto 443..."
+          
+          # Intentar conectar con curl (aceptando certificados self-signed)
+          if curl -k -s --connect-timeout 10 --max-time 15 https://localhost:443/ >/dev/null 2>&1; then
+            echo "¡Nginx está respondiendo en puerto 443!"
+            
+            # Verificar que también responda a rutas específicas
+            echo "Verificando rutas de API..."
+            if curl -k -s --connect-timeout 5 https://localhost:443/usuarios >/dev/null 2>&1; then
+              echo "Ruta /usuarios está disponible"
+            fi
+            
+            if curl -k -s --connect-timeout 5 https://localhost:443/auth >/dev/null 2>&1; then
+              echo "Ruta /auth está disponible"
+            fi
+            
+            break
+          fi
+          
+          # Diagnóstico detallado cada 10 intentos
+          if [ $((retry_count % 10)) -eq 0 ]; then
+            echo "Diagnóstico detallado (intento $retry_count):"
+            echo "--- Estado de contenedores ---"
+            docker compose ps
+            echo "--- Logs recientes de Nginx ---"
+            docker compose logs --tail=3 nginx-load-balancer
+            echo "--- Procesos escuchando en puertos ---"
+            netstat -tuln | grep -E "(443|80)" || echo "No hay procesos en puertos 80/443"
+          fi
+          
+          echo "Esperando... ($(($timeout-5)) seconds left, intento $retry_count)"
+          sleep 5
+          timeout=$((timeout-5))
+        done
+        
+        if [ $timeout -le 0 ] || [ $retry_count -ge $max_retries ]; then
+          echo "Nginx no responde después de $max_retries intentos"
+          echo "Diagnóstico final de falla:"
+          
+          echo "--- Estado final de contenedores ---"
+          docker compose ps -a
+          
+          echo "--- Logs completos de Nginx ---"
+          docker compose logs nginx-load-balancer
+          
+          echo "--- Logs de API Gateways ---"
+          docker compose logs api-gateway-1 | tail -10
+          
+          echo "--- Logs de User Service ---"
+          docker compose logs user-service | tail -10
+          
+          echo "--- Logs de Auth Service ---"
+          docker compose logs auth-service | tail -10
+          
+          echo "--- Puertos del sistema ---"
+          netstat -tuln | grep LISTEN
+          
+          echo "--- Procesos Docker ---"
+          docker ps -a
+          
+          exit 1
+        fi
+        
+        echo "Todos los servicios están listos para testing"
+        echo "Nginx responde correctamente en https://localhost:443"
+        echo "Esperando 60 segundos adicionales para estabilidad (colas de rabbit y base de datos)..."
+        sleep 60 # Espera adicional para estabilidad
+      working-directory: Nginx
+        
+
+    - name: Set up Node.js for E2E tests
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'e2e-tests/package-lock.json'
+        
+    - name: Install E2E test dependencies
+      run: |
+        cd e2e-tests
+        npm install
+
+    - name: Run E2E Tests
+      run: |
+        cd e2e-tests
+        npm test
+      env:
+        API_GATEWAY_URL: https://localhost:443
+        TEST_TIMEOUT: 30000
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-test-results
+        path: e2e-tests/test-results/
+        
+    - name: Show service logs on failure
+      if: failure()
+      run: |
+        echo "Mostrando los logs"
+        docker compose -f Nginx/docker-compose.yml logs user-service
+        docker compose -f Nginx/docker-compose.yml logs auth-service
+        docker compose -f Nginx/docker-compose.yml logs nginx
+
+    - name: Cleanup
+      if: always()
+      run: |
+        cd Nginx
+        docker compose --env-file .env.test down -v
+        docker system prune -f

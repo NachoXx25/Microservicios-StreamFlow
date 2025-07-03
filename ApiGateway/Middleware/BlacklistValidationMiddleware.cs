@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using DotNetEnv;
 using Serilog;
 
 namespace ApiGateway.Middleware
@@ -22,7 +23,7 @@ namespace ApiGateway.Middleware
             _next = next;
             _httpClientFactory = httpClientFactory;
 
-            _authServiceUrl = configuration["Services:AuthService"] ?? "http://localhost:5184";
+            _authServiceUrl = Env.GetString("Services__AuthService") ?? "http://localhost:5184/";
         }
 
         public async Task InvokeAsync(HttpContext context)

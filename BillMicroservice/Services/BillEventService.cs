@@ -29,7 +29,7 @@ namespace BillMicroservice.Services
 
         public BillEventService()
         {
-            _hostname = "localhost";
+            _hostname = "rabbit_mq";
             _username = "guest";
             _password = "guest";
             _port = 5672;
@@ -67,7 +67,7 @@ namespace BillMicroservice.Services
                 using (var channel = connection.CreateModel())
                 {
 
-                    var userName = updatedBill.FirstName + " " + updatedBill.LastName; 
+                    var userName = updatedBill.FirstName + " " + updatedBill.LastName;
 
                     var message = new
                     {
@@ -91,7 +91,7 @@ namespace BillMicroservice.Services
                         body: body
                     );
                 }
-                
+
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -116,7 +116,7 @@ namespace BillMicroservice.Services
                 routingKey: routingKey
             );
         }
-        
+
 
     }
 }

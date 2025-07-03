@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "EmailMicroservice";
+import "google/protobuf/empty.proto";
+package greet;
+
+
+service Greeter {
+    rpc CheckHealth(google.protobuf.Empty) returns (CheckHealthResponse);
+}
+
+
+// Mensaje para verificar la salud del servicio
+message CheckHealthResponse {
+    bool IsRunning = 1;
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiGateway.Protos.SocialInteractionsService;
+using DotNetEnv;
 using Grpc.Core;
 using Grpc.Net.Client;
 
@@ -15,7 +16,7 @@ namespace ApiGateway.Services
 
         public SocialInteractionsGrpcClient(IConfiguration configuration)
         {
-            var socialInteractionsServiceUrl = configuration["GrpcServices:SocialInteractionsService"] ?? "http://localhost:5217/";
+            var socialInteractionsServiceUrl = Env.GetString("GrpcServices__SocialInteractionsService") ?? "http://localhost:5217/";
             _channel = GrpcChannel.ForAddress(socialInteractionsServiceUrl);
             _client = new SocialInteractionsGrpcService.SocialInteractionsGrpcServiceClient(_channel);
         }

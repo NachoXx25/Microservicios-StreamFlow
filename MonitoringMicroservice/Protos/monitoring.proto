@@ -5,11 +5,13 @@ option csharp_namespace = "MonitoringMicroservice.Protos";
 package monitoring;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service MonitoringGrpcService {
   
     rpc GetAllActions (GetAllActionsRequest) returns (GetAllActionsResponse);
     rpc GetAllErrors (GetAllErrorsRequest) returns (GetAllErrorsResponse);
+    rpc CheckHealth (google.protobuf.Empty) returns (CheckHealthResponse);
 }
 
 message UserData {
@@ -49,4 +51,8 @@ message GetAllErrorsRequest {
 
 message GetAllErrorsResponse {
     repeated Error errors = 1;
+}
+
+message CheckHealthResponse {
+    bool is_running = 1;
 }

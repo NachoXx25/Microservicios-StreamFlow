@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Serilog;
+using SocialInteractionsMicroservice.Protos;
 using SocialInteractionsMicroservice.src.Application.Services.Interfaces;
 using SocialInteractionsMicroservice.src.Domain.Models;
 using SocialInteractionsMicroservice.src.Infrastructure.MessageBroker.Models;
@@ -145,6 +148,22 @@ namespace SocialInteractionsMicroservice.Services
                     UserEmail = request.UserData.Email,
                 });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
+        }
+
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            try
+            {
+                return Task.FromResult(new CheckHealthResponse
+                {
+                    IsRunning = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                throw new RpcException(new Status(StatusCode.Internal, "Error al verificar la salud del servicio de interacciones sociales."));
             }
         }
     }

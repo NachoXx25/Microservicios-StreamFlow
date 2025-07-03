@@ -6,6 +6,7 @@ using BillMicroservice.Protos;
 using BillMicroservice.src.Application.DTOs;
 using BillMicroservice.src.Application.Services.Interfaces;
 using BillMicroservice.src.Infrastructure.MessageBroker.Models;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.VisualBasic;
 using Serilog;
@@ -37,18 +38,18 @@ namespace BillMicroservice.Services
                     UrlMethod = "POST/facturas"
                 });
 
-                if(string.IsNullOrWhiteSpace(request.UserEmail))
+                if (string.IsNullOrWhiteSpace(request.UserEmail))
                 {
                     throw new ArgumentException("No autenticado: se requiere un usuario autenticado para crear una factura.");
                 }
 
                 if (request.UserRole.ToLower() != "administrador")
-                { 
+                {
                     throw new ArgumentException("No autorizado: no tienes permisos para crear una factura.");
                 }
 
                 if (int.TryParse(request.UserId, out var userId) == false || userId <= 0)
-                { 
+                {
                     throw new ArgumentException("El ID de usuario debe ser un número entero positivo.");
                 }
 
@@ -116,12 +117,12 @@ namespace BillMicroservice.Services
                 });
 
                 if (string.IsNullOrWhiteSpace(request.UserId))
-                { 
+                {
                     throw new ArgumentException("No autenticado: se requiere un usuario autenticado para obtener una factura.");
                 }
 
                 if (string.IsNullOrWhiteSpace(request.BillId))
-                { 
+                {
                     throw new ArgumentException("El ID de la factura no puede estar vacío.");
                 }
 
@@ -331,6 +332,22 @@ namespace BillMicroservice.Services
                     UserEmail = request.UserEmail
                 });
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
+        }
+
+        public override Task<CheckHealthResponse> CheckHealth(Empty request, ServerCallContext context)
+        {
+            try
+            {
+                return Task.FromResult(new CheckHealthResponse
+                {
+                    IsRunning = true,
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error al verificar la salud del servicio: {ex.Message}");
+                throw new RpcException(new Status(StatusCode.Internal, "Error al verificar la salud del servicio de facturación."));
             }
         }
     }

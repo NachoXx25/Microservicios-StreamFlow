@@ -22,7 +22,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Services
         public RabbitMQService()
         {
 
-            _hostname = "localhost";
+            _hostname = "rabbit_mq";
             _username = "guest";
             _password = "guest";
             _port = 5672;
@@ -38,7 +38,10 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Services
                 UserName = _username,
                 Password = _password,
                 Port = _port,
-                DispatchConsumersAsync = true
+                DispatchConsumersAsync = true,
+                AutomaticRecoveryEnabled = true,
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(15),
+                UseBackgroundThreadsForIO = true
             };
 
             lock (_connectionLock)

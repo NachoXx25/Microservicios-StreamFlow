@@ -19,24 +19,18 @@ namespace UserMicroservice.Services
     public class UserEventService : IUserEventService
     {
         private readonly string _userExchangeName;
-        private readonly string _billExchangeName;
-        private readonly string _playlistExchangeName;
         private readonly IConnection _connection;
-        private readonly IModel _userChannel;
-        private readonly IModel _billChannel;
-        private readonly IModel _playlistChannel;
+        private readonly IModel _Channel;
         private bool _disposed = false;
 
         public UserEventService()
         {
-            var hostname = "localhost";
+            var hostname = "rabbit_mq";
             var username = "guest";
             var password = "guest";
             var port = 5672;
 
             _userExchangeName = "StreamFlowExchange";
-            _billExchangeName = "StreamFlowExchange";
-            _playlistExchangeName = "StreamFlowExchange";
 
             var factory = new ConnectionFactory
             {
@@ -50,9 +44,9 @@ namespace UserMicroservice.Services
             {
                 _connection = factory.CreateConnection();
 
-                _userChannel = _connection.CreateModel();
-                _billChannel = _connection.CreateModel();
-                _playlistChannel = _connection.CreateModel();
+                _Channel = _connection.CreateModel();
+                _Channel = _connection.CreateModel();
+                _Channel = _connection.CreateModel();
 
                 SetupUserExchange();
                 SetupBillExchange();
@@ -69,21 +63,7 @@ namespace UserMicroservice.Services
 
         private void SetupPlaylistExchange()
         {
-            _playlistChannel.ExchangeDeclare(
-                exchange: _playlistExchangeName,
-                type: "topic",
-                durable: true,
-                autoDelete: false,
-                arguments: null
-            );
-
-            DeclareAndBindQueue(_playlistChannel, "playlist_user_created_queue", "user.created", _playlistExchangeName);
-            DeclareAndBindQueue(_playlistChannel, "playlist_user_updated_queue", "user.updated", _playlistExchangeName);
-        }
-
-        private void SetupUserExchange()
-        {
-            _userChannel.ExchangeDeclare(
+            _Channel.ExchangeDeclare(
                 exchange: _userExchangeName,
                 type: "topic",
                 durable: true,
@@ -91,25 +71,39 @@ namespace UserMicroservice.Services
                 arguments: null
             );
 
-            DeclareAndBindQueue(_userChannel, "user_created_queue", "user.created", _userExchangeName);
-            DeclareAndBindQueue(_userChannel, "user_updated_queue", "user.updated", _userExchangeName);
-            DeclareAndBindQueue(_userChannel, "user_deleted_queue", "user.deleted", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "playlist_user_created_queue", "user.created", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "playlist_user_updated_queue", "user.updated", _userExchangeName);
         }
 
-        private void SetupBillExchange()
+        private void SetupUserExchange()
         {
-
-            _billChannel.ExchangeDeclare(
-                exchange: _billExchangeName,
+            _Channel.ExchangeDeclare(
+                exchange: _userExchangeName,
                 type: "topic",
                 durable: true,
                 autoDelete: false,
                 arguments: null
             );
 
-            DeclareAndBindQueue(_billChannel, "bill_user_created_queue", "user.created", _billExchangeName);
-            DeclareAndBindQueue(_billChannel, "bill_user_updated_queue", "user.updated", _billExchangeName);
-            DeclareAndBindQueue(_billChannel, "bill_user_deleted_queue", "user.deleted", _billExchangeName);
+            DeclareAndBindQueue(_Channel, "user_created_queue", "user.created", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "user_updated_queue", "user.updated", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "user_deleted_queue", "user.deleted", _userExchangeName);
+        }
+
+        private void SetupBillExchange()
+        {
+
+            _Channel.ExchangeDeclare(
+                exchange: _userExchangeName,
+                type: "topic",
+                durable: true,
+                autoDelete: false,
+                arguments: null
+            );
+
+            DeclareAndBindQueue(_Channel, "bill_user_created_queue", "user.created", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "bill_user_updated_queue", "user.updated", _userExchangeName);
+            DeclareAndBindQueue(_Channel, "bill_user_deleted_queue", "user.deleted", _userExchangeName);
         }
 
         private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
@@ -151,9 +145,7 @@ namespace UserMicroservice.Services
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
                 var properties = CreateBasicProperties();
 
-                PublishToExchange(_userChannel, _userExchangeName, "user.created", body, properties);
-                PublishToExchange(_billChannel, _billExchangeName, "user.created", body, properties);
-                PublishToExchange(_playlistChannel, _playlistExchangeName, "user.created", body, properties);
+                PublishToExchange(_Channel, _userExchangeName, "user.created", body, properties);
 
                 Log.Information("Evento UserCreated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
@@ -185,9 +177,7 @@ namespace UserMicroservice.Services
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
                 var properties = CreateBasicProperties();
 
-                PublishToExchange(_userChannel, _userExchangeName, "user.updated", body, properties);
-                PublishToExchange(_billChannel, _billExchangeName, "user.updated", body, properties);
-                PublishToExchange(_playlistChannel, _playlistExchangeName, "user.updated", body, properties);
+                PublishToExchange(_Channel, _userExchangeName, "user.updated", body, properties);
 
                 Log.Information("Evento UserUpdated publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
@@ -217,8 +207,7 @@ namespace UserMicroservice.Services
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
                 var properties = CreateBasicProperties();
 
-                PublishToExchange(_userChannel, _userExchangeName, "user.deleted", body, properties);
-                PublishToExchange(_billChannel, _billExchangeName, "user.deleted", body, properties);
+                PublishToExchange(_Channel, _userExchangeName, "user.deleted", body, properties);
 
                 Log.Information("Evento UserDeleted publicado en ambos exchanges para: {Email}", user.Email);
                 return Task.CompletedTask;
@@ -252,7 +241,7 @@ namespace UserMicroservice.Services
 
         private IBasicProperties CreateBasicProperties()
         {
-            var properties = _userChannel.CreateBasicProperties();
+            var properties = _Channel.CreateBasicProperties();
             properties.Persistent = true;
             properties.ContentType = "application/json";
             properties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
@@ -271,12 +260,10 @@ namespace UserMicroservice.Services
             {
                 try
                 {
-                    _userChannel?.Close();
-                    _billChannel?.Close();
+                    _Channel?.Close();
                     _connection?.Close();
 
-                    _userChannel?.Dispose();
-                    _billChannel?.Dispose();
+                    _Channel?.Dispose();
                     _connection?.Dispose();
 
                     Log.Information("Conexiones RabbitMQ cerradas correctamente");

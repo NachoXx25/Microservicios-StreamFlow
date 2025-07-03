@@ -20,7 +20,12 @@ using AuthMicroservice.Services;
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
-
+static string GetRequiredEnvironmentVariable(string key)
+{
+    return Environment.GetEnvironmentVariable(key) ?? 
+           Env.GetString(key) ?? 
+           throw new ArgumentNullException($"{key} no encontrado");
+}
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -30,25 +35,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserEventHandlerRepository, UserEventHandlerRepository>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
-try
-{
-    var connectionFactory = new ConnectionFactory();
-    connectionFactory.HostName = "localhost";
-    connectionFactory.UserName = "guest";
-    connectionFactory.Password = "guest";
-    connectionFactory.Port = 5672;
-    var connection = connectionFactory.CreateConnection();
-    builder.Services.AddHostedService<UserEventConsumer>();
-    builder.Services.AddSingleton<RabbitMQService>();
-}catch (Exception ex)
-{
-    Log.Error("Error al realizar la conexión a RabbitMQ: {Message}", ex.Message);
-}
+builder.Services.AddHostedService<UserEventConsumer>();
+builder.Services.AddSingleton<RabbitMQService>();
 
 //Conexión a base de datos de módulo de autenticación (PostgreSQL)
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(
-        Env.GetString("POSTGRES_CONNECTION_STRING"),
+        GetRequiredEnvironmentVariable("POSTGRES_CONNECTION_STRING"),
         npgsqlOptions => 
         {
             npgsqlOptions.EnableRetryOnFailure(
@@ -66,10 +59,10 @@ builder.Services.AddAuthentication( options => {
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer( options => {
-
+    var jwtSecret = GetRequiredEnvironmentVariable("JWT_SECRET");
     options.TokenValidationParameters = new TokenValidationParameters (){
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.GetString("JWT_SECRET"))),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
         ValidateLifetime = true,
         ValidateIssuer = false,
         ValidateAudience = false,

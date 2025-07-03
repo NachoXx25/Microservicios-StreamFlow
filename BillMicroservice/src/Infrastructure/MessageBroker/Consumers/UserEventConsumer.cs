@@ -18,6 +18,7 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
     {
         private readonly RabbitMQService _rabbitMQService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly string _exchangeName;
 
         public required IConnection _connection { get; set; }
 
@@ -31,6 +32,7 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
         {
             _rabbitMQService = rabbitMQService;
             _serviceProvider = serviceProvider;
+            _exchangeName = _rabbitMQService.ExchangeName;
             InitializeRabbitMQ();
         }
 
@@ -43,6 +45,25 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
                 _channelCreated = _connection.CreateModel();
                 _channelUpdated = _connection.CreateModel();
                 _channelDeleted = _connection.CreateModel();
+
+                _channelCreated.ExchangeDeclare(
+                            exchange: _exchangeName,
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                );
+                _channelUpdated.ExchangeDeclare(
+                            exchange: _exchangeName,
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                );
+                _channelDeleted.ExchangeDeclare(
+                            exchange: _exchangeName,
+                            type: ExchangeType.Topic,
+                            durable: true,
+                            autoDelete: false
+                );
 
                 _channelCreated.BasicQos(0, 1, false);
                 _channelCreated.QueueDeclare(
@@ -223,7 +244,7 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Consumers
             Log.Information("Consumidores de eventos iniciados");
             return Task.CompletedTask;
         }
-        
+
         public override void Dispose()
         {
             _channelCreated.Close();

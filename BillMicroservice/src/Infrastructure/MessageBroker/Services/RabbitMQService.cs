@@ -23,8 +23,8 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Services
 
         public RabbitMQService()
         {
-            _hostName = "localhost";
-            _userName =  "guest";
+            _hostName = "rabbit_mq";
+            _userName = "guest";
             _password = "guest";
             _port = 5672;
             _exchangeName = "StreamFlowExchange";
@@ -34,8 +34,8 @@ namespace BillMicroservice.src.Infrastructure.MessageBroker.Services
 
         public IConnection CreateConnection()
         {
-           _connectionFactory = new ConnectionFactory
-           {
+            _connectionFactory = new ConnectionFactory
+            {
                 HostName = _hostName,
                 UserName = _userName,
                 Password = _password,
