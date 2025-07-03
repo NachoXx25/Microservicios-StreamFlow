@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "da34a71e-46df-406e-9d20-18c04090c10f",
+		"_postman_id": "a64b312f-ed8d-4f60-b618-745e82329589",
 		"name": "Microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30508365"
+		"_exporter_id": "33657530"
 	},
 	"item": [
 		{
@@ -12,62 +12,6 @@
 				{
 					"name": "Playlist Service",
 					"item": [
-						{
-							"name": "Ver listas de reproducción",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/listas-reproduccion",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"listas-reproduccion"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Ver videos de lista de reproducción",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/listas-reproduccion/10/videos",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"listas-reproduccion",
-										"10",
-										"videos"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "Crear lista de reproducción",
 							"request": {
@@ -184,6 +128,62 @@
 							"response": []
 						},
 						{
+							"name": "Ver listas de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ver videos de lista de reproducción",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/listas-reproduccion/10/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"listas-reproduccion",
+										"10",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Eliminar lista de reproducción",
 							"request": {
 								"auth": {
@@ -285,38 +285,6 @@
 							"response": []
 						},
 						{
-							"name": "Eliminar usuario",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken-Flujo3}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": []
-								},
-								"url": {
-									"raw": "{{URL}}/usuarios/120",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"usuarios",
-										"120"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Actualizar usuario",
 							"request": {
 								"auth": {
@@ -372,6 +340,91 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Eliminar usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken-Flujo3}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios/120",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios",
+										"120"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar todos los usuarios",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken-Flujo3}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "FirstName",
+											"value": "j",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "LastName",
+											"value": "R",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "Email",
+											"value": "big",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/usuarios",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -419,34 +472,6 @@
 							"response": []
 						},
 						{
-							"name": "Logout",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{authToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/auth/logout",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"auth",
-										"logout"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Cambiar contraseña",
 							"request": {
 								"auth": {
@@ -483,74 +508,40 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Logout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/auth/logout",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
 				{
 					"name": "Bill Service",
 					"item": [
-						{
-							"name": "Listar facturas por usuario",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI5YjYyNDMxYi0yY2JlLTQxNzYtOGM4Yy1hNjc2YzA1NTAyNjkiLCJJZCI6IjEiLCJFbWFpbCI6Imp1YW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ2xpZW50ZSIsImV4cCI6MTc1NDUxNDU4OX0.QBU0NuBVC-th7Q2VG6zyLSYpldEcud_DaHx4s_f0q3s",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/facturas",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"facturas"
-									],
-									"query": [
-										{
-											"key": "Status",
-											"value": "p",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Obtener factura por ID",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI5YjYyNDMxYi0yY2JlLTQxNzYtOGM4Yy1hNjc2YzA1NTAyNjkiLCJJZCI6IjEiLCJFbWFpbCI6Imp1YW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ2xpZW50ZSIsImV4cCI6MTc1NDUxNDU4OX0.QBU0NuBVC-th7Q2VG6zyLSYpldEcud_DaHx4s_f0q3s",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/facturas/2",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"facturas",
-										"2"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "Crear factura",
 							"request": {
@@ -588,6 +579,34 @@
 							"response": []
 						},
 						{
+							"name": "Obtener factura por ID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/facturas/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"facturas",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Actualiza estado de factura",
 							"request": {
 								"auth": {
@@ -595,7 +614,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -612,13 +631,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/facturas/9",
+									"raw": "{{URL}}/facturas/351",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"facturas",
-										"9"
+										"351"
 									]
 								}
 							},
@@ -628,7 +647,14 @@
 							"name": "Eliminar factura",
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "DELETE",
 								"header": [],
@@ -640,6 +666,40 @@
 									"path": [
 										"facturas",
 										"400"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar facturas por usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/facturas",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"facturas"
+									],
+									"query": [
+										{
+											"key": "Status",
+											"value": "p",
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -658,7 +718,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -687,7 +747,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -725,7 +785,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -758,7 +818,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -786,7 +846,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -819,7 +879,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -848,35 +908,6 @@
 							"response": []
 						},
 						{
-							"name": "Listar todos los videos",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/videos",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"videos"
-									],
-									"query": [
-										{
-											"key": "Title",
-											"value": null,
-											"disabled": true
-										},
-										{
-											"key": "Genre",
-											"value": null,
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Obtener video por ID",
 							"request": {
 								"auth": {
@@ -884,7 +915,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiI1NTAxZTc2NS1lNWFhLTQ3MDYtYWIyNi1hZjZhYWMxOGM5MzciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQzMzY5NjN9.mziUNSb0JpSvgmHK9E2yTIj8g3OBIcWdrUmi_71RIxw",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -912,7 +943,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -949,7 +980,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJKdGkiOiJkNDlkNWQyMC01NDY1LTQyYTctOWU0OS04ODEzYjNkMTdkMjciLCJJZCI6IjIiLCJFbWFpbCI6Imp1YW5hQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmFkb3IiLCJleHAiOjE3NTQ1MTQ2MDF9.xYyxWj0LeJ67PMdb6dV-0fj2koa2yqG6MFPZB6GXWRs",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -964,6 +995,35 @@
 									"path": [
 										"videos",
 										"6841b292da6e65dba7c19873"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar todos los videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/videos",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"videos"
+									],
+									"query": [
+										{
+											"key": "Title",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "Genre",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -1208,7 +1268,7 @@
 					"response": []
 				},
 				{
-					"name": "Actualiza estado de factura Copy",
+					"name": "Actualiza estado de factura",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1232,13 +1292,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{URL}}/facturas/351",
+							"raw": "{{URL}}/facturas/350",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"facturas",
-								"351"
+								"350"
 							]
 						}
 					},
