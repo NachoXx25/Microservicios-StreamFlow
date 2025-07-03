@@ -176,15 +176,17 @@ dotnet run
 
 Repeat the steps 6.1 to 6.4 for each service until all are running. Make sure to run all the services in the order listed in [step 6](#installation-and-configuration) before running the API Gateway.
 
+**Once all the services are running, you can test the endpoints with the postman collection included in the project (Microservices.postman_collection.json) with the API Gateway URL ```http://localhost:5000```.**
+
 ## Table of contents
 
-This section shows the steps to execute the application seeders, obtain the gmail application password for the EmailService and use Nginx.
+This section shows the steps to execute the application seeders, obtain the gmail application password for the EmailService, run the project with Docker, execute the E2E tests and test Nginx functionalities.
 
 ### How to execute the seeders
 
 1. **Run the RabbitMQ container on Docker**
 
-**It is recommended that you see the considerations of the RabbitMQ docker container on the [step 3 from Installation and Configuration](#installation-and-configuration) before running it in this step.** Once you've seen that section, run RabbitMQ from Docker
+**It is recommended that you see the considerations of the RabbitMQ docker container on the [step 3 from Installation and Configuration](#installation-and-configuration) before running it in this step.** Once you've seen that section, run RabbitMQ from Docker.
 
 ```
 docker run your_rabbitmq_container_name
@@ -312,13 +314,19 @@ bash openssl.sh
 
 Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
 
-5. Run the docker compose
+5. Return to the Nginx folder
+
+```bash
+cd ..
+```
+
+6. Run the docker compose
 
 ```bash
 docker-compose up -d --quiet-pull
 ```
 
-Once the container called _nginx_ is fully running, you will be able to test the endpoints with the same postman collection, but using the URL `https://localhost:443`; the HTTPS port that Nginx provides.
+**Once the container called _nginx_ is fully running, you will be able to test the endpoints with the postman collection included in the project (Microservices.postman_collection.json), but using the URL `https://localhost:443`; the HTTPS port that Nginx provides.**
 
 #### End to End Tests (E2E)
 
@@ -326,18 +334,19 @@ In addition to the use of Docker to run the application, End to End testing is i
 
 1. Navigate to the e2e-tests folder.
 
-   ```bash
-   cd e2e-tests
-   ```
-
+```bash
+cd e2e-tests
+```
 2. Install the Node modules.
-   ```bash
-   npm i
-   ```
+
+```bash
+npm i
+```
 3. Run the tests.
-   `bash
+
+```bash
 npm test
-`
+```
    When running the tests, a small message will be displayed indicating how many tests were performed (should be 12) and how many were failures and successes. If everything goes well, all tests should be successful.
 
 ### Nginx functionalities
