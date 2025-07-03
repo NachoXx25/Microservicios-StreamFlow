@@ -26,9 +26,9 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-        - name: Generate SSL certificates for testing
+    - name: Generate SSL certificates for testing
       run: |
-        echo "🔒 Generando certificados SSL para testing..."
+        echo "Generando certificados SSL para testing..."
         
         # Crear directorio ssl si no existe
         mkdir -p ssl
@@ -41,18 +41,18 @@ jobs:
           -addext "subjectAltName=DNS:localhost,DNS:127.0.0.1,IP:127.0.0.1"
         
         # Verificar que se crearon correctamente
-        echo "✅ Certificados SSL generados:"
+        echo "Certificados SSL generados:"
         ls -la ssl/
         
         # Verificar contenido del certificado
-        echo "📋 Información del certificado:"
+        echo "Información del certificado:"
         openssl x509 -in ssl/mycert.pem -text -noout | grep -A1 "Subject:"
         
         # Dar permisos correctos
         chmod 644 ssl/mycert.pem
         chmod 600 ssl/mykey.pem
         
-        echo "✅ Certificados SSL listos para uso"
+        echo "Certificados SSL listos para uso"
       working-directory: Nginx
 
     - name: Create test environment file
@@ -77,7 +77,7 @@ jobs:
           exit 1
         fi
         
-        echo "📋 Verificando nginx.conf:"
+        echo "Verificando nginx.conf:"
         if [ -f nginx.conf ]; then
           echo "nginx.conf encontrado"
           # Verificar puertos configurados
