@@ -26,17 +26,17 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Generate SSL certificates for testing
+        - name: Generate SSL certificates for testing
       run: |
         echo "🔒 Generando certificados SSL para testing..."
         
         # Crear directorio ssl si no existe
         mkdir -p ssl
         
-        # Generar certificados self-signed para localhost
+        # Generar certificados self-signed con los nombres correctos que espera Nginx
         openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-          -keyout ssl/nginx.key \
-          -out ssl/nginx.crt \
+          -keyout ssl/mykey.pem \
+          -out ssl/mycert.pem \
           -subj "/C=US/ST=Test/L=Test/O=StreamFlow/OU=Testing/CN=localhost" \
           -addext "subjectAltName=DNS:localhost,DNS:127.0.0.1,IP:127.0.0.1"
         
@@ -46,11 +46,11 @@ jobs:
         
         # Verificar contenido del certificado
         echo "📋 Información del certificado:"
-        openssl x509 -in ssl/nginx.crt -text -noout | grep -A1 "Subject:"
+        openssl x509 -in ssl/mycert.pem -text -noout | grep -A1 "Subject:"
         
         # Dar permisos correctos
-        chmod 644 ssl/nginx.crt
-        chmod 600 ssl/nginx.key
+        chmod 644 ssl/mycert.pem
+        chmod 600 ssl/mykey.pem
         
         echo "✅ Certificados SSL listos para uso"
       working-directory: Nginx
