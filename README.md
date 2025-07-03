@@ -31,9 +31,9 @@ git clone https://github.com/NachoXx25/Microservicios-StreamFlow.git
 
 2. **Navigate to the project directory**
 
-   ```bash
-   cd Microservicios-StreamFlow
-   ```
+```bash
+cd Microservicios-StreamFlow
+```
 
 3. Navigate to the SSL folder
 
@@ -43,11 +43,11 @@ cd Nginx/ssl
 
 4.  Create your own SSL certificates
 
-        ```bash
-        bash openssl.sh
-        ```
+```bash
+bash openssl.sh
+```
 
-    Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
+Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
 
 5.  **Run RabbitMQ on Docker**
 
@@ -67,7 +67,7 @@ You can also run the container using the Docker Desktop Application.
 
 6. **Run the services and the API Gateway**
 
-   Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
+Microservices have a specific order of execution, mainly because of the connections that exist between them and their data. Thus, the order and steps to be executed in each one are described:
 
 Execution order of the microservices and the API Gateway
 
@@ -285,11 +285,13 @@ To run the project with Docker, follow these steps:
   - `your_jwt_secret_key` with your JWT secret key.
 
 4. Create your own SSL certificates
-   **If you already have your certificates, skip this step.**
+
+**If you already have your certificates, skip this step.**
 
 Otherwise, you can do it with the following steps.
 
 4.1 Navigate to the SSL folder
+
 If you are already inside the Nginx folder, use this command
 
 ```bash
@@ -312,9 +314,9 @@ Once you run this command, the console will ask you a series of questions that y
 
 5. Run the docker compose
 
-   ```bash
-   docker-compose up -d --quiet-pull
-   ```
+```bash
+docker-compose up -d --quiet-pull
+```
 
 Once the container called _nginx_ is fully running, you will be able to test the endpoints with the same postman collection, but using the URL `https://localhost:443`; the HTTPS port that Nginx provides.
 
