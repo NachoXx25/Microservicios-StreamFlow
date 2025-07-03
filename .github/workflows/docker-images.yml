@@ -9,6 +9,7 @@ on:
 jobs:
   auth-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps: 
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -29,6 +30,7 @@ jobs:
 
   user-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -49,6 +51,7 @@ jobs:
 
   playlist-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -69,6 +72,7 @@ jobs:
 
   email-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -89,6 +93,7 @@ jobs:
 
   video-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -110,6 +115,7 @@ jobs:
 
   bill-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -131,6 +137,7 @@ jobs:
 
   monitoring-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
@@ -151,6 +158,7 @@ jobs:
 
   social-interactions-service:
     runs-on: ubuntu-latest
+    environment: Microservicios-StreamFLow
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
