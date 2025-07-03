@@ -1,8 +1,10 @@
 {
 	"info": {
 		"_postman_id": "a64b312f-ed8d-4f60-b618-745e82329589",
+		"_postman_id": "a64b312f-ed8d-4f60-b618-745e82329589",
 		"name": "Microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33657530"
 		"_exporter_id": "33657530"
 	},
 	"item": [
@@ -551,6 +553,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -586,6 +589,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -652,6 +656,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -675,6 +680,14 @@
 							"name": "Listar facturas por usuario",
 							"request": {
 								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
 									"type": "bearer",
 									"bearer": [
 										{
@@ -719,6 +732,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -747,6 +761,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -786,6 +801,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -819,6 +835,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -846,6 +863,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -879,6 +897,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -916,6 +935,7 @@
 										{
 											"key": "token",
 											"value": "{{authToken}}",
+											"value": "{{authToken}}",
 											"type": "string"
 										}
 									]
@@ -943,6 +963,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -980,6 +1001,7 @@
 									"bearer": [
 										{
 											"key": "token",
+											"value": "{{authToken}}",
 											"value": "{{authToken}}",
 											"type": "string"
 										}
@@ -1269,6 +1291,7 @@
 				},
 				{
 					"name": "Actualiza estado de factura",
+					"name": "Actualiza estado de factura",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1293,11 +1316,13 @@
 						},
 						"url": {
 							"raw": "{{URL}}/facturas/350",
+							"raw": "{{URL}}/facturas/350",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"facturas",
+								"350"
 								"350"
 							]
 						}

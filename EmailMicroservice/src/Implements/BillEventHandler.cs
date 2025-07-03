@@ -31,6 +31,9 @@ namespace EmailMicroservice.src.Implements
 
                 using (var smtpClient = new MailKit.Net.Smtp.SmtpClient())
                 {
+                   
+                    smtpClient.ServerCertificateValidationCallback = (s, certificate, chain, sslPolicyErrors) => true;
+                    
                     await smtpClient.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
                     await smtpClient.AuthenticateAsync(
                         Env.GetString("FROM_EMAIL"), 
