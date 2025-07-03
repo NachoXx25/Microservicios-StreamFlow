@@ -189,7 +189,7 @@ jobs:
         
         echo "Todos los servicios están listos para testing"
         echo "Nginx responde correctamente en https://localhost:443"
-        
+        sleep 40 # Espera adicional para estabilidad
       working-directory: Nginx
         
 
