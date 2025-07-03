@@ -189,7 +189,8 @@ jobs:
         
         echo "Todos los servicios están listos para testing"
         echo "Nginx responde correctamente en https://localhost:443"
-        sleep 40 # Espera adicional para estabilidad
+        echo "Esperando 60 segundos adicionales para estabilidad (colas de rabbit y base de datos)..."
+        sleep 60 # Espera adicional para estabilidad
       working-directory: Nginx
         
 
