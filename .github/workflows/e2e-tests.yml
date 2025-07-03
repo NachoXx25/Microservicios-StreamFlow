@@ -34,14 +34,14 @@ jobs:
     - name: Build and start services
       run: |
         cd Nginx
-        docker-compose --env-file .env.test up -d --build
+        docker compose --env-file .env.test up -d --build
         
     - name: Wait for services to be ready
       run: |
         echo "Levantando los servicios"
         sleep 30
         
-        docker-compose -f Nginx/docker-compose.yml ps
+        docker compose -f Nginx/docker-compose.yml ps
         
         timeout=300
         until curl -f https://localhost:443/health || [ $timeout -eq 0 ]; do
@@ -52,7 +52,7 @@ jobs:
         
         if [ $timeout -eq 0 ]; then
           echo "La API falló"
-          docker-compose -f Nginx/docker-compose.yml logs nginx
+          docker compose -f Nginx/docker-compose.yml logs nginx
           exit 1
         fi
         
@@ -87,13 +87,13 @@ jobs:
       if: failure()
       run: |
         echo "Mostrando los logs"
-        docker-compose -f Nginx/docker-compose.yml logs user-service
-        docker-compose -f Nginx/docker-compose.yml logs auth-service
-        docker-compose -f Nginx/docker-compose.yml logs nginx
+        docker compose -f Nginx/docker-compose.yml logs user-service
+        docker compose -f Nginx/docker-compose.yml logs auth-service
+        docker compose -f Nginx/docker-compose.yml logs nginx
 
     - name: Cleanup
       if: always()
       run: |
         cd Nginx
-        docker-compose --env-file .env.test down -v
+        docker compose --env-file .env.test down -v
         docker system prune -f
