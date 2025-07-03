@@ -44,7 +44,7 @@ jobs:
         docker compose -f Nginx/docker-compose.yml ps
         
         timeout=300
-        until curl -f https://localhost:443/health || [ $timeout -eq 0 ]; do
+        until curl -f https://localhost:443/health || https://localhost:443/usuarios/1 [ $timeout -eq 0 ]; do
           echo "Esperando a que la API responda ($timeout seconds left)"
           sleep 5
           timeout=$((timeout-5))
