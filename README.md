@@ -261,17 +261,41 @@ To use Gmail services via SMTP messaging protocol, it is no longer allowed to us
 
 To run the project with Docker, follow these steps:
 
-1. Navigate to the Nginx folder
+1. **Clone the repository**
 
-   ```bash
-   cd Nginx
-   ```
+Open a bash terminal and run the command
 
-2. Copy the `.env.example` on the `.env` file
-   ```bash
-   cp .env.example .env
-   ```
-3. Fill in the environment variables with your data
+```bash
+git clone https://github.com/NachoXx25/Microservicios-StreamFlow.git
+```
+
+2. **Navigate to the project directory**
+
+```bash
+cd Microservicios-StreamFlow
+```
+
+3. **Navigate to the SSL folder**
+
+```bash
+cd Nginx/ssl
+```
+
+4. **Create your own SSL certificates**
+
+```bash
+bash openssl.sh
+```
+
+Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
+   
+5. Copy the `.env.example` on the `.env` file
+
+```bash
+cp .env.example .env
+```
+
+6. Fill in the environment variables with your data
 
 - On the `MYSQL_CONNECTION_USER`, the `MARIADB_CONNECTION_BILL` and the `MYSQL_ROOT_PASSWORD` replace:
   - `your_mysql_password` with your MySQL password.
@@ -286,35 +310,7 @@ To run the project with Docker, follow these steps:
 - On the `JWT_SECRET` replace:
   - `your_jwt_secret_key` with your JWT secret key.
 
-4. Create your own SSL certificates
-
-**If you already have your certificates, skip this step.**
-
-Otherwise, you can do it with the following steps.
-
-4.1 Navigate to the SSL folder
-
-If you are already inside the Nginx folder, use this command
-
-```bash
-cd ssl
-```
-
-Otherwise, use this one
-
-```bash
-cd Nginx/ssl
-```
-
-4.2 Run the script to create the certificates
-
-```bash
-bash openssl.sh
-```
-
-Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
-
-5. Return to the Nginx folder
+7. Return to the Nginx folder
 
 ```bash
 cd ..
