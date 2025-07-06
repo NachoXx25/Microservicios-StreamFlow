@@ -25,7 +25,7 @@ namespace UserMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = "rabbit_mq";
+            var hostname = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             var username = "guest";
             var password = "guest";
             var port = 5672;
@@ -85,7 +85,7 @@ namespace UserMicroservice.Services
             DeclareAndBindQueue(_actionChannel, "Action_queue", "action.generated", _exchangeName);
         }
 
-         private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
+        private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
         {
             channel.QueueDeclare(
                 queue: queueName,

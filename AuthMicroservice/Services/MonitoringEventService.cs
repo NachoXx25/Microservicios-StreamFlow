@@ -29,9 +29,9 @@ namespace AuthMicroservice.Services
         {
             _exchangeName = "StreamFlowExchange";
 
-             var factory = new ConnectionFactory
+            var factory = new ConnectionFactory
             {
-                HostName = "rabbit_mq",
+                HostName = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq",
                 UserName = "guest",
                 Password = "guest",
                 Port = 5672
@@ -85,7 +85,7 @@ namespace AuthMicroservice.Services
             DeclareAndBindQueue(_actionChannel, "Action_queue", "action.generated", _exchangeName);
         }
 
-         private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
+        private void DeclareAndBindQueue(IModel channel, string queueName, string routingKey, string exchangeName)
         {
             channel.QueueDeclare(
                 queue: queueName,

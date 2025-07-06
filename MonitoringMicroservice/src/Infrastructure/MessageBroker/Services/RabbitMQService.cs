@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetEnv;
 using RabbitMQ.Client;
 
 namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Services
@@ -22,7 +23,7 @@ namespace MonitoringMicroservice.src.Infrastructure.MessageBroker.Services
 
         public RabbitMQService()
         {
-            _hostName = "rabbit_mq";
+            _hostName = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             _userName = "guest";
             _password = "guest";
             _port = 5672;

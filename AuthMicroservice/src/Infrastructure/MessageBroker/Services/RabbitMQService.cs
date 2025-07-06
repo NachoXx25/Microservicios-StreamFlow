@@ -22,7 +22,7 @@ namespace AuthMicroservice.src.Infrastructure.MessageBroker.Services
         public RabbitMQService()
         {
 
-            _hostname = "rabbit_mq";
+            _hostname = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             _username = "guest";
             _password = "guest";
             _port = 5672;

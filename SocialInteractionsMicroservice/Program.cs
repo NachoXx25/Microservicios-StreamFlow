@@ -25,7 +25,7 @@ builder.Services.AddScoped<ISocialInteractionsEventService, SocialInteractionsEv
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 
 var connectionFactory = new ConnectionFactory();
-connectionFactory.HostName = "rabbit_mq";
+connectionFactory.HostName = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
 connectionFactory.UserName = "guest";
 connectionFactory.Password = "guest";
 connectionFactory.Port = 5672;
@@ -38,9 +38,9 @@ try
 {
     var mongoConnectionString = Env.GetString("MONGODB_CONNECTION");
     var databaseName = Env.GetString("MONGODB_DATABASE_NAME");
-    
+
     Log.Information("SocialInteractionsMicroservice: Configuring MongoDB connection...");
-    
+
     MongoClient mongoClient = null;
     int maxRetryCount = 5;
     TimeSpan maxRetryDelay = TimeSpan.FromSeconds(60);
@@ -85,12 +85,12 @@ try
     }
 
     builder.Services.AddSingleton<IMongoClient>(mongoClient);
-    
+
     builder.Services.AddDbContext<SocialInteractionsContext>((serviceProvider, options) =>
     {
         var client = serviceProvider.GetRequiredService<IMongoClient>();
         options.UseMongoDB(client, databaseName);
-        
+
         options.ConfigureWarnings(warnings =>
         {
             warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.ManyServiceProvidersCreatedWarning);

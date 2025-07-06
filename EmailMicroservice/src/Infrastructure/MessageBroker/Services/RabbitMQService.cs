@@ -20,14 +20,14 @@ namespace EmailMicroservice.src.Infrastructure.MessageBroker.Services
         private readonly string _exchangeName;
         public RabbitMQService()
         {
-            _hostname = "rabbit_mq";
+            _hostname = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             _username = "guest";
             _password = "guest";
             _port = 5672;
             _exchangeName = "StreamFlowExchange";
             CreateConnection();
         }
-         public IConnection CreateConnection()
+        public IConnection CreateConnection()
         {
             _factory = new ConnectionFactory
             {

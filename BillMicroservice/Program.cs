@@ -27,7 +27,7 @@ builder.Services.AddScoped<IBillService, BillService>();
 builder.Services.AddScoped<IMonitoringEventService, MonitoringEventService>();
 
 var connectionFactory = new ConnectionFactory();
-connectionFactory.HostName = "rabbit_mq";
+connectionFactory.HostName = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
 connectionFactory.UserName = "guest";
 connectionFactory.Password = "guest";
 connectionFactory.Port = 5672;

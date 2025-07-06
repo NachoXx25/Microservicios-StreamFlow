@@ -15,7 +15,7 @@ namespace UserMicroservice.Services
         Task PublishUserUpdatedEvent(User user);
         Task PublishUserDeletedEvent(User user);
     }
-    
+
     public class UserEventService : IUserEventService
     {
         private readonly string _userExchangeName;
@@ -25,7 +25,7 @@ namespace UserMicroservice.Services
 
         public UserEventService()
         {
-            var hostname = "rabbit_mq";
+            var hostname = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             var username = "guest";
             var password = "guest";
             var port = 5672;

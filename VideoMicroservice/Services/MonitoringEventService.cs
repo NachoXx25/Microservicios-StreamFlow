@@ -26,7 +26,7 @@ namespace VideoMicroservice.Services
 
         public MonitoringEventService()
         {
-            var hostname = "rabbit_mq";
+            var hostname = Env.GetBool("IS_LOCAL", true) ? "localhost" : "rabbit_mq";
             var username = "guest";
             var password = "guest";
             var port = 5672;
