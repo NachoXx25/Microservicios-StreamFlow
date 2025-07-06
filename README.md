@@ -23,7 +23,8 @@ There are 2 ways to run the project:
 If you want to run it with Docker, go to the [Run with Docker](#run-the-project-with-docker) section. Otherwise, follow the steps below.
 
 1. **Clone the repository**
-   Open a bash terminal and run the command
+
+Open a bash terminal and run the command
 
 ```bash
 git clone https://github.com/NachoXx25/Microservicios-StreamFlow.git
@@ -165,6 +166,10 @@ Once you have replaced everything, save the changes and move on to the next step
 
 - On the `JWT_SECRET` replace:
   - `your_jwt_secret_key` with your JWT secret key.
+ 
+#### For each microservice
+- On the `IS_LOCAL` replace:
+   - `true` if is not. By default it is true, so you might not change it.
 
 Once you have replaced everything, save the changes and move on to the next step.
 
@@ -309,6 +314,8 @@ cp .env.example .env
   - `your_password` with your gmail application password. This password **IS NOT** your gmail password, instead, is a dedicated password for an application. To obtain this password, go to the [Obtain an App Password](#obtain-an-app-password) section.
 - On the `JWT_SECRET` replace:
   - `your_jwt_secret_key` with your JWT secret key.
+- On the `IS_LOCAL` replace:
+   - `false` if is not. By default it is false, so you might not change it.
 
 7. Return to the Nginx folder
 
