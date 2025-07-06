@@ -293,14 +293,20 @@ bash openssl.sh
 ```
 
 Once you run this command, the console will ask you a series of questions that you must skip by pressing Enter until the files have been created. This will create 3 files: `mycert.pem`, `mykey.pem` and `myrequest.csr` on the SSL folder.
+
+5. Return to the Nginx folder
+
+```bash
+cd ..
+```
    
-5. Copy the `.env.example` on the `.env` file
+6. Copy the `.env.example` on the `.env` file
 
 ```bash
 cp .env.example .env
 ```
 
-6. Fill in the environment variables with your data
+7. Fill in the environment variables with your data
 
 - On the `MYSQL_CONNECTION_USER`, the `MARIADB_CONNECTION_BILL` and the `MYSQL_ROOT_PASSWORD` replace:
   - `your_mysql_password` with your MySQL password.
@@ -317,13 +323,7 @@ cp .env.example .env
 - On the `IS_LOCAL` replace:
    - `false` if is not. By default it is false, so you might not change it.
 
-7. Return to the Nginx folder
-
-```bash
-cd ..
-```
-
-6. Run the docker compose
+8. Run the docker compose
 
 ```bash
 docker-compose up -d --quiet-pull
